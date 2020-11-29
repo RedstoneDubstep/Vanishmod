@@ -4,7 +4,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.fml.common.Mod;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(Vanishmod.MODID)
 public class Vanishmod {
     public static final String MODID = "vanishmod";

@@ -15,7 +15,6 @@ public abstract class MixinLivingEntity {
 		if (livingEntity instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity)livingEntity;
 
-			System.out.println("SetInvisible has been called!");
 			player.setInvisible(invisible || VanishUtil.isVanished(player));
 		}
 	}
