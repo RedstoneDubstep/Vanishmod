@@ -6,14 +6,18 @@ import java.util.UUID;
 import com.google.common.collect.Lists;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPlayerListItemPacket;
 import net.minecraft.network.play.server.SPlayerListItemPacket.Action;
 import net.minecraft.network.play.server.SSpawnPlayerPacket;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.server.ServerChunkProvider;
 
 public class VanishUtil {
 	private static final List<UUID> vanishedPlayers = Lists.newArrayList();
@@ -43,8 +47,8 @@ public class VanishUtil {
 			if (!player.equals(currentPlayer)) { //prevent packet from being sent to the executor of the command
 				player.connection.sendPacket(new SPlayerListItemPacket(vanished ? Action.REMOVE_PLAYER : Action.ADD_PLAYER, currentPlayer));
 				if (!vanished) {
-
-
+					//Statement below should compile due to accesstransformer, but doesn't
+					chunkProvider.chunkManager.entities.remove(currentPlayer.getEntityId());
 					chunkProvider.track(currentPlayer);
 				}
 			}
