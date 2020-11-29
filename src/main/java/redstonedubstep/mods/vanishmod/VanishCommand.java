@@ -24,13 +24,13 @@ public class VanishCommand {
 				ctx.getSource().sendFeedback(new TranslationTextComponent("%s vanished", player.getDisplayName()), true);
 				player.sendMessage(new StringTextComponent("Note: You can still see yourself in the tab list for technical reasons, but you are vanished for other players."), Util.DUMMY_UUID);
 				player.sendMessage(new StringTextComponent("Note: It is preferable to be in spectator mode while vanished, because other players can still see the items you hold and wear and can interact with your hitbox."), Util.DUMMY_UUID);
-				VanishUtil.sendPacketOnVanish(ctx, true);
 				VanishUtil.sendMessageToAllPlayers(ctx.getSource().getWorld().getPlayers(), ctx.getSource().asPlayer(), true);
+				VanishUtil.sendPacketsOnVanish(ctx, true);
 			} else {
 				VanishUtil.updateVanishedList(player, false);
 				ctx.getSource().sendFeedback(new TranslationTextComponent("%s appeared again", player.getDisplayName()), true);
-				VanishUtil.sendPacketOnVanish(ctx, false);
 				VanishUtil.sendMessageToAllPlayers(ctx.getSource().getWorld().getPlayers(), ctx.getSource().asPlayer(), false);
+				VanishUtil.sendPacketsOnVanish(ctx, false);
 			}
 			return 0;
 		});

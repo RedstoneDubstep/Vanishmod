@@ -31,16 +31,21 @@ public class VanishUtil {
 		return formattedList;
 	}
 
-	public static void sendPacketOnVanish(CommandContext<CommandSource> ctx, boolean vanished) throws CommandSyntaxException {
+	public static void sendPacketsOnVanish(CommandContext<CommandSource> ctx, boolean vanished) throws CommandSyntaxException {
 		System.out.println("SendPacketOnVanish has been called! vanished="+vanished);
+		ServerPlayerEntity currentPlayer = ctx.getSource().asPlayer();
+
 		List<ServerPlayerEntity> list = ctx.getSource().getWorld().getPlayers();
 
 		for (ServerPlayerEntity player : list) {
-			if (!player.equals(ctx.getSource().asPlayer())) { //prevent packet from being sent to the executor of the command
-				player.connection.sendPacket(new SPlayerListItemPacket(vanished ? Action.REMOVE_PLAYER : Action.ADD_PLAYER, ctx.getSource().asPlayer()));
+			ServerChunkProvider chunkProvider = player.getServerWorld().getChunkProvider();
+
+			if (!player.equals(currentPlayer)) { //prevent packet from being sent to the executor of the command
+				player.connection.sendPacket(new SPlayerListItemPacket(vanished ? Action.REMOVE_PLAYER : Action.ADD_PLAYER, currentPlayer));
 				if (!vanished) {
-					player.connection.sendPacket(new SSpawnPlayerPacket(ctx.getSource().asPlayer()));
-					//player.connection.sendPacket(new SPlayerListItemPacket(Action.UPDATE_GAME_MODE, ctx.getSource().asPlayer()));
+
+
+					chunkProvider.track(currentPlayer);
 				}
 			}
 		}

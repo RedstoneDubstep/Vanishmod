@@ -1,7 +1,6 @@
 package redstonedubstep.mods.vanishmod.mixin;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
