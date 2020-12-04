@@ -1,6 +1,0 @@
-{
-  "vanishmod.command.note.seeYourself": "Note: You can still see yourself in the tab list for technical reasons, but you are vanished for other players.",
-  "vanishmod.command.note.spectatorMode": "Note: It is preferable to be in spectator mode while vanished, because other players can still see the items you hold and wear and can interact with your hitbox.",
-  "vanishmod.command.message.vanished": "%s vanished",
-  "vanishmod.command.message.appeared": "%a appeared again"
-}
