@@ -9,6 +9,7 @@ import net.minecraft.network.play.server.SPlayerListItemPacket;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -33,6 +34,8 @@ public abstract class MixinPlayerList {
 	public void redirectFunc_232641_a_(PlayerList playerList, ITextComponent content, ChatType chatType, UUID uuid, NetworkManager netManager, ServerPlayerEntity player) {
 		if (!VanishUtil.isVanished(player))
 			playerList.func_232641_a_(content, chatType, uuid);
+		else
+			player.sendMessage(new StringTextComponent("Note: You are still vanished"), player.getUniqueID());
 	}
 
 }

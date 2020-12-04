@@ -19,7 +19,7 @@ public abstract class MixinServerPlayNetHandler implements IServerPlayNetHandler
 	@Shadow
 	public ServerPlayerEntity player;
 
-	//Block join message when player is vanished
+	//Block leave message when player is vanished
 	@Redirect(method="onDisconnect", at=@At(value="INVOKE", target="Lnet/minecraft/server/management/PlayerList;func_232641_a_(Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ChatType;Ljava/util/UUID;)V"))
 	public void redirectFunc_232641_a_(PlayerList playerList, ITextComponent content, ChatType chatType, UUID uuid) {
 		if (!VanishUtil.isVanished(player))
