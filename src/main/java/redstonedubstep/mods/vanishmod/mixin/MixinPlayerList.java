@@ -16,11 +16,13 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(PlayerList.class)
 public abstract class MixinPlayerList {
+	//remove vanished players from packet that is sent on connect
 	@Redirect(method="initializeConnectionToPlayer", at=@At(value="NEW", target="net/minecraft/network/play/server/SPlayerListItemPacket"))
 	public SPlayerListItemPacket constructPacketOnJoin(SPlayerListItemPacket.Action actionIn, ServerPlayerEntity... playersIn) {
 		return new SPlayerListItemPacket(actionIn, VanishUtil.formatPlayerList(Arrays.asList(playersIn)));
 	}
 
+	//remove vanished players from packet that is sent on disconnect
 	@Redirect(method="playerLoggedOut", at=@At(value="NEW", target="net/minecraft/network/play/server/SPlayerListItemPacket"))
 	public SPlayerListItemPacket constructPacketOnLeave(SPlayerListItemPacket.Action actionIn, ServerPlayerEntity... playersIn) {
 		return new SPlayerListItemPacket(actionIn, VanishUtil.formatPlayerList(Arrays.asList(playersIn)));

@@ -10,6 +10,7 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 @Mixin(LivingEntity.class)
 public abstract class MixinLivingEntity {
 
+	//Sometimes the EffectHandler updates the status of the invisibility. This mixin prevents the player from being set visible while vanished
 	@Redirect(method = "updatePotionMetadata", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setInvisible(Z)V"))
 	public void onSetInvisible(LivingEntity livingEntity, boolean invisible) {
 		if (livingEntity instanceof ServerPlayerEntity) {

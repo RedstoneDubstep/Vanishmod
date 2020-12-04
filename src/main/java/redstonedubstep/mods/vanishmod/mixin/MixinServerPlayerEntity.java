@@ -16,10 +16,12 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 @Mixin(ServerPlayerEntity.class)
 public abstract class MixinServerPlayerEntity extends PlayerEntity {
 
+	//player entity needs a constructor, so here we go
 	public MixinServerPlayerEntity(World world, BlockPos pos, float f, GameProfile gameProfile) {
 		super(world, pos, f, gameProfile);
 	}
 
+	//suppress death messages when player is vanished by modification of the method that usually gets the value of the Gamerule showDeathMessages
 	@Redirect(method="onDeath", at=@At(value="INVOKE", target="Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$RuleKey;)Z", ordinal=0))
 	public boolean getBoolean(GameRules gameRules, RuleKey<BooleanValue> key) {
 		if (VanishUtil.isVanished(getUniqueID()))

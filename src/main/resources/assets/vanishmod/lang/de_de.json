@@ -1,0 +1,6 @@
+{
+  "vanishmod.command.note.seeYourself": "Info: Du kannst dich aus technischen Gründen immer noch selbst in der Spielerliste sehen, aber du bist unsichtbar für alle anderen Spieler.",
+  "vanishmod.command.note.spectatorMode": "Info: Es ist zu empfehlen, den Zuschauermodus zu verwenden, während man unsichtbar ist, um zu verhindern, dass andere Spieler deine Rüstung und die Items in deiner Hand sehen.",
+  "vanishmod.command.message.vanished": "%s wurde unsichtbar",
+  "vanishmod.command.message.appeared": "%a wurde wieder sichtbar"
+}
