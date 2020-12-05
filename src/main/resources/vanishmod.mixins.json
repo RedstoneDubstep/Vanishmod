@@ -7,7 +7,9 @@
     "MixinLivingEntity",
     "MixinPlayerList",
     "MixinServerPlayerEntity",
-    "MixinServerPlayNetHandler"
+    "MixinServerPlayNetHandler",
+    "MixinServerStatusNetHandler",
+    "MixinServerStatusResponsePlayers"
   ],
   "minVersion": "0.8"
 }
