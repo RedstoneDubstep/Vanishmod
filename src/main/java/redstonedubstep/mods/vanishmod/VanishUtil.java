@@ -21,6 +21,7 @@ import net.minecraft.world.server.ServerChunkProvider;
 
 public class VanishUtil {
 	private static final List<UUID> vanishedPlayers = Lists.newArrayList();
+	public static boolean isMixinInvolved = false;
 
 	public static List<ServerPlayerEntity> formatPlayerList(List<ServerPlayerEntity> rawList) {
 		List<ServerPlayerEntity> formattedList = Lists.newArrayList();
@@ -82,6 +83,8 @@ public class VanishUtil {
 	}
 
 	public static boolean isVanished(ServerPlayerEntity player) {
+		if (player == null)
+			return false;
 		return isVanished(player.getUniqueID());
 	}
 

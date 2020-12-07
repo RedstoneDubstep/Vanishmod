@@ -9,7 +9,8 @@
     "MixinServerPlayerEntity",
     "MixinServerPlayNetHandler",
     "MixinServerStatusNetHandler",
-    "MixinServerStatusResponsePlayers"
+    "MixinServerStatusResponsePlayers",
+    "MixinServerWorld"
   ],
   "minVersion": "0.8"
 }

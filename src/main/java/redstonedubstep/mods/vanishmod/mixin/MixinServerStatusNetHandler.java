@@ -1,7 +1,5 @@
 package redstonedubstep.mods.vanishmod.mixin;
 
-import java.util.Arrays;
-
 import com.mojang.authlib.GameProfile;
 import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.network.status.ServerStatusNetHandler;
