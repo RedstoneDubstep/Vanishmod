@@ -6,12 +6,9 @@ import java.util.UUID;
 import com.google.common.collect.Lists;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.SEntityEquipmentPacket;
+import net.minecraft.network.play.server.SDestroyEntitiesPacket;
 import net.minecraft.network.play.server.SPlayerListItemPacket;
 import net.minecraft.network.play.server.SPlayerListItemPacket.Action;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -47,22 +44,11 @@ public class VanishUtil {
 				if (!vanished) {
 					chunkProvider.chunkManager.entities.remove(currentPlayer.getEntityId());
 					chunkProvider.track(currentPlayer);
-				}
-				else {
-					hidePlayerArmor(currentPlayer, player);
+				} else {
+					player.connection.sendPacket(new SDestroyEntitiesPacket(currentPlayer.getEntityId()));
 				}
 			}
 		}
-	}
-
-	private static void hidePlayerArmor(ServerPlayerEntity vanishedPlayer, ServerPlayerEntity otherPlayer) {
-		List<Pair<EquipmentSlotType, ItemStack>> list = Lists.newArrayList();
-
-		for(EquipmentSlotType equipmentslottype : EquipmentSlotType.values()) {
-			list.add(Pair.of(equipmentslottype, ItemStack.EMPTY));
-		}
-
-		otherPlayer.connection.sendPacket(new SEntityEquipmentPacket(vanishedPlayer.getEntityId(), list));
 	}
 
 	public static void sendMessageToAllPlayers(List<ServerPlayerEntity> playerList, ServerPlayerEntity sender, boolean vanished) {
