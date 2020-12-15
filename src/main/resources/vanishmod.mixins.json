@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "vanishmod.refmap.json",
   "mixins": [
+    "MixinChunkManagerEntityTracker",
     "MixinLivingEntity",
     "MixinPlayerEntity",
     "MixinPlayerList",

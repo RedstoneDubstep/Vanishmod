@@ -18,13 +18,12 @@ import net.minecraft.world.server.ServerChunkProvider;
 
 public class VanishUtil {
 	private static final List<UUID> vanishedPlayers = Lists.newArrayList();
-	public static boolean isMixinInvolved = false;
 
 	public static List<ServerPlayerEntity> formatPlayerList(List<ServerPlayerEntity> rawList) {
 		List<ServerPlayerEntity> formattedList = Lists.newArrayList();
 
 		for (ServerPlayerEntity player : rawList) {
-			if (!vanishedPlayers.contains(player.getUniqueID()))
+			if (!isVanished(player))
 				formattedList.add(player);
 		}
 
@@ -42,7 +41,7 @@ public class VanishUtil {
 			if (!player.equals(currentPlayer)) { //prevent packet from being sent to the executor of the command
 				player.connection.sendPacket(new SPlayerListItemPacket(vanished ? Action.REMOVE_PLAYER : Action.ADD_PLAYER, currentPlayer));
 				if (!vanished) {
-					chunkProvider.chunkManager.entities.remove(currentPlayer.getEntityId());
+					chunkProvider.chunkManager.entities.remove(currentPlayer.getEntityId()); //we don't want an error in our log because the entity to be tracked is already on that list
 					chunkProvider.track(currentPlayer);
 				} else {
 					player.connection.sendPacket(new SDestroyEntitiesPacket(currentPlayer.getEntityId()));
