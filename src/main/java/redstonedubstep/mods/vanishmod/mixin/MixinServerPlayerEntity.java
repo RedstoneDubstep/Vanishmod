@@ -23,7 +23,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity {
 
 	//suppress death messages when player is vanished by modification of the method that usually gets the value of the Gamerule showDeathMessages
 	@Redirect(method="onDeath", at=@At(value="INVOKE", target="Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$RuleKey;)Z", ordinal=0))
-	public boolean getBoolean(GameRules gameRules, RuleKey<BooleanValue> key) {
+	public boolean redirectGetBoolean(GameRules gameRules, RuleKey<BooleanValue> key) {
 		if (VanishUtil.isVanished(getUniqueID()))
 			return false;
 		return gameRules.get(key).get();

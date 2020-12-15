@@ -5,6 +5,7 @@
   "refmap": "vanishmod.refmap.json",
   "mixins": [
     "MixinLivingEntity",
+    "MixinPlayerEntity",
     "MixinPlayerList",
     "MixinServerPlayerEntity",
     "MixinServerPlayNetHandler",
