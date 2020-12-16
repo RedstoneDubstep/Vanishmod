@@ -1,6 +1,7 @@
 package redstonedubstep.mods.vanishmod.mixin;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -17,13 +18,27 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(PlayerList.class)
 public abstract class MixinPlayerList {
-	//remove vanished players from packet that is sent on connect
+	//Remove vanished players from packet that is sent to all players on connect
 	@Redirect(method="initializeConnectionToPlayer", at=@At(value="NEW", target="net/minecraft/network/play/server/SPlayerListItemPacket", ordinal=0))
-	public SPlayerListItemPacket constructPacketOnJoin(SPlayerListItemPacket.Action actionIn, ServerPlayerEntity... playersIn) {
+	public SPlayerListItemPacket constructPacketToAll(SPlayerListItemPacket.Action actionIn, ServerPlayerEntity[] playersIn) {
 		return new SPlayerListItemPacket(actionIn, VanishUtil.formatPlayerList(Arrays.asList(playersIn)));
 	}
 
-	//remove vanished players from packet that is sent on disconnect
+	//Remove vanished players from packets that are sent to the joining player on connect. Includes an extra check to ensure that the vanished player gets information about itself
+	@Redirect(method="initializeConnectionToPlayer", at=@At(value="NEW", target="net/minecraft/network/play/server/SPlayerListItemPacket", ordinal=1))
+	public SPlayerListItemPacket constructPacketToJoinedPlayer(SPlayerListItemPacket.Action actionIn, ServerPlayerEntity[] playersIn, NetworkManager netManager, ServerPlayerEntity receiver) {
+		List<ServerPlayerEntity> list;
+
+		if (VanishUtil.isVanished(receiver) && receiver.equals(playersIn[0])) {
+			list=Arrays.asList(playersIn);
+		} else {
+			list=VanishUtil.formatPlayerList(Arrays.asList(playersIn));
+		}
+
+		return new SPlayerListItemPacket(actionIn, list);
+	}
+
+	//Remove vanished players from packet that is sent on disconnect
 	@Redirect(method="playerLoggedOut", at=@At(value="NEW", target="net/minecraft/network/play/server/SPlayerListItemPacket"))
 	public SPlayerListItemPacket constructPacketOnLeave(SPlayerListItemPacket.Action actionIn, ServerPlayerEntity... playersIn) {
 		return new SPlayerListItemPacket(actionIn, VanishUtil.formatPlayerList(Arrays.asList(playersIn)));
