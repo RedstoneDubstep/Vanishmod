@@ -4,8 +4,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.IPacket;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,5 +38,12 @@ public abstract class MixinLivingEntity extends Entity {
 		if (!VanishUtil.isVanished(this.getUniqueID()))
 			serverWorld.spawnParticle(type, posX, posY, posZ, particleCount, xOffset, yOffset, zOffset, speed);
 		return 0;
+	}
+
+	//Prevent pickup animation from being sent when a vanished player picks up an item. This fixes that the unvanished client thinks that it picked up an item while in reality a vanished player did
+	@Redirect(method="onItemPickup", at=@At(value="INVOKE", target="Lnet/minecraft/world/server/ServerChunkProvider;sendToAllTracking(Lnet/minecraft/entity/Entity;Lnet/minecraft/network/IPacket;)V"))
+	public void redirectSendToAllTracking(ServerChunkProvider chunkProvider, Entity item, IPacket<?> packet) {
+		if (!VanishUtil.isVanished(this.getUniqueID()))
+			chunkProvider.sendToAllTracking(item, packet);
 	}
 }
