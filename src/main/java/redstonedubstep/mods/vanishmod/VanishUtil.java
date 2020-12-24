@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.play.server.SDestroyEntitiesPacket;
 import net.minecraft.network.play.server.SPlayerListItemPacket;
@@ -15,10 +16,9 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerChunkProvider;
+import net.minecraft.world.server.ServerWorld;
 
 public class VanishUtil {
-	private static final List<UUID> vanishedPlayers = Lists.newArrayList();
-
 	public static List<ServerPlayerEntity> formatPlayerList(List<ServerPlayerEntity> rawList) {
 		List<ServerPlayerEntity> formattedList = Lists.newArrayList();
 
@@ -58,22 +58,24 @@ public class VanishUtil {
 		}
 	}
 
-	public static void updateVanishedList(ServerPlayerEntity player, boolean vanished) {
-		if (vanished)
-			vanishedPlayers.add(player.getUniqueID());
-		else
-			vanishedPlayers.remove(player.getUniqueID());
-
+	public static void updateVanishedStatus(ServerPlayerEntity player, boolean vanished) {
+		player.getPersistentData().putBoolean("vanished", vanished);
 		player.setInvisible(vanished);
+	}
+
+	public static boolean isVanished(UUID uuid, ServerWorld world) {
+		Entity entity = world.getEntityByUuid(uuid);
+		if (!(entity instanceof ServerPlayerEntity))
+			return false;
+
+		return isVanished((ServerPlayerEntity)entity);
 	}
 
 	public static boolean isVanished(ServerPlayerEntity player) {
 		if (player == null)
 			return false;
-		return isVanished(player.getUniqueID());
+
+		return player.getPersistentData().getBoolean("vanished");
 	}
 
-	public static boolean isVanished(UUID uuid) {
-		return vanishedPlayers.contains(uuid);
-	}
 }

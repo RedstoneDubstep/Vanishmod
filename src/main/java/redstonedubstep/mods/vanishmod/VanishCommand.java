@@ -21,14 +21,14 @@ public class VanishCommand {
 			ServerPlayerEntity player = ctx.getSource().asPlayer();
 
 			if (!VanishUtil.isVanished(player)) { //when the player isn't already vanished
-				VanishUtil.updateVanishedList(player, true);
+				VanishUtil.updateVanishedStatus(player, true);
 				ctx.getSource().sendFeedback(new TranslationTextComponent("%s vanished", player.getDisplayName()), true);
 				player.sendMessage(new StringTextComponent("Note: You can still see yourself in the tab list for technical reasons, but you are vanished for other players."), Util.DUMMY_UUID);
 				player.sendMessage(new StringTextComponent("Note: It is preferable to be in spectator mode while vanished, because other players can still see the items you hold and wear and can interact with your hitbox."), Util.DUMMY_UUID);
 				VanishUtil.sendMessageToAllPlayers(ctx.getSource().getWorld().getPlayers(), player, true);
 				VanishUtil.sendPacketsOnVanish(ctx, true);
 			} else {
-				VanishUtil.updateVanishedList(player, false);
+				VanishUtil.updateVanishedStatus(player, false);
 				ctx.getSource().sendFeedback(new TranslationTextComponent("%s appeared again", player.getDisplayName()), true);
 				VanishUtil.sendMessageToAllPlayers(ctx.getSource().getWorld().getPlayers(), player, false);
 				VanishUtil.sendPacketsOnVanish(ctx, false);

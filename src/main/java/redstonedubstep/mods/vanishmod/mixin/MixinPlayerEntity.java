@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -24,7 +25,7 @@ public abstract class MixinPlayerEntity extends LivingEntity {
 	//Suppress arm swing sound when hitting the player
 	@Redirect(method="attackTargetEntityWithCurrentItem", at=@At(value="INVOKE", target="Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/player/PlayerEntity;DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FF)V"))
 	public void redirectPlaySound(World world, @Nullable PlayerEntity player, double x, double y, double z, SoundEvent soundIn, SoundCategory category, float volume, float pitch) {
-		if (!VanishUtil.isVanished(this.getUniqueID()))
+		if (!VanishUtil.isVanished(this.getUniqueID(), (ServerWorld)this.getEntityWorld()))
 			world.playSound(player, x, y, z, soundIn, category, volume, pitch);
 	}
 }
