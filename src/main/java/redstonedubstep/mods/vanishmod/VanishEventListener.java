@@ -5,7 +5,7 @@ import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
-@EventBusSubscriber(modid=Vanishmod.MODID)
+@EventBusSubscriber(modid = Vanishmod.MODID)
 public class VanishEventListener {
 
 	@SubscribeEvent

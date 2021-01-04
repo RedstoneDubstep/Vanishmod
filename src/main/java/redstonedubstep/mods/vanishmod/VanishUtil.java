@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.google.common.collect.Lists;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -43,7 +44,8 @@ public class VanishUtil {
 				if (!vanished) {
 					chunkProvider.chunkManager.entities.remove(currentPlayer.getEntityId()); //we don't want an error in our log because the entity to be tracked is already on that list
 					chunkProvider.track(currentPlayer);
-				} else {
+				}
+				else {
 					player.connection.sendPacket(new SDestroyEntitiesPacket(currentPlayer.getEntityId()));
 				}
 			}
