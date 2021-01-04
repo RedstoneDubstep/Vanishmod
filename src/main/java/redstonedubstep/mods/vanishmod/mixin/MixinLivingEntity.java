@@ -23,16 +23,6 @@ public abstract class MixinLivingEntity extends Entity {
 		super(entityType, world);
 	}
 
-	//Sometimes the EffectHandler updates the status of the invisibility. This mixin prevents the player from being set visible while vanished
-	@Redirect(method = "updatePotionMetadata", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setInvisible(Z)V"))
-	public void onSetInvisible(LivingEntity livingEntity, boolean invisible) {
-		if (livingEntity instanceof ServerPlayerEntity) {
-			ServerPlayerEntity player = (ServerPlayerEntity)livingEntity;
-
-			player.setInvisible(invisible || VanishUtil.isVanished(player));
-		}
-	}
-
 	//Prevent particles from being created when a vanished player falls
 	@Redirect(method = "updateFallState", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/server/ServerWorld;spawnParticle(Lnet/minecraft/particles/IParticleData;DDDIDDDD)I"))
 	public <T extends IParticleData> int redirectSpawnParticle(ServerWorld serverWorld, T type, double posX, double posY, double posZ, int particleCount, double xOffset, double yOffset, double zOffset, double speed) {
@@ -41,7 +31,7 @@ public abstract class MixinLivingEntity extends Entity {
 		return 0;
 	}
 
-	//Prevent pickup animation from being sent when a vanished player picks up an item. This fixes that the unvanished client thinks that it picked up an item while in reality a vanished player did
+	//Prevent pickup animation from being sent when a vanished player picks up an item. This fixes that the unvanished client thinks that it picked up an item while in reality a vanished player did (due to Minecraft's code)
 	@Redirect(method = "onItemPickup", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/server/ServerChunkProvider;sendToAllTracking(Lnet/minecraft/entity/Entity;Lnet/minecraft/network/IPacket;)V"))
 	public void redirectSendToAllTracking(ServerChunkProvider chunkProvider, Entity item, IPacket<?> packet) {
 		if (!VanishUtil.isVanished(this.getUniqueID(), (ServerWorld)this.getEntityWorld()))
