@@ -4,10 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.google.common.collect.Lists;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.play.server.SDestroyEntitiesPacket;
@@ -31,10 +28,8 @@ public class VanishUtil {
 		return formattedList;
 	}
 
-	public static void sendPacketsOnVanish(CommandContext<CommandSource> ctx, boolean vanished) throws CommandSyntaxException {
-		ServerPlayerEntity currentPlayer = ctx.getSource().asPlayer();
-
-		List<ServerPlayerEntity> list = ctx.getSource().getWorld().getPlayers();
+	public static void sendPacketsOnVanish(ServerPlayerEntity currentPlayer, ServerWorld world, boolean vanished) {
+		List<ServerPlayerEntity> list = world.getPlayers();
 
 		for (ServerPlayerEntity player : list) {
 			ServerChunkProvider chunkProvider = player.getServerWorld().getChunkProvider();

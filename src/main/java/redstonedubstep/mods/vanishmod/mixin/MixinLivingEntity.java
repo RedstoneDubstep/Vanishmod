@@ -7,7 +7,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.IPacket;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.world.World;
