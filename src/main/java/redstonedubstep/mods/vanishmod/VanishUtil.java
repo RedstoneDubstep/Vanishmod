@@ -15,6 +15,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.MinecraftForge;
 
 public class VanishUtil {
 	public static List<ServerPlayerEntity> formatPlayerList(List<ServerPlayerEntity> rawList) {
@@ -58,6 +59,7 @@ public class VanishUtil {
 	public static void updateVanishedStatus(ServerPlayerEntity player, boolean vanished) {
 		player.getPersistentData().putBoolean("vanished", vanished);
 		player.setInvisible(vanished);
+		MinecraftForge.EVENT_BUS.post(new PlayerVanishEvent(player, vanished));
 	}
 
 	public static boolean isVanished(UUID uuid, ServerWorld world) {
