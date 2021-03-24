@@ -2,8 +2,7 @@ package redstonedubstep.mods.vanishmod;
 
 import java.util.List;
 import java.util.UUID;
-
-import com.google.common.collect.Lists;
+import java.util.stream.Collectors;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -19,14 +18,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 public class VanishUtil {
 	public static List<ServerPlayerEntity> formatPlayerList(List<ServerPlayerEntity> rawList) {
-		List<ServerPlayerEntity> formattedList = Lists.newArrayList();
-
-		for (ServerPlayerEntity player : rawList) {
-			if (!isVanished(player))
-				formattedList.add(player);
-		}
-
-		return formattedList;
+		return rawList.stream().filter(player -> !isVanished(player)).collect(Collectors.toList());
 	}
 
 	public static void sendPacketsOnVanish(ServerPlayerEntity currentPlayer, ServerWorld world, boolean vanished) {
@@ -48,11 +40,11 @@ public class VanishUtil {
 		}
 	}
 
-	public static void sendMessageToAllPlayers(List<ServerPlayerEntity> playerList, ServerPlayerEntity sender, boolean vanished) {
-		IFormattableTextComponent content = new TranslationTextComponent(vanished ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).mergeStyle(TextFormatting.YELLOW);
+	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayerEntity> playerList, ServerPlayerEntity sender, boolean joinMessage) {
+		IFormattableTextComponent message = new TranslationTextComponent(joinMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).mergeStyle(TextFormatting.YELLOW);
 
 		for (ServerPlayerEntity receiver : playerList) {
-			receiver.sendMessage(content, sender.getUniqueID());
+			receiver.sendMessage(message, sender.getUniqueID());
 		}
 	}
 
@@ -64,17 +56,19 @@ public class VanishUtil {
 
 	public static boolean isVanished(UUID uuid, ServerWorld world) {
 		Entity entity = world.getEntityByUuid(uuid);
-		if (!(entity instanceof ServerPlayerEntity))
-			return false;
 
-		return isVanished((ServerPlayerEntity)entity);
+		if (entity instanceof ServerPlayerEntity) {
+			return isVanished((ServerPlayerEntity)entity);
+		}
+
+		return false;
 	}
 
 	public static boolean isVanished(ServerPlayerEntity player) {
-		if (player == null)
-			return false;
+		if (player != null) {
+			return player.getPersistentData().getBoolean("vanished");
+		}
 
-		return player.getPersistentData().getBoolean("vanished");
+		return false;
 	}
-
 }

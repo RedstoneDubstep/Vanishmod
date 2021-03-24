@@ -28,13 +28,10 @@ public abstract class MixinPlayerList {
 	//Remove vanished players from packets that are sent to the joining player on connect. Includes an extra check to ensure that the vanished player gets information about itself
 	@Redirect(method = "initializeConnectionToPlayer", at = @At(value = "NEW", target = "net/minecraft/network/play/server/SPlayerListItemPacket", ordinal = 1))
 	public SPlayerListItemPacket constructPacketToJoinedPlayer(SPlayerListItemPacket.Action actionIn, ServerPlayerEntity[] playersIn, NetworkManager netManager, ServerPlayerEntity receiver) {
-		List<ServerPlayerEntity> list;
+		List<ServerPlayerEntity> list = Arrays.asList(playersIn);
 
-		if (VanishUtil.isVanished(receiver) && receiver.equals(playersIn[0])) {
-			list = Arrays.asList(playersIn);
-		}
-		else {
-			list = VanishUtil.formatPlayerList(Arrays.asList(playersIn));
+		if (!VanishUtil.isVanished(receiver) || !receiver.equals(playersIn[0])) {
+			list = VanishUtil.formatPlayerList(list);
 		}
 
 		return new SPlayerListItemPacket(actionIn, list);

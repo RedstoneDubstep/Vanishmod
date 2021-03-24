@@ -29,6 +29,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity {
 	public boolean redirectGetBoolean(GameRules gameRules, RuleKey<BooleanValue> key) {
 		if (VanishUtil.isVanished(this.getUniqueID(), (ServerWorld)this.getEntityWorld()))
 			return false;
-		return gameRules.get(key).get();
+
+		return gameRules.getBoolean(key);
 	}
 }

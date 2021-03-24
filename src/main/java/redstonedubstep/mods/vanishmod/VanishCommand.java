@@ -24,21 +24,21 @@ public class VanishCommand {
 	}
 
 	private static int vanish(CommandContext<CommandSource> ctx, ServerPlayerEntity player) {
-		if (!VanishUtil.isVanished(player)) { //when the player isn't already vanished
-			VanishUtil.updateVanishedStatus(player, true);
+		boolean vanishes = !VanishUtil.isVanished(player);
+
+		VanishUtil.updateVanishedStatus(player, vanishes);
+
+		if (vanishes) { //when the player isn't already vanished
 			ctx.getSource().sendFeedback(new TranslationTextComponent("%s vanished", player.getDisplayName()), true);
 			player.sendMessage(new StringTextComponent("Note: You can still see yourself in the tab list for technical reasons, but you are vanished for other players."), Util.DUMMY_UUID);
 			player.sendMessage(new StringTextComponent("Note: Be careful when producing noise near other players, because while most sounds will get suppressed, some won't due to technical limitations."), Util.DUMMY_UUID);
-			VanishUtil.sendMessageToAllPlayers(ctx.getSource().getWorld().getPlayers(), player, true);
-			VanishUtil.sendPacketsOnVanish(player, ctx.getSource().getWorld(), true);
 		}
 		else {
-			VanishUtil.updateVanishedStatus(player, false);
 			ctx.getSource().sendFeedback(new TranslationTextComponent("%s appeared again", player.getDisplayName()), true);
-			VanishUtil.sendMessageToAllPlayers(ctx.getSource().getWorld().getPlayers(), player, false);
-			VanishUtil.sendPacketsOnVanish(player, ctx.getSource().getWorld(), false);
 		}
 
+		VanishUtil.sendJoinOrLeaveMessageToPlayers(ctx.getSource().getWorld().getPlayers(), player, vanishes);
+		VanishUtil.sendPacketsOnVanish(player, ctx.getSource().getWorld(), vanishes);
 		return 0;
 	}
 }

@@ -21,7 +21,8 @@ public abstract class MixinChunkManagerEntityTracker {
 	//Don't track vanished players for other players.
 	@Inject(method = "updateTrackingState(Lnet/minecraft/entity/player/ServerPlayerEntity;)V", at = @At("HEAD"), cancellable = true)
 	private void onUpdateTrackingState(ServerPlayerEntity player, CallbackInfo info) {
-		if (this.entity instanceof ServerPlayerEntity && VanishUtil.isVanished((ServerPlayerEntity)this.entity))
+		if (entity instanceof ServerPlayerEntity && VanishUtil.isVanished((ServerPlayerEntity)entity)) {
 			info.cancel();
+		}
 	}
 }
