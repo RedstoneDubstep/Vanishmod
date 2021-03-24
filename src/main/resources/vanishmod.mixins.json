@@ -3,7 +3,7 @@
   "package": "redstonedubstep.mods.vanishmod.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "vanishmod.refmap.json",
-  "mixins": [
+  "server": [
     "MixinChunkManagerEntityTracker",
     "MixinLivingEntity",
     "MixinPlayerEntity",
