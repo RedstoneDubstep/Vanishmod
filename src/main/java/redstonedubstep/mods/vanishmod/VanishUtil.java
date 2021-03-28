@@ -17,6 +17,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
+import redstonedubstep.mods.vanishmod.api.PlayerVanishEvent;
 import redstonedubstep.mods.vanishmod.compat.Mc2DiscordCompat;
 
 public class VanishUtil {
