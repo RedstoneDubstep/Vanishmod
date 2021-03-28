@@ -5,7 +5,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.server.SDestroyEntitiesPacket;
 import net.minecraft.network.play.server.SPlayerListItemPacket;
 import net.minecraft.network.play.server.SPlayerListItemPacket.Action;
@@ -50,7 +52,10 @@ public class VanishUtil {
 	}
 
 	public static void updateVanishedStatus(ServerPlayerEntity player, boolean vanished) {
-		player.getPersistentData().putBoolean("vanished", vanished);
+		CompoundNBT deathPersistedData = new CompoundNBT();
+
+		deathPersistedData.putBoolean("Vanished", vanished);
+		player.getPersistentData().put(PlayerEntity.PERSISTED_NBT_TAG, deathPersistedData);
 		player.setInvisible(vanished);
 		Mc2DiscordCompat.hidePlayer(player, vanished);
 		MinecraftForge.EVENT_BUS.post(new PlayerVanishEvent(player, vanished));
@@ -68,7 +73,9 @@ public class VanishUtil {
 
 	public static boolean isVanished(ServerPlayerEntity player) {
 		if (player != null) {
-			return player.getPersistentData().getBoolean("vanished");
+			CompoundNBT deathPersistedData = player.getPersistentData().getCompound(PlayerEntity.PERSISTED_NBT_TAG);
+
+			return deathPersistedData.getBoolean("Vanished");
 		}
 
 		return false;
