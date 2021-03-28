@@ -15,6 +15,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
+import redstonedubstep.mods.vanishmod.compat.Mc2DiscordCompat;
 
 public class VanishUtil {
 	public static List<ServerPlayerEntity> formatPlayerList(List<ServerPlayerEntity> rawList) {
@@ -51,6 +52,7 @@ public class VanishUtil {
 	public static void updateVanishedStatus(ServerPlayerEntity player, boolean vanished) {
 		player.getPersistentData().putBoolean("vanished", vanished);
 		player.setInvisible(vanished);
+		Mc2DiscordCompat.hidePlayer(player, vanished);
 		MinecraftForge.EVENT_BUS.post(new PlayerVanishEvent(player, vanished));
 	}
 

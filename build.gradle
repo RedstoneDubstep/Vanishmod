@@ -89,6 +89,12 @@ minecraft {
     }
 }
 
+repositories {
+    maven {
+        url "https://cursemaven.com/"
+    }
+}
+
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
@@ -108,6 +114,11 @@ dependencies {
 
     // These dependencies get remapped to your current MCP mappings
     // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+
+    implementation fg.deobf("curse.maven:minecraft2discord-325235:3247035")
+
+    compileOnly 'com.austinv11.servicer:Servicer:1.0.3' //fixers for the minecraft2discord dependency
+    annotationProcessor 'com.austinv11.servicer:Servicer:1.0.3'
 
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
