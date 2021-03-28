@@ -12,7 +12,8 @@
     "MixinServerPlayNetHandler",
     "MixinServerStatusNetHandler",
     "MixinServerStatusResponsePlayers",
-    "MixinServerWorld"
+    "MixinServerWorld",
+    "MixinPlayerAdvancements"
   ],
   "minVersion": "0.8"
 }
