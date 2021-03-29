@@ -3,7 +3,6 @@ package redstonedubstep.mods.vanishmod;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -46,12 +45,12 @@ public class VanishCommand {
 		return 1;
 	}
 
-	private static int getVanishedStatus(CommandContext<CommandSource> ctx, ServerPlayerEntity player) throws CommandSyntaxException {
+	private static int getVanishedStatus(CommandContext<CommandSource> ctx, ServerPlayerEntity player) {
 		if (VanishUtil.isVanished(player)) {
-			ctx.getSource().asPlayer().sendMessage(new TranslationTextComponent("%s is currently vanished.", player.getDisplayName()), Util.DUMMY_UUID);
+			ctx.getSource().sendFeedback(new TranslationTextComponent("%s is currently vanished.", player.getDisplayName()), false);
 		}
 		else {
-			ctx.getSource().asPlayer().sendMessage(new TranslationTextComponent("%s is currently not vanished.", player.getDisplayName()), Util.DUMMY_UUID);
+			ctx.getSource().sendFeedback(new TranslationTextComponent("%s is currently not vanished.", player.getDisplayName()), false);
 		}
 
 		return 1;
