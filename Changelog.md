@@ -1,4 +1,6 @@
------------Changelog for v1.0.6-----------
+-----------Changelog for v1.0.7-----------
+
+####DISCLAIMER: After updating the mod to this version, players will very likely not be vanished anymore despite being vanished before the update. This is caused by an internal change of where the vanished status is stored.
 
 - Added support for minecraft2discord
 - Added vanish event that modders can use to run actions when a player is vanished
