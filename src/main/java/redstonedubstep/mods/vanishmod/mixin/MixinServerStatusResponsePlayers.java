@@ -13,7 +13,7 @@ import net.minecraft.network.ServerStatusResponse;
 @Mixin(ServerStatusResponse.Players.class)
 public abstract class MixinServerStatusResponsePlayers {
 	@Shadow
-	private int onlinePlayerCount;
+	public int onlinePlayerCount;
 
 	//update the onlinePlayerCount when setting the players; also makes use of an AT to un-final onlinePlayerCount
 	@Inject(method = "setPlayers", at = @At("HEAD"))

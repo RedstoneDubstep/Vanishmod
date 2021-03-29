@@ -117,8 +117,7 @@ dependencies {
 
     implementation fg.deobf("curse.maven:minecraft2discord-325235:3247035")
 
-    compileOnly 'com.austinv11.servicer:Servicer:1.0.3' //fixers for the minecraft2discord dependency
-    annotationProcessor 'com.austinv11.servicer:Servicer:1.0.3'
+    compileOnly 'com.austinv11.servicer:Servicer:1.0.3' //fixer for the minecraft2discord dependency
 
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
