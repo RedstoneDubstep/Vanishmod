@@ -1,6 +1,7 @@
 -----------Changelog for v1.0.8-----------
 
 - Fixed fake join/leave messages not getting sent on discord servers via minecraft2discord
+- Fixed that this mod deleted persistent player data from other mods
 
 -----------Changelog for v1.0.7-----------
 
