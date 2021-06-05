@@ -2,7 +2,9 @@ package redstonedubstep.mods.vanishmod.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.mojang.authlib.GameProfile;
 
@@ -31,5 +33,22 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity {
 			return false;
 
 		return gameRules.getBoolean(key);
+	}
+
+	//hacky mixin that should improve mod compat: mods should always respect spectator mode when targeting players, and this mixin lets isSpectator also check if the player is vanished (and thus should also not be targeted); but don't interfere with Vanilla's isSpectator() calls, else weird glitches can happen
+	@Inject(method = "isSpectator", at = @At("HEAD"), cancellable = true)
+	public void onIsSpectator(CallbackInfoReturnable<Boolean> callback) {
+		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+		String className = stackTrace[3].getClassName(); //0 is getStackTrace(), 1 is this mixin's lambda, 2 is isSpectator(), 3 is the caller of isSpectator()
+
+		try {
+			Class<?> clazz = Class.forName(className);
+
+			if (!clazz.getPackage().getName().startsWith("net.minecraft.") && VanishUtil.isVanished(this)) { //if a mod calls this, check for the vanished status
+				callback.setReturnValue(true);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 }

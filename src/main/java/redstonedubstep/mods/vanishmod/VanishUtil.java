@@ -54,7 +54,7 @@ public class VanishUtil {
 
 		if (ModList.get().isLoaded("minecraft2discord")) {
 			Mc2DiscordCompat.sendPlayerStatusMessage(sender, leaveMessage);
-	}
+		}
 	}
 
 	public static void updateVanishedStatus(ServerPlayerEntity player, boolean vanished) {
@@ -71,15 +71,15 @@ public class VanishUtil {
 	public static boolean isVanished(UUID uuid, ServerWorld world) {
 		Entity entity = world.getEntityByUuid(uuid);
 
-		if (entity instanceof ServerPlayerEntity) {
-			return isVanished((ServerPlayerEntity)entity);
+		if (entity instanceof PlayerEntity) {
+			return isVanished((PlayerEntity)entity);
 		}
 
 		return false;
 	}
 
-	public static boolean isVanished(ServerPlayerEntity player) {
-		if (player != null) {
+	public static boolean isVanished(PlayerEntity player) {
+		if (player != null && !player.world.isRemote) {
 			CompoundNBT deathPersistedData = player.getPersistentData().getCompound(PlayerEntity.PERSISTED_NBT_TAG);
 
 			return deathPersistedData.getBoolean("Vanished");
