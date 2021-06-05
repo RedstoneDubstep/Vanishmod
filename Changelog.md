@@ -1,3 +1,7 @@
+-----------Changelog for v1.0.8-----------
+
+- Fixed fake join/leave messages not getting sent on discord servers via minecraft2discord
+
 -----------Changelog for v1.0.7-----------
 
 ####DISCLAIMER: After updating the mod to this version, players will very likely not be vanished anymore despite being vanished before the update. This is caused by an internal change of where the vanished status is stored.

@@ -45,12 +45,16 @@ public class VanishUtil {
 		}
 	}
 
-	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayerEntity> playerList, ServerPlayerEntity sender, boolean joinMessage) {
-		IFormattableTextComponent message = new TranslationTextComponent(joinMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).mergeStyle(TextFormatting.YELLOW);
+	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayerEntity> playerList, ServerPlayerEntity sender, boolean leaveMessage) {
+		IFormattableTextComponent message = new TranslationTextComponent(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).mergeStyle(TextFormatting.YELLOW);
 
 		for (ServerPlayerEntity receiver : playerList) {
 			receiver.sendMessage(message, sender.getUniqueID());
 		}
+
+		if (ModList.get().isLoaded("minecraft2discord")) {
+			Mc2DiscordCompat.sendPlayerStatusMessage(sender, leaveMessage);
+	}
 	}
 
 	public static void updateVanishedStatus(ServerPlayerEntity player, boolean vanished) {
