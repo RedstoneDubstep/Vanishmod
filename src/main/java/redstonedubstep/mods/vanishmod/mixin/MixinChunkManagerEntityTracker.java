@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.server.ChunkManager.EntityTracker;
 import redstonedubstep.mods.vanishmod.VanishUtil;
@@ -18,10 +19,10 @@ public abstract class MixinChunkManagerEntityTracker {
 	@Final
 	private Entity entity;
 
-	//Don't track vanished players for other players.
+	//Prevent Tracking of vanished players for other players, which prevents vanished players from being rendered for anyone but themselves.
 	@Inject(method = "updateTrackingState(Lnet/minecraft/entity/player/ServerPlayerEntity;)V", at = @At("HEAD"), cancellable = true)
 	private void onUpdateTrackingState(ServerPlayerEntity player, CallbackInfo info) {
-		if (entity instanceof ServerPlayerEntity && VanishUtil.isVanished((ServerPlayerEntity)entity)) {
+		if (entity instanceof PlayerEntity && VanishUtil.isVanished((PlayerEntity)entity)) {
 			info.cancel();
 		}
 	}

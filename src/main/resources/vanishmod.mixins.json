@@ -6,14 +6,14 @@
   "server": [
     "MixinChunkManagerEntityTracker",
     "MixinLivingEntity",
+    "MixinPlayerAdvancements",
     "MixinPlayerEntity",
     "MixinPlayerList",
     "MixinServerPlayerEntity",
     "MixinServerPlayNetHandler",
     "MixinServerStatusNetHandler",
     "MixinServerStatusResponsePlayers",
-    "MixinServerWorld",
-    "MixinPlayerAdvancements"
+    "MixinServerWorld"
   ],
   "minVersion": "0.8"
 }

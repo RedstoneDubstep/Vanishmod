@@ -43,7 +43,7 @@ public abstract class MixinPlayerList {
 		return new SPlayerListItemPacket(actionIn, VanishUtil.formatPlayerList(Arrays.asList(playersIn)));
 	}
 
-	//Block join message when player is vanished
+	//Block join message when player is vanished and notifies vanished player that it is still vanished
 	@Redirect(method = "initializeConnectionToPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/PlayerList;func_232641_a_(Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ChatType;Ljava/util/UUID;)V"))
 	public void redirectFunc_232641_a_(PlayerList playerList, ITextComponent content, ChatType chatType, UUID uuid, NetworkManager netManager, ServerPlayerEntity player) {
 		if (!VanishUtil.isVanished(player))
