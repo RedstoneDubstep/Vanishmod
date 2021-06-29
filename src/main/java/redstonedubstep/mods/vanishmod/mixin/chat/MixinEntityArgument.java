@@ -17,7 +17,7 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 @Mixin(EntityArgument.class)
 public abstract class MixinEntityArgument {
 
-	//Make non-admins not able to target vanished players through their name or a selector, admins shouldn't be affected
+	//Prevent non-admins from targeting vanished players through their name or a selector, admins bypass this filtering
 	@Redirect(method = "getPlayers", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"))
 	private static boolean redirectIsEmpty(List<ServerPlayerEntity> list, CommandContext<CommandSource> context) {
 		CommandSource source = context.getSource();

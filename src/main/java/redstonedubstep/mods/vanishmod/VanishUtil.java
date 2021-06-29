@@ -62,9 +62,7 @@ public class VanishUtil {
 		CompoundNBT deathPersistentData = persistentData.getCompound(PlayerEntity.PERSISTED_NBT_TAG);
 
 		deathPersistentData.putBoolean("Vanished", vanished);
-		persistentData.put(PlayerEntity.PERSISTED_NBT_TAG, deathPersistentData); //Because the deathPersistentData could have been created newly if it didn't exist before
-
-		player.setInvisible(vanished);
+		persistentData.put(PlayerEntity.PERSISTED_NBT_TAG, deathPersistentData); //Because the deathPersistentData could have been created newly by getCompound if it didn't exist before
 
 		if (ModList.get().isLoaded("minecraft2discord")) {
 			Mc2DiscordCompat.hidePlayer(player, vanished);
