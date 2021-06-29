@@ -1,6 +1,7 @@
 -----------Changelog for v1.1.0-----------
 
 - Added filtering for the output of the /list command (does not affect server admins)
+- Fixed that vanished players can be targeted and identified by non-admins via the /msg command 
 
 -----------Changelog for v1.0.9-----------
 
