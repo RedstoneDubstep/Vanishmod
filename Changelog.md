@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.0-----------
+
+- Added filtering for the output of the /list command (does not affect server admins)
+
 -----------Changelog for v1.0.9-----------
 
 - Fixed that players could not get vanished in v1.0.8 if they didn't have any persistent player data stored
