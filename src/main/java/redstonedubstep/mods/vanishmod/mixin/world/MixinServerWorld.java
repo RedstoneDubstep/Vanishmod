@@ -1,4 +1,4 @@
-package redstonedubstep.mods.vanishmod.mixin;
+package redstonedubstep.mods.vanishmod.mixin.world;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

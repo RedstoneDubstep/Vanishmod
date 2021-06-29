@@ -1,4 +1,4 @@
-package redstonedubstep.mods.vanishmod.mixin;
+package redstonedubstep.mods.vanishmod.mixin.world;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,7 +19,7 @@ public abstract class MixinChunkManagerEntityTracker {
 	@Final
 	private Entity entity;
 
-	//Prevent Tracking of vanished players for other players, which prevents vanished players from being rendered for anyone but themselves.
+	//Prevent tracking of vanished players for other players, which prevents vanished players from being rendered for anyone but themselves.
 	@Inject(method = "updateTrackingState(Lnet/minecraft/entity/player/ServerPlayerEntity;)V", at = @At("HEAD"), cancellable = true)
 	private void onUpdateTrackingState(ServerPlayerEntity player, CallbackInfo info) {
 		if (entity instanceof PlayerEntity && VanishUtil.isVanished((PlayerEntity)entity)) {

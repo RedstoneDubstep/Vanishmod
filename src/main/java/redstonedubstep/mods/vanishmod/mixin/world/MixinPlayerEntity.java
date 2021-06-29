@@ -1,4 +1,4 @@
-package redstonedubstep.mods.vanishmod.mixin;
+package redstonedubstep.mods.vanishmod.mixin.world;
 
 import javax.annotation.Nullable;
 

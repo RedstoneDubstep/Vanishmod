@@ -4,16 +4,18 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "vanishmod.refmap.json",
   "server": [
-    "MixinChunkManagerEntityTracker",
-    "MixinLivingEntity",
-    "MixinPlayerAdvancements",
-    "MixinPlayerEntity",
+    "chat.MixinEntityArgument",
+    "chat.MixinListCommand",
+    "chat.MixinPlayerAdvancements",
+    "chat.MixinServerPlayNetHandler",
+    "gui.MixinServerStatusNetHandler",
+    "gui.MixinServerStatusResponsePlayers",
+    "world.MixinChunkManagerEntityTracker",
+    "world.MixinLivingEntity",
+    "world.MixinPlayerEntity",
+    "world.MixinServerWorld",
     "MixinPlayerList",
-    "MixinServerPlayerEntity",
-    "MixinServerPlayNetHandler",
-    "MixinServerStatusNetHandler",
-    "MixinServerStatusResponsePlayers",
-    "MixinServerWorld"
+    "MixinServerPlayerEntity"
   ],
   "minVersion": "0.8"
 }
