@@ -13,7 +13,7 @@ public class VanishEventListener {
 		if (event.getEntity() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity)event.getEntity();
 
-			if (VanishUtil.isVanished(player))
+			if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(player))
 				event.setCanceled(true);
 		}
 	}

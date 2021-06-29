@@ -12,6 +12,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import redstonedubstep.mods.vanishmod.VanishConfig;
 import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(EntityArgument.class)
@@ -20,9 +21,12 @@ public abstract class MixinEntityArgument {
 	//Prevent non-admins from targeting vanished players through their name or a selector, admins bypass this filtering
 	@Redirect(method = "getPlayers", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"))
 	private static boolean redirectIsEmpty(List<ServerPlayerEntity> list, CommandContext<CommandSource> context) {
-		CommandSource source = context.getSource();
-		List<ServerPlayerEntity> filteredList = list.stream().filter(p -> !VanishUtil.isVanished(p)).collect(Collectors.toList());
+		if (VanishConfig.CONFIG.hidePlayersFromCommandSelectors.get() && !context.getSource().hasPermissionLevel(1)) {
+			List<ServerPlayerEntity> filteredList = VanishUtil.formatPlayerList(list);
 
-		return source.hasPermissionLevel(2) ? list.isEmpty() : filteredList.isEmpty();
+			return filteredList.isEmpty();
+		}
+
+		return list.isEmpty();
 	}
 }

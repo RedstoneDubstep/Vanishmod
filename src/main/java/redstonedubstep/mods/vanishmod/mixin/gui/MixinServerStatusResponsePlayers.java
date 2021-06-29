@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.network.ServerStatusResponse;
+import redstonedubstep.mods.vanishmod.VanishConfig;
 
 @Mixin(ServerStatusResponse.Players.class)
 public abstract class MixinServerStatusResponsePlayers {
@@ -18,6 +19,8 @@ public abstract class MixinServerStatusResponsePlayers {
 	//update the onlinePlayerCount when setting the players; also makes use of an AT to un-final onlinePlayerCount
 	@Inject(method = "setPlayers", at = @At("HEAD"))
 	private void onSetPlayers(GameProfile[] players, CallbackInfo info) {
-		this.onlinePlayerCount = players.length;
+		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get()) {
+			this.onlinePlayerCount = players.length;
+		}
 	}
 }

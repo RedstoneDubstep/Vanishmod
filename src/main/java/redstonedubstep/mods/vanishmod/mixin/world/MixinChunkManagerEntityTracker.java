@@ -11,6 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.server.ChunkManager.EntityTracker;
+import redstonedubstep.mods.vanishmod.VanishConfig;
 import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(EntityTracker.class)
@@ -22,8 +23,10 @@ public abstract class MixinChunkManagerEntityTracker {
 	//Prevent tracking of vanished players for other players, which prevents vanished players from being rendered for anyone but themselves.
 	@Inject(method = "updateTrackingState(Lnet/minecraft/entity/player/ServerPlayerEntity;)V", at = @At("HEAD"), cancellable = true)
 	private void onUpdateTrackingState(ServerPlayerEntity player, CallbackInfo info) {
-		if (entity instanceof PlayerEntity && VanishUtil.isVanished((PlayerEntity)entity)) {
-			info.cancel();
+		if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
+			if (entity instanceof PlayerEntity && VanishUtil.isVanished((PlayerEntity)entity)) {
+				info.cancel();
+			}
 		}
 	}
 }

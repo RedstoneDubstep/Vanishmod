@@ -19,7 +19,7 @@ public class VanishCommand {
 	}
 
 	private static LiteralArgumentBuilder<CommandSource> alias(String prefix) {
-		return Commands.literal(prefix).requires(player -> player.hasPermissionLevel(2)).executes(ctx -> vanish(ctx, ctx.getSource().asPlayer()))
+		return Commands.literal(prefix).requires(player -> player.hasPermissionLevel(VanishConfig.CONFIG.requiredPermissionLevel.get())).executes(ctx -> vanish(ctx, ctx.getSource().asPlayer()))
 				.then(Commands.literal("toggle").executes(ctx -> vanish(ctx, ctx.getSource().asPlayer()))
 						.then(Commands.argument("player", EntityArgument.player()).executes(ctx -> vanish(ctx, EntityArgument.getPlayer(ctx, "player")))))
 				.then(Commands.literal("get").executes(ctx -> getVanishedStatus(ctx, ctx.getSource().asPlayer()))

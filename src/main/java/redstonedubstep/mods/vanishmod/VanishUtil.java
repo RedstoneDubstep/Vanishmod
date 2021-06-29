@@ -38,7 +38,7 @@ public class VanishUtil {
 					chunkProvider.chunkManager.entities.remove(currentPlayer.getEntityId()); //we don't want an error in our log because the entity to be tracked is already on that list
 					chunkProvider.track(currentPlayer);
 				}
-				else {
+				else if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
 					player.connection.sendPacket(new SDestroyEntitiesPacket(currentPlayer.getEntityId()));
 				}
 			}
