@@ -52,7 +52,7 @@ public class VanishUtil {
 			receiver.sendMessage(message, sender.getUniqueID());
 		}
 
-		if (ModList.get().isLoaded("minecraft2discord")) {
+		if (ModList.get().isLoaded("mc2discord")) {
 			Mc2DiscordCompat.sendPlayerStatusMessage(sender, leaveMessage);
 		}
 	}
@@ -64,7 +64,7 @@ public class VanishUtil {
 		deathPersistentData.putBoolean("Vanished", vanished);
 		persistentData.put(PlayerEntity.PERSISTED_NBT_TAG, deathPersistentData); //Because the deathPersistentData could have been created newly by getCompound if it didn't exist before
 
-		if (ModList.get().isLoaded("minecraft2discord")) {
+		if (ModList.get().isLoaded("mc2discord")) {
 			Mc2DiscordCompat.hidePlayer(player, vanished);
 		}
 
