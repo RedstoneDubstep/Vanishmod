@@ -126,9 +126,14 @@ dependencies {
 
 jar {
     manifest {
-        attributes([
-                "MixinConfigs": "vanishmod.mixins.json"
-        ])
+        attributes(["Specification-Title": "Vanishmod",
+                    "Specification-Vendor": "Redstone_Dubstep",
+                    "Specification-Version": "${version}",
+                    "Implementation-Title": "Vanishmod",
+                    "Implementation-Version": "${version}",
+                    "Implementation-Vendor" :"Redstone_Dubstep",
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    "MixinConfigs": "vanishmod.mixins.json"])
     }
 }
 
