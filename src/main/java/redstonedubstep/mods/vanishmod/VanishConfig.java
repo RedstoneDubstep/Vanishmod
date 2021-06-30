@@ -21,6 +21,7 @@ public class VanishConfig {
 		public BooleanValue hidePlayersFromWorld;
 		public BooleanValue hidePlayersFromPlayerLists;
 		public BooleanValue hidePlayersFromCommandSelectors;
+		public BooleanValue hidePlayerNameInChat;
 		public IntValue requiredPermissionLevel;
 
 		Config(ForgeConfigSpec.Builder builder) {
@@ -33,6 +34,9 @@ public class VanishConfig {
 			hidePlayersFromCommandSelectors = builder
 					.comment("Should vanished players not be targetable by normal players via command selectors (so non-admins cannot target vanished players with e.g. /msg)?")
 					.define("hidePlayersFromCommandSelectors", true);
+			hidePlayerNameInChat = builder
+					.comment("When vanished players send a chat message, should the name of the player that sent the message be replaced with \"vanished\" (in gray color)?")
+					.define("hidePlayerNameInChat", false);
 
 			requiredPermissionLevel = builder
 					.comment("What op permission level should be the requirement for being able to execute /vanish?")

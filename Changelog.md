@@ -1,7 +1,8 @@
 -----------Changelog for v1.1.0-----------
 
 - Added filtering for the output of the /list command (does not affect server admins)
-- Added Config options with which you can toggle some features of the mod. The core features (hiding from tab list, not sending death messages, etc.) are not controllable, but toggleable features include rendering of vanished players, op level required for /vanish and filtering of /list<
+- Added Config options with which you can toggle some features of the mod. The core features (hiding from tab list, not sending death messages, etc.) are not controllable, but toggleable features include rendering of vanished players, op level required for /vanish and filtering of /list
+- Added config-toggleable feature of replacing the names of vanished players that send chat messages with "vanished". This feature is disabled by default, you can enable it in the mod's config file
 - Fixed that vanished players can be targeted and identified by non-admins via the /msg command
 - Fixed that unvanishing could cancel the invisibility granted by a currently active Invisibility effect
 
