@@ -38,17 +38,19 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity {
 	//hacky mixin that should improve mod compat: mods should always respect spectator mode when targeting players, and this mixin lets isSpectator also check if the player is vanished (and thus should also not be targeted); but don't interfere with Vanilla's isSpectator() calls, else weird glitches can happen
 	@Inject(method = "isSpectator", at = @At("HEAD"), cancellable = true)
 	public void onIsSpectator(CallbackInfoReturnable<Boolean> callback) {
-		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-		String className = stackTrace[3].getClassName(); //0 is getStackTrace(), 1 is this mixin's lambda, 2 is isSpectator(), 3 is the caller of isSpectator()
+		if (VanishUtil.isVanished(this)) {
+			StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+			String className = stackTrace[3].getClassName(); //0 is getStackTrace(), 1 is this mixin's lambda, 2 is isSpectator(), 3 is the caller of isSpectator()
 
-		try {
-			Class<?> clazz = Class.forName(className);
+			try {
+				Class<?> clazz = Class.forName(className);
 
-			if (!clazz.getPackage().getName().startsWith("net.minecraft.") && VanishUtil.isVanished(this)) { //if a mod calls this, check for the vanished status
-				callback.setReturnValue(true);
+				if (!clazz.getPackage().getName().startsWith("net.minecraft.")) { //if a mod calls this on a vanished player, then it is a spectator and should not be targeted
+					callback.setReturnValue(true);
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		}
 	}
 }

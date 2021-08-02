@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.1-----------
+
+- Fixed heavily increased CPU usage of a mod compatibility mixin even though this mod's features were not used
+
 -----------Changelog for v1.1.0-----------
 
 - Added filtering for the output of the /list command (does not affect server admins)
