@@ -12,7 +12,7 @@ import net.minecraftforge.fml.network.FMLNetworkConstants;
 
 @Mod(Vanishmod.MODID)
 public class Vanishmod {
-	public static final String MODID = "vanishmod"; //This is Vanishmod v1.1.0 for 1.16.5!
+	public static final String MODID = "vanishmod"; //This is Vanishmod v1.1.1 for 1.16.5!
 
 	public Vanishmod() {
 		ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
