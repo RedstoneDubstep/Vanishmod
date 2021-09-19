@@ -1,10 +1,10 @@
 package redstonedubstep.mods.vanishmod;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,8 +15,8 @@ public class VanishEventListener {
 
 	@SubscribeEvent
 	public static void onPlaySoundAtEntity(PlaySoundAtEntityEvent event) {
-		if (event.getEntity() instanceof ServerPlayerEntity) {
-			ServerPlayerEntity player = (ServerPlayerEntity)event.getEntity();
+		if (event.getEntity() instanceof ServerPlayer) {
+			ServerPlayer player = (ServerPlayer)event.getEntity();
 
 			if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(player))
 				event.setCanceled(true);
@@ -26,13 +26,13 @@ public class VanishEventListener {
 	@SubscribeEvent
 	public static void onServerChat(ServerChatEvent event) {
 		if (VanishUtil.isVanished(event.getPlayer()) && VanishConfig.CONFIG.hidePlayerNameInChat.get()) {
-			ITextComponent message = event.getComponent();
+			Component message = event.getComponent();
 
-			if (message instanceof TranslationTextComponent && ((TranslationTextComponent)message).getKey().contains("chat.type.text")) {
-				StringTextComponent blurredName = new StringTextComponent("vanished");
+			if (message instanceof TranslatableComponent && ((TranslatableComponent)message).getKey().contains("chat.type.text")) {
+				TextComponent blurredName = new TextComponent("vanished");
 
-				blurredName.withStyle(TextFormatting.GRAY);
-				event.setComponent(new TranslationTextComponent("chat.type.text", blurredName, ((TranslationTextComponent)message).getArgs()[1]));
+				blurredName.withStyle(ChatFormatting.GRAY);
+				event.setComponent(new TranslatableComponent("chat.type.text", blurredName, ((TranslatableComponent)message).getArgs()[1]));
 			}
 		}
 	}

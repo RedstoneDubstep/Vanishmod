@@ -5,17 +5,17 @@
   "refmap": "vanishmod.refmap.json",
   "server": [
     "chat.MixinEntityArgument",
-    "chat.MixinListCommand",
+    "chat.MixinListPlayersCommand",
     "chat.MixinPlayerAdvancements",
-    "chat.MixinServerPlayNetHandler",
-    "gui.MixinServerStatusNetHandler",
-    "gui.MixinServerStatusResponsePlayers",
-    "world.MixinChunkManagerEntityTracker",
+    "chat.MixinServerGamePacketListenerImpl",
+    "gui.MixinServerStatusPacketListenerImpl",
+    "gui.MixinServerStatusPlayers",
+    "world.MixinChunkMapTrackedEntity",
     "world.MixinLivingEntity",
-    "world.MixinPlayerEntity",
-    "world.MixinServerWorld",
+    "world.MixinPlayer",
+    "world.MixinServerLevel",
     "MixinPlayerList",
-    "MixinServerPlayerEntity"
+    "MixinServerPlayer"
   ],
   "minVersion": "0.8"
 }

@@ -4,51 +4,51 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.play.server.SDestroyEntitiesPacket;
-import net.minecraft.network.play.server.SPlayerListItemPacket;
-import net.minecraft.network.play.server.SPlayerListItemPacket.Action;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.server.ServerChunkProvider;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.Action;
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
+import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
 import redstonedubstep.mods.vanishmod.api.PlayerVanishEvent;
 import redstonedubstep.mods.vanishmod.compat.Mc2DiscordCompat;
 
 public class VanishUtil {
-	public static List<ServerPlayerEntity> formatPlayerList(List<ServerPlayerEntity> rawList) {
+	public static List<ServerPlayer> formatPlayerList(List<ServerPlayer> rawList) {
 		return rawList.stream().filter(player -> !isVanished(player)).collect(Collectors.toList());
 	}
 
-	public static void sendPacketsOnVanish(ServerPlayerEntity currentPlayer, ServerWorld world, boolean vanished) {
-		List<ServerPlayerEntity> list = world.players();
+	public static void sendPacketsOnVanish(ServerPlayer currentPlayer, ServerLevel world, boolean vanished) {
+		List<ServerPlayer> list = world.players();
 
-		for (ServerPlayerEntity player : list) {
-			ServerChunkProvider chunkProvider = player.getLevel().getChunkSource();
+		for (ServerPlayer player : list) {
+			ServerChunkCache chunkProvider = player.getLevel().getChunkSource();
 
 			if (!player.equals(currentPlayer)) { //prevent packet from being sent to the executor of the command
-				player.connection.send(new SPlayerListItemPacket(vanished ? Action.REMOVE_PLAYER : Action.ADD_PLAYER, currentPlayer));
+				player.connection.send(new ClientboundPlayerInfoPacket(vanished ? Action.REMOVE_PLAYER : Action.ADD_PLAYER, currentPlayer));
 				if (!vanished) {
 					chunkProvider.chunkMap.entityMap.remove(currentPlayer.getId()); //we don't want an error in our log because the entity to be tracked is already on that list
 					chunkProvider.addEntity(currentPlayer);
 				}
 				else if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
-					player.connection.send(new SDestroyEntitiesPacket(currentPlayer.getId()));
+					player.connection.send(new ClientboundRemoveEntitiesPacket(currentPlayer.getId()));
 				}
 			}
 		}
 	}
 
-	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayerEntity> playerList, ServerPlayerEntity sender, boolean leaveMessage) {
-		IFormattableTextComponent message = new TranslationTextComponent(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).withStyle(TextFormatting.YELLOW);
+	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayer> playerList, ServerPlayer sender, boolean leaveMessage) {
+		Component message = new TranslatableComponent(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).withStyle(ChatFormatting.YELLOW);
 
-		for (ServerPlayerEntity receiver : playerList) {
+		for (ServerPlayer receiver : playerList) {
 			receiver.sendMessage(message, sender.getUUID());
 		}
 
@@ -57,12 +57,12 @@ public class VanishUtil {
 		}
 	}
 
-	public static void updateVanishedStatus(ServerPlayerEntity player, boolean vanished) {
-		CompoundNBT persistentData = player.getPersistentData();
-		CompoundNBT deathPersistentData = persistentData.getCompound(PlayerEntity.PERSISTED_NBT_TAG);
+	public static void updateVanishedStatus(ServerPlayer player, boolean vanished) {
+		CompoundTag persistentData = player.getPersistentData();
+		CompoundTag deathPersistentData = persistentData.getCompound(Player.PERSISTED_NBT_TAG);
 
 		deathPersistentData.putBoolean("Vanished", vanished);
-		persistentData.put(PlayerEntity.PERSISTED_NBT_TAG, deathPersistentData); //Because the deathPersistentData could have been created newly by getCompound if it didn't exist before
+		persistentData.put(Player.PERSISTED_NBT_TAG, deathPersistentData); //Because the deathPersistentData could have been created newly by getCompound if it didn't exist before
 
 		if (ModList.get().isLoaded("mc2discord")) {
 			Mc2DiscordCompat.hidePlayer(player, vanished);
@@ -71,19 +71,19 @@ public class VanishUtil {
 		MinecraftForge.EVENT_BUS.post(new PlayerVanishEvent(player, vanished));
 	}
 
-	public static boolean isVanished(UUID uuid, ServerWorld world) {
+	public static boolean isVanished(UUID uuid, ServerLevel world) {
 		Entity entity = world.getEntity(uuid);
 
-		if (entity instanceof PlayerEntity) {
-			return isVanished((PlayerEntity)entity);
+		if (entity instanceof Player) {
+			return isVanished((Player)entity);
 		}
 
 		return false;
 	}
 
-	public static boolean isVanished(PlayerEntity player) {
+	public static boolean isVanished(Player player) {
 		if (player != null && !player.level.isClientSide) {
-			CompoundNBT deathPersistedData = player.getPersistentData().getCompound(PlayerEntity.PERSISTED_NBT_TAG);
+			CompoundTag deathPersistedData = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
 
 			return deathPersistedData.getBoolean("Vanished");
 		}

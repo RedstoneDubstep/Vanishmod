@@ -1,6 +1,6 @@
 package redstonedubstep.mods.vanishmod.compat;
 
-import java.util.Collections;
+import net.minecraft.server.level.ServerPlayer;
 import java.util.Optional;
 
 import com.mojang.authlib.GameProfile;
@@ -12,10 +12,9 @@ import ml.denisd3d.mc2discord.core.entities.Player;
 import ml.denisd3d.mc2discord.forge.MinecraftImpl;
 import ml.denisd3d.mc2discord.forge.storage.HiddenPlayerEntry;
 import ml.denisd3d.mc2discord.forge.storage.HiddenPlayerList;
-import net.minecraft.entity.player.ServerPlayerEntity;
 
 public class Mc2DiscordCompat {
-	public static void hidePlayer(ServerPlayerEntity player, boolean hide) {
+	public static void hidePlayer(ServerPlayer player, boolean hide) {
 		HiddenPlayerList list = ((MinecraftImpl)Mc2Discord.INSTANCE.iMinecraft).hiddenPlayerList;
 		GameProfile profile = player.getGameProfile();
 
@@ -28,7 +27,7 @@ public class Mc2DiscordCompat {
 		}
 	}
 
-	public static void sendPlayerStatusMessage(ServerPlayerEntity player, boolean left) {
+	public static void sendPlayerStatusMessage(ServerPlayer player, boolean left) {
 		Player mc2dcplayer = new Player(player.getGameProfile().getName(), player.getDisplayName().getString(), Optional.ofNullable(player.getGameProfile().getId()).orElse(null));
 		M2DConfig config = Mc2Discord.INSTANCE.config;
 
