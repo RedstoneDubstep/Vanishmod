@@ -14,13 +14,13 @@ import redstonedubstep.mods.vanishmod.VanishConfig;
 @Mixin(ServerStatusResponse.Players.class)
 public abstract class MixinServerStatusResponsePlayers {
 	@Shadow
-	public int onlinePlayerCount;
+	public int numPlayers;
 
-	//update the onlinePlayerCount when setting the players; also makes use of an AT to un-final onlinePlayerCount
-	@Inject(method = "setPlayers", at = @At("HEAD"))
-	private void onSetPlayers(GameProfile[] players, CallbackInfo info) {
+	//update the onlinePlayerCount when setting the players, players should be already filtered by MixinServerStatusNetHandler; also makes use of an AT to un-final onlinePlayerCount
+	@Inject(method = "setSample", at = @At("HEAD"))
+	private void onSetSample(GameProfile[] players, CallbackInfo info) {
 		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get()) {
-			this.onlinePlayerCount = players.length;
+			this.numPlayers = players.length;
 		}
 	}
 }

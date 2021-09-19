@@ -21,10 +21,10 @@ public class Mc2DiscordCompat {
 
 		if (hide) {
 			if (!list.isHidden(profile))
-				list.addEntry(new HiddenPlayerEntry(profile));
+				list.add(new HiddenPlayerEntry(profile));
 		}
 		else if (list.isHidden(profile)) {
-			list.removeEntry(new HiddenPlayerEntry(profile));
+			list.remove(new HiddenPlayerEntry(profile));
 		}
 	}
 

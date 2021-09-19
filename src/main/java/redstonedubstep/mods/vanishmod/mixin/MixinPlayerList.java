@@ -20,13 +20,13 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 @Mixin(PlayerList.class)
 public abstract class MixinPlayerList {
 	//Remove vanished players from tab list information packet that is sent to all players on connect
-	@Redirect(method = "initializeConnectionToPlayer", at = @At(value = "NEW", target = "net/minecraft/network/play/server/SPlayerListItemPacket", ordinal = 0))
+	@Redirect(method = "placeNewPlayer", at = @At(value = "NEW", target = "net/minecraft/network/play/server/SPlayerListItemPacket", ordinal = 0))
 	public SPlayerListItemPacket constructPacketToAll(SPlayerListItemPacket.Action actionIn, ServerPlayerEntity[] playersIn) {
 		return new SPlayerListItemPacket(actionIn, VanishUtil.formatPlayerList(Arrays.asList(playersIn)));
 	}
 
 	//Remove vanished players from tab list information packets that are sent to the joining player on connect. Includes an extra check to ensure that the vanished player gets information about itself
-	@Redirect(method = "initializeConnectionToPlayer", at = @At(value = "NEW", target = "net/minecraft/network/play/server/SPlayerListItemPacket", ordinal = 1))
+	@Redirect(method = "placeNewPlayer", at = @At(value = "NEW", target = "net/minecraft/network/play/server/SPlayerListItemPacket", ordinal = 1))
 	public SPlayerListItemPacket constructPacketToJoinedPlayer(SPlayerListItemPacket.Action actionIn, ServerPlayerEntity[] playersIn, NetworkManager netManager, ServerPlayerEntity receiver) {
 		List<ServerPlayerEntity> list = Arrays.asList(playersIn);
 
@@ -38,17 +38,17 @@ public abstract class MixinPlayerList {
 	}
 
 	//Remove vanished players from tab list information packet that is sent on disconnect
-	@Redirect(method = "playerLoggedOut", at = @At(value = "NEW", target = "net/minecraft/network/play/server/SPlayerListItemPacket"))
+	@Redirect(method = "remove", at = @At(value = "NEW", target = "net/minecraft/network/play/server/SPlayerListItemPacket"))
 	public SPlayerListItemPacket constructPacketOnLeave(SPlayerListItemPacket.Action actionIn, ServerPlayerEntity... playersIn) {
 		return new SPlayerListItemPacket(actionIn, VanishUtil.formatPlayerList(Arrays.asList(playersIn)));
 	}
 
 	//Block join message when player is vanished and notifies vanished player that it is still vanished
-	@Redirect(method = "initializeConnectionToPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/PlayerList;func_232641_a_(Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ChatType;Ljava/util/UUID;)V"))
-	public void redirectFunc_232641_a_(PlayerList playerList, ITextComponent content, ChatType chatType, UUID uuid, NetworkManager netManager, ServerPlayerEntity player) {
+	@Redirect(method = "placeNewPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/PlayerList;broadcastMessage(Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ChatType;Ljava/util/UUID;)V"))
+	public void redirectBroadcastMessage(PlayerList playerList, ITextComponent content, ChatType chatType, UUID uuid, NetworkManager netManager, ServerPlayerEntity player) {
 		if (!VanishUtil.isVanished(player))
-			playerList.func_232641_a_(content, chatType, uuid);
+			playerList.broadcastMessage(content, chatType, uuid);
 		else
-			player.sendMessage(new StringTextComponent("Note: You are still vanished"), player.getUniqueID());
+			player.sendMessage(new StringTextComponent("Note: You are still vanished"), player.getUUID());
 	}
 }

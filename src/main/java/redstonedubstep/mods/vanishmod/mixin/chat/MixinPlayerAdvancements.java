@@ -18,7 +18,7 @@ public abstract class MixinPlayerAdvancements {
 	private ServerPlayerEntity player;
 
 	//suppress advancement messages for vanished players
-	@Redirect(method = "grantCriterion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$RuleKey;)Z"))
+	@Redirect(method = "award", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$RuleKey;)Z"))
 	private boolean redirectGetBoolean(GameRules gameRules, RuleKey<BooleanValue> key) {
 		if (VanishUtil.isVanished(this.player))
 			return false;

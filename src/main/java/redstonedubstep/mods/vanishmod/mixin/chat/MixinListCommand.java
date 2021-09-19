@@ -19,9 +19,9 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 public abstract class MixinListCommand {
 
 	//Filter result of /list command when non-admins execute it
-	@Redirect(method = "listPlayers", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/PlayerList;getPlayers()Ljava/util/List;"))
+	@Redirect(method = "format", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/PlayerList;getPlayers()Ljava/util/List;"))
 	private static List<ServerPlayerEntity> redirectGetPlayers(PlayerList playerList, CommandSource source) {
-		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get() && !source.hasPermissionLevel(1)) {
+		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get() && !source.hasPermission(1)) {
 			return VanishUtil.formatPlayerList(playerList.getPlayers());
 		}
 

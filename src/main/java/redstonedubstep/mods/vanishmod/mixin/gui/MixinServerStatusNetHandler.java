@@ -23,17 +23,17 @@ public abstract class MixinServerStatusNetHandler {
 	private MinecraftServer server;
 
 	//stop server from sending the names of vanished players to the Multiplayer screen
-	@Redirect(method = "processServerQuery", at = @At(value = "NEW", target = "net/minecraft/network/status/server/SServerInfoPacket"))
+	@Redirect(method = "handleStatusRequest", at = @At(value = "NEW", target = "net/minecraft/network/status/server/SServerInfoPacket"))
 	public SServerInfoPacket constructSServerInfoPacket(ServerStatusResponse response) {
 		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get()) {
 			PlayerList list = server.getPlayerList();
-			GameProfile[] players = response.getPlayers().getPlayers();
+			GameProfile[] players = response.getPlayers().getSample();
 			GameProfile[] newPlayersHelper = new GameProfile[players.length]; //this helper is needed to evaluate the right size for the actual array
 			GameProfile[] newPlayers;
 			int visiblePlayersCount = 0;
 
 			for (GameProfile profile : players) {
-				if (!VanishUtil.isVanished(list.getPlayerByUUID(profile.getId()))) {
+				if (!VanishUtil.isVanished(list.getPlayer(profile.getId()))) {
 					newPlayersHelper[visiblePlayersCount] = profile;
 					visiblePlayersCount++;
 				}
@@ -46,7 +46,7 @@ public abstract class MixinServerStatusNetHandler {
 					newPlayers[i] = newPlayersHelper[i];
 			}
 
-			response.getPlayers().setPlayers(newPlayers);
+			response.getPlayers().setSample(newPlayers);
 		}
 
 		return new SServerInfoPacket(response);

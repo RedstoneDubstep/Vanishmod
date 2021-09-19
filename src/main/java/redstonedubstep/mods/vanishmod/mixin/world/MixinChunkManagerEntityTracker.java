@@ -21,8 +21,8 @@ public abstract class MixinChunkManagerEntityTracker {
 	private Entity entity;
 
 	//Prevent tracking of vanished players for other players, which prevents vanished players from being rendered for anyone but themselves.
-	@Inject(method = "updateTrackingState(Lnet/minecraft/entity/player/ServerPlayerEntity;)V", at = @At("HEAD"), cancellable = true)
-	private void onUpdateTrackingState(ServerPlayerEntity player, CallbackInfo info) {
+	@Inject(method = "updatePlayer", at = @At("HEAD"), cancellable = true)
+	private void onUpdatePlayer(ServerPlayerEntity player, CallbackInfo info) {
 		if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
 			if (entity instanceof PlayerEntity && VanishUtil.isVanished((PlayerEntity)entity)) {
 				info.cancel();

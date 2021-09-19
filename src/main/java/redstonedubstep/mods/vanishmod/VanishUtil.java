@@ -27,29 +27,29 @@ public class VanishUtil {
 	}
 
 	public static void sendPacketsOnVanish(ServerPlayerEntity currentPlayer, ServerWorld world, boolean vanished) {
-		List<ServerPlayerEntity> list = world.getPlayers();
+		List<ServerPlayerEntity> list = world.players();
 
 		for (ServerPlayerEntity player : list) {
-			ServerChunkProvider chunkProvider = player.getServerWorld().getChunkProvider();
+			ServerChunkProvider chunkProvider = player.getLevel().getChunkSource();
 
 			if (!player.equals(currentPlayer)) { //prevent packet from being sent to the executor of the command
-				player.connection.sendPacket(new SPlayerListItemPacket(vanished ? Action.REMOVE_PLAYER : Action.ADD_PLAYER, currentPlayer));
+				player.connection.send(new SPlayerListItemPacket(vanished ? Action.REMOVE_PLAYER : Action.ADD_PLAYER, currentPlayer));
 				if (!vanished) {
-					chunkProvider.chunkManager.entities.remove(currentPlayer.getEntityId()); //we don't want an error in our log because the entity to be tracked is already on that list
-					chunkProvider.track(currentPlayer);
+					chunkProvider.chunkMap.entityMap.remove(currentPlayer.getId()); //we don't want an error in our log because the entity to be tracked is already on that list
+					chunkProvider.addEntity(currentPlayer);
 				}
 				else if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
-					player.connection.sendPacket(new SDestroyEntitiesPacket(currentPlayer.getEntityId()));
+					player.connection.send(new SDestroyEntitiesPacket(currentPlayer.getId()));
 				}
 			}
 		}
 	}
 
 	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayerEntity> playerList, ServerPlayerEntity sender, boolean leaveMessage) {
-		IFormattableTextComponent message = new TranslationTextComponent(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).mergeStyle(TextFormatting.YELLOW);
+		IFormattableTextComponent message = new TranslationTextComponent(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).withStyle(TextFormatting.YELLOW);
 
 		for (ServerPlayerEntity receiver : playerList) {
-			receiver.sendMessage(message, sender.getUniqueID());
+			receiver.sendMessage(message, sender.getUUID());
 		}
 
 		if (ModList.get().isLoaded("mc2discord")) {
@@ -72,7 +72,7 @@ public class VanishUtil {
 	}
 
 	public static boolean isVanished(UUID uuid, ServerWorld world) {
-		Entity entity = world.getEntityByUuid(uuid);
+		Entity entity = world.getEntity(uuid);
 
 		if (entity instanceof PlayerEntity) {
 			return isVanished((PlayerEntity)entity);
@@ -82,7 +82,7 @@ public class VanishUtil {
 	}
 
 	public static boolean isVanished(PlayerEntity player) {
-		if (player != null && !player.world.isRemote) {
+		if (player != null && !player.level.isClientSide) {
 			CompoundNBT deathPersistedData = player.getPersistentData().getCompound(PlayerEntity.PERSISTED_NBT_TAG);
 
 			return deathPersistedData.getBoolean("Vanished");
