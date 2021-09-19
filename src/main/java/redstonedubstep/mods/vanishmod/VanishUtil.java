@@ -74,8 +74,8 @@ public class VanishUtil {
 	public static boolean isVanished(UUID uuid, ServerLevel world) {
 		Entity entity = world.getEntity(uuid);
 
-		if (entity instanceof Player) {
-			return isVanished((Player)entity);
+		if (entity instanceof Player player) {
+			return isVanished(player);
 		}
 
 		return false;
