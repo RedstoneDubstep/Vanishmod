@@ -29,9 +29,9 @@ public class Mc2DiscordCompat {
 	}
 
 	public static void sendPlayerStatusMessage(ServerPlayerEntity player, boolean left) {
-		Player mc2dcplayer = new Player(player.getGameProfile().getName(), player.getDisplayName().getString(), Optional.ofNullable(player.getGameProfile().getId()).orElse(null));
+		Player mc2dcplayer = new Player(player.getGameProfile().getName(), player.getDisplayName().getString(), player.getGameProfile().getId());
 		M2DConfig config = Mc2Discord.INSTANCE.config;
 
-		Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(left ? config.leave_message : config.join_message, Collections.singletonList(mc2dcplayer)));
+		Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(left ? config.messages.leave : config.messages.join, Collections.singletonList(mc2dcplayer)));
 	}
 }

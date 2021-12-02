@@ -1,5 +1,9 @@
 -----------Changelog for v1.1.1-----------
 
+- Fixed compatibility with latest mc2discord version (3.2.0)
+
+-----------Changelog for v1.1.1-----------
+
 - Added config option for a performance-heavy mod compatibility mixin
 - Fixed heavily increased CPU usage of a mod compatibility mixin even though this mod's features were not used
 
