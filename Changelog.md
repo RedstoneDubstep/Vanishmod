@@ -1,4 +1,4 @@
------------Changelog for v1.1.1-----------
+-----------Changelog for v1.1.2-----------
 
 - Fixed compatibility with latest mc2discord version (3.2.0)
 
