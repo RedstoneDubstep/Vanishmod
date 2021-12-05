@@ -1,7 +1,3 @@
------------Changelog for v1.1.1-----------
+-----------Changelog for v1.1.2-----------
 
-- Re-enabled mc2discord compat
-
------------Changelog for v1.1.1-----------
-
-- Updated to 1.17.1
+- Updated to 1.18
