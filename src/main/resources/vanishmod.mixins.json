@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "redstonedubstep.mods.vanishmod.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "refmap": "vanishmod.refmap.json",
   "server": [
     "chat.MixinEntityArgument",
