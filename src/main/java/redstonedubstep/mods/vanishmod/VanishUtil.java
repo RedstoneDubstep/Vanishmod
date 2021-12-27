@@ -6,7 +6,10 @@ import java.util.stream.Collectors;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.Action;
@@ -23,6 +26,8 @@ import redstonedubstep.mods.vanishmod.api.PlayerVanishEvent;
 import redstonedubstep.mods.vanishmod.compat.Mc2DiscordCompat;
 
 public class VanishUtil {
+	public static final MutableComponent VANISHMOD_PREFIX = (new TextComponent("[")).append(new TextComponent("Vanishmod").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/vanishmod")))).append("] ");
+
 	public static List<ServerPlayer> formatPlayerList(List<ServerPlayer> rawList) {
 		return rawList.stream().filter(player -> !isVanished(player)).collect(Collectors.toList());
 	}
