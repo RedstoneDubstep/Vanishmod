@@ -45,12 +45,10 @@ public class VanishCommand {
 	}
 
 	private static int getVanishedStatus(CommandContext<CommandSourceStack> ctx, ServerPlayer player) {
-		if (VanishUtil.isVanished(player)) {
+		if (VanishUtil.isVanished(player))
 			ctx.getSource().sendSuccess(new TranslatableComponent("%s is currently vanished.", player.getDisplayName()), false);
-		}
-		else {
+		else
 			ctx.getSource().sendSuccess(new TranslatableComponent("%s is currently not vanished.", player.getDisplayName()), false);
-		}
 
 		return 1;
 	}

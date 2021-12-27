@@ -26,12 +26,8 @@ public class VanishEventListener {
 		if (VanishUtil.isVanished(event.getPlayer()) && VanishConfig.CONFIG.hidePlayerNameInChat.get()) {
 			Component message = event.getComponent();
 
-			if (message instanceof TranslatableComponent component && component.getKey().contains("chat.type.text")) {
-				TextComponent blurredName = new TextComponent("vanished");
-
-				blurredName.withStyle(ChatFormatting.GRAY);
-				event.setComponent(new TranslatableComponent("chat.type.text", blurredName, ((TranslatableComponent)message).getArgs()[1]));
-			}
+			if (message instanceof TranslatableComponent component && component.getKey().contains("chat.type.text"))
+				event.setComponent(new TranslatableComponent("chat.type.text", new TextComponent("vanished").withStyle(ChatFormatting.GRAY), ((TranslatableComponent)message).getArgs()[1]));
 		}
 	}
 }
