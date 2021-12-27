@@ -14,8 +14,10 @@ import net.minecraft.network.play.server.SPlayerListItemPacket.Action;
 import net.minecraft.network.play.server.STitlePacket;
 import net.minecraft.network.play.server.STitlePacket.Type;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
@@ -24,6 +26,8 @@ import redstonedubstep.mods.vanishmod.api.PlayerVanishEvent;
 import redstonedubstep.mods.vanishmod.compat.Mc2DiscordCompat;
 
 public class VanishUtil {
+	public static final IFormattableTextComponent VANISHMOD_PREFIX = (new StringTextComponent("[")).append(new StringTextComponent("Vanishmod").withStyle(s -> s.applyFormat(TextFormatting.GRAY).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/vanishmod")))).append("] ");
+
 	public static List<ServerPlayerEntity> formatPlayerList(List<ServerPlayerEntity> rawList) {
 		return rawList.stream().filter(player -> !isVanished(player)).collect(Collectors.toList());
 	}
