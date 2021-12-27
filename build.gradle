@@ -7,12 +7,13 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.7+'
         classpath 'org.parchmentmc:librarian:1.+'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
@@ -29,7 +30,7 @@ minecraft {
     // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'official', version: '1.18'
+    mappings channel: 'parchment', version: '2021.12.19-1.18.1'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -42,7 +43,6 @@ minecraft {
 
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'REGISTRIES,REGISTRYDUMP'
-            arg "-mixin.config=vanishmod.mixins.json"
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
@@ -59,7 +59,6 @@ minecraft {
 
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', ''
-            arg "-mixin.config=vanishmod.mixins.json"
             args '-nogui'
 
             // Recommended logging level for the console
@@ -143,6 +142,10 @@ jar {
 
 mixin {
     add sourceSets.main, "vanishmod.refmap.json"
+    config 'vanishmod.mixins.json'
+
+    // debug.verbose = true
+    // debug.export = true
 }
 
 jar.finalizedBy('reobfJar')
