@@ -46,14 +46,15 @@ public class VanishUtil {
 	}
 
 	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayer> playerList, ServerPlayer sender, boolean leaveMessage) {
-		Component message = new TranslatableComponent(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).withStyle(ChatFormatting.YELLOW);
+		if (VanishConfig.CONFIG.sendJoinLeaveMessages.get()) {
+			Component message = new TranslatableComponent(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).withStyle(ChatFormatting.YELLOW);
 
-		for (ServerPlayer receiver : playerList) {
-			receiver.sendMessage(message, sender.getUUID());
-		}
+			for (ServerPlayer receiver : playerList) {
+				receiver.sendMessage(message, sender.getUUID());
+			}
 
-		if (ModList.get().isLoaded("mc2discord")) {
-			Mc2DiscordCompat.sendPlayerStatusMessage(sender, leaveMessage);
+			if (ModList.get().isLoaded("mc2discord"))
+				Mc2DiscordCompat.sendPlayerStatusMessage(sender, leaveMessage);
 		}
 	}
 
