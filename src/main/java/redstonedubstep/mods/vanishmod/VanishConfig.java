@@ -44,7 +44,7 @@ public class VanishConfig {
 
 			requiredPermissionLevel = builder
 					.comment("What op permission level should be the requirement for being able to execute /vanish?")
-					.defineInRange("requiredPermissionLevel", 3, 0, 4);
+					.defineInRange("requiredPermissionLevel", 2, 0, 4);
 		}
 	}
 }
