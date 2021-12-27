@@ -11,6 +11,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.server.SDestroyEntitiesPacket;
 import net.minecraft.network.play.server.SPlayerListItemPacket;
 import net.minecraft.network.play.server.SPlayerListItemPacket.Action;
+import net.minecraft.network.play.server.STitlePacket;
+import net.minecraft.network.play.server.STitlePacket.Type;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -43,6 +45,8 @@ public class VanishUtil {
 				}
 			}
 		}
+
+		currentPlayer.connection.send(new STitlePacket(Type.ACTIONBAR, VanishUtil.getVanishedStatusText(currentPlayer)));
 	}
 
 	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayerEntity> playerList, ServerPlayerEntity sender, boolean leaveMessage) {
@@ -79,9 +83,8 @@ public class VanishUtil {
 	public static boolean isVanished(UUID uuid, ServerWorld world) {
 		Entity entity = world.getEntity(uuid);
 
-		if (entity instanceof PlayerEntity) {
+		if (entity instanceof PlayerEntity)
 			return isVanished((PlayerEntity)entity);
-		}
 
 		return false;
 	}
