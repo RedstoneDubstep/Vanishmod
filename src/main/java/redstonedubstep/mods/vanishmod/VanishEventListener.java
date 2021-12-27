@@ -29,10 +29,7 @@ public class VanishEventListener {
 			ITextComponent message = event.getComponent();
 
 			if (message instanceof TranslationTextComponent && ((TranslationTextComponent)message).getKey().contains("chat.type.text")) {
-				StringTextComponent blurredName = new StringTextComponent("vanished");
-
-				blurredName.withStyle(TextFormatting.GRAY);
-				event.setComponent(new TranslationTextComponent("chat.type.text", blurredName, ((TranslationTextComponent)message).getArgs()[1]));
+				event.setComponent(new TranslationTextComponent("chat.type.text", new StringTextComponent("vanished").withStyle(TextFormatting.GRAY), ((TranslationTextComponent)message).getArgs()[1]));
 			}
 		}
 	}

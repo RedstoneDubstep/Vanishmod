@@ -72,6 +72,10 @@ public class VanishUtil {
 		MinecraftForge.EVENT_BUS.post(new PlayerVanishEvent(player, vanished));
 	}
 
+	public static TranslationTextComponent getVanishedStatusText(ServerPlayerEntity player) {
+		return new TranslationTextComponent(VanishUtil.isVanished(player) ? VanishConfig.CONFIG.onVanishQuery.get() : VanishConfig.CONFIG.onUnvanishQuery.get(), player.getDisplayName());
+	}
+
 	public static boolean isVanished(UUID uuid, ServerWorld world) {
 		Entity entity = world.getEntity(uuid);
 

@@ -32,13 +32,12 @@ public class VanishCommand {
 		VanishUtil.updateVanishedStatus(player, vanishes);
 
 		if (vanishes) {
-			ctx.getSource().sendSuccess(new TranslationTextComponent("%s vanished", player.getDisplayName()), true);
+			ctx.getSource().sendSuccess(new TranslationTextComponent(VanishConfig.CONFIG.onVanishMessage.get(), player.getDisplayName()), true);
 			player.sendMessage(new StringTextComponent("Note: You can still see yourself in the tab list for technical reasons, but you are vanished for other players."), Util.NIL_UUID);
 			player.sendMessage(new StringTextComponent("Note: Be careful when producing noise near other players, because while most sounds will get suppressed, some won't due to technical limitations."), Util.NIL_UUID);
 		}
-		else {
-			ctx.getSource().sendSuccess(new TranslationTextComponent("%s appeared again", player.getDisplayName()), true);
-		}
+		else
+			ctx.getSource().sendSuccess(new TranslationTextComponent(VanishConfig.CONFIG.onUnvanishMessage.get(), player.getDisplayName()), true);
 
 		VanishUtil.sendJoinOrLeaveMessageToPlayers(ctx.getSource().getLevel().players(), player, vanishes);
 		VanishUtil.sendPacketsOnVanish(player, ctx.getSource().getLevel(), vanishes);
@@ -46,13 +45,9 @@ public class VanishCommand {
 	}
 
 	private static int getVanishedStatus(CommandContext<CommandSource> ctx, ServerPlayerEntity player) {
-		if (VanishUtil.isVanished(player)) {
-			ctx.getSource().sendSuccess(new TranslationTextComponent("%s is currently vanished.", player.getDisplayName()), false);
-		}
-		else {
-			ctx.getSource().sendSuccess(new TranslationTextComponent("%s is currently not vanished.", player.getDisplayName()), false);
-		}
+		TranslationTextComponent vanishedStatus = VanishUtil.getVanishedStatusText(player);
 
+		ctx.getSource().sendSuccess(vanishedStatus, false);
 		return 1;
 	}
 }
