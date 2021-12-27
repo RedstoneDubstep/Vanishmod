@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.3-----------
+
+- Fixed that Command Blocks are not able to execute /v by default
+
 -----------Changelog for v1.1.2-----------
 
 - Fixed compatibility with latest mc2discord version (3.2.0)
