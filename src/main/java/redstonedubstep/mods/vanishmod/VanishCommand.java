@@ -47,7 +47,10 @@ public class VanishCommand {
 		TranslatableComponent vanishedStatus = VanishUtil.getVanishedStatusText(player);
 
 		ctx.getSource().sendSuccess(vanishedStatus, false);
-		player.connection.send(new ClientboundSetActionBarTextPacket(vanishedStatus));
+
+		if (ctx.getSource().getEntity() instanceof ServerPlayer currentPlayer)
+			currentPlayer.connection.send(new ClientboundSetActionBarTextPacket(vanishedStatus));
+
 		return 1;
 	}
 }
