@@ -32,13 +32,12 @@ public class VanishCommand {
 		VanishUtil.updateVanishedStatus(player, vanishes);
 
 		if (vanishes) {
-			ctx.getSource().sendSuccess(new TranslatableComponent("%s vanished", player.getDisplayName()), true);
+			ctx.getSource().sendSuccess(new TranslatableComponent(VanishConfig.CONFIG.onVanishMessage.get(), player.getDisplayName()), true);
 			player.sendMessage(new TextComponent("Note: You can still see yourself in the tab list for technical reasons, but you are vanished for other players."), Util.NIL_UUID);
 			player.sendMessage(new TextComponent("Note: Be careful when producing noise near other players, because while most sounds will get suppressed, some won't due to technical limitations."), Util.NIL_UUID);
 		}
-		else {
-			ctx.getSource().sendSuccess(new TranslatableComponent("%s appeared again", player.getDisplayName()), true);
-		}
+		else
+			ctx.getSource().sendSuccess(new TranslatableComponent(VanishConfig.CONFIG.onUnvanishMessage.get(), player.getDisplayName()), true);
 
 		VanishUtil.sendJoinOrLeaveMessageToPlayers(ctx.getSource().getLevel().players(), player, vanishes);
 		VanishUtil.sendPacketsOnVanish(player, ctx.getSource().getLevel(), vanishes);

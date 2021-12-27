@@ -4,6 +4,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 
 public class VanishConfig {
@@ -25,6 +26,8 @@ public class VanishConfig {
 		public BooleanValue sendJoinLeaveMessages;
 		public BooleanValue fixModCompat;
 		public IntValue requiredPermissionLevel;
+		public ConfigValue<String> onVanishMessage;
+		public ConfigValue<String> onUnvanishMessage;
 
 		Config(ForgeConfigSpec.Builder builder) {
 			hidePlayersFromWorld = builder
@@ -49,6 +52,13 @@ public class VanishConfig {
 			requiredPermissionLevel = builder
 					.comment("What op permission level should be the requirement for being able to execute /vanish?")
 					.defineInRange("requiredPermissionLevel", 2, 0, 4);
+
+			onVanishMessage = builder
+					.comment("What message should the vanishing player receive if they vanish? (%s will get replaced with the name of the vanishing player)")
+					.define("onVanishMessage", "%s vanished");
+			onUnvanishMessage = builder
+					.comment("What message should the now visible player receive if they unvanish? (%s will get replaced with the name of the unvanishing player)")
+					.define("onUnvanishMessage", "%s unvanished");
 		}
 	}
 }
