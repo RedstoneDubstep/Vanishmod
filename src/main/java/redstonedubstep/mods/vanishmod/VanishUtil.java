@@ -11,6 +11,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.Action;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
+import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -43,6 +44,8 @@ public class VanishUtil {
 				}
 			}
 		}
+
+		currentPlayer.connection.send(new ClientboundSetActionBarTextPacket(VanishUtil.getVanishedStatusText(currentPlayer)));
 	}
 
 	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayer> playerList, ServerPlayer sender, boolean leaveMessage) {
@@ -72,12 +75,15 @@ public class VanishUtil {
 		MinecraftForge.EVENT_BUS.post(new PlayerVanishEvent(player, vanished));
 	}
 
+	public static TranslatableComponent getVanishedStatusText(ServerPlayer player) {
+		return new TranslatableComponent(VanishUtil.isVanished(player) ? "%s is currently vanished." : "%s is currently not vanished.", player.getDisplayName());
+	}
+
 	public static boolean isVanished(UUID uuid, ServerLevel world) {
 		Entity entity = world.getEntity(uuid);
 
-		if (entity instanceof Player player) {
+		if (entity instanceof Player player)
 			return isVanished(player);
-		}
 
 		return false;
 	}

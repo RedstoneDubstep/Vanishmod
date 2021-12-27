@@ -4,13 +4,14 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
+import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.Util;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
+import net.minecraft.server.level.ServerPlayer;
 
 public class VanishCommand {
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -30,14 +31,12 @@ public class VanishCommand {
 		boolean vanishes = !VanishUtil.isVanished(player);
 
 		VanishUtil.updateVanishedStatus(player, vanishes);
+		ctx.getSource().sendSuccess(new TranslatableComponent(vanishes ? VanishConfig.CONFIG.onVanishMessage.get() : VanishConfig.CONFIG.onUnvanishMessage.get(), player.getDisplayName()), true);
 
 		if (vanishes) {
-			ctx.getSource().sendSuccess(new TranslatableComponent(VanishConfig.CONFIG.onVanishMessage.get(), player.getDisplayName()), true);
 			player.sendMessage(new TextComponent("Note: You can still see yourself in the tab list for technical reasons, but you are vanished for other players."), Util.NIL_UUID);
 			player.sendMessage(new TextComponent("Note: Be careful when producing noise near other players, because while most sounds will get suppressed, some won't due to technical limitations."), Util.NIL_UUID);
 		}
-		else
-			ctx.getSource().sendSuccess(new TranslatableComponent(VanishConfig.CONFIG.onUnvanishMessage.get(), player.getDisplayName()), true);
 
 		VanishUtil.sendJoinOrLeaveMessageToPlayers(ctx.getSource().getLevel().players(), player, vanishes);
 		VanishUtil.sendPacketsOnVanish(player, ctx.getSource().getLevel(), vanishes);
@@ -45,11 +44,10 @@ public class VanishCommand {
 	}
 
 	private static int getVanishedStatus(CommandContext<CommandSourceStack> ctx, ServerPlayer player) {
-		if (VanishUtil.isVanished(player))
-			ctx.getSource().sendSuccess(new TranslatableComponent("%s is currently vanished.", player.getDisplayName()), false);
-		else
-			ctx.getSource().sendSuccess(new TranslatableComponent("%s is currently not vanished.", player.getDisplayName()), false);
+		TranslatableComponent vanishedStatus = VanishUtil.getVanishedStatusText(player);
 
+		ctx.getSource().sendSuccess(vanishedStatus, false);
+		player.connection.send(new ClientboundSetActionBarTextPacket(vanishedStatus));
 		return 1;
 	}
 }
