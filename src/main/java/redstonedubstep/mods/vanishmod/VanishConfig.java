@@ -22,6 +22,7 @@ public class VanishConfig {
 		public BooleanValue hidePlayersFromPlayerLists;
 		public BooleanValue hidePlayersFromCommandSelectors;
 		public BooleanValue hidePlayerNameInChat;
+		public BooleanValue sendJoinLeaveMessages;
 		public BooleanValue fixModCompat;
 		public IntValue requiredPermissionLevel;
 
@@ -38,6 +39,9 @@ public class VanishConfig {
 			hidePlayerNameInChat = builder
 					.comment("When vanished players send a chat message, should the name of the player that sent the message be replaced with \"vanished\" (in gray color)?")
 					.define("hidePlayerNameInChat", false);
+			sendJoinLeaveMessages = builder
+					.comment("Should other players see a join/leave message in their chat when a player (un-)vanishes?")
+					.define("sendJoinLeaveMessages", true);
 			fixModCompat = builder
 					.comment("Should there be a (potential) fix for other mods uncovering the presence of vanished players? This may severely increase CPU usage and is thus not recommended")
 					.define("fixModCompat", false);
