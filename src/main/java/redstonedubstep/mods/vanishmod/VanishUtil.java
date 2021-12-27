@@ -76,7 +76,7 @@ public class VanishUtil {
 	}
 
 	public static TranslatableComponent getVanishedStatusText(ServerPlayer player) {
-		return new TranslatableComponent(VanishUtil.isVanished(player) ? "%s is currently vanished." : "%s is currently not vanished.", player.getDisplayName());
+		return new TranslatableComponent(VanishUtil.isVanished(player) ? VanishConfig.CONFIG.onVanishQuery.get() : VanishConfig.CONFIG.onUnvanishQuery.get(), player.getDisplayName());
 	}
 
 	public static boolean isVanished(UUID uuid, ServerLevel world) {

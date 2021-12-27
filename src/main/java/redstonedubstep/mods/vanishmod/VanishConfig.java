@@ -28,6 +28,8 @@ public class VanishConfig {
 		public IntValue requiredPermissionLevel;
 		public ConfigValue<String> onVanishMessage;
 		public ConfigValue<String> onUnvanishMessage;
+		public ConfigValue<String> onVanishQuery;
+		public ConfigValue<String> onUnvanishQuery;
 
 		Config(ForgeConfigSpec.Builder builder) {
 			hidePlayersFromWorld = builder
@@ -59,6 +61,12 @@ public class VanishConfig {
 			onUnvanishMessage = builder
 					.comment("What message should the now visible player receive if they unvanish? (%s will get replaced with the name of the unvanishing player)")
 					.define("onUnvanishMessage", "%s unvanished");
+			onVanishQuery = builder
+					.comment("What message should the player receive if they query their vanished status while they are vanished? (%s will get replaced with the name of the querying player)")
+					.define("onVanishQuery", "%s is currently vanished.");
+			onUnvanishQuery = builder
+					.comment("What message should the player receive if they query their vanished status while they are not vanished? (%s will get replaced with the name of the querying player)")
+					.define("onUnvanishQuery", "%s is currently not vanished.");
 		}
 	}
 }
