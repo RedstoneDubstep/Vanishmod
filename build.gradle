@@ -18,7 +18,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 group = 'redstonedubstep.mods'
-version = '1.1.2.1'
+version = '1.1.3'
 archivesBaseName = 'vanishmod'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
