@@ -1,6 +1,7 @@
 -----------Changelog for v1.1.3.1-----------
 
 - Potentially fixed some instances of the server not starting when the Vanishmod is installed alongside other mods
+- Fixed that vanished players are able to trigger Sculk Sensors
 
 -----------Changelog for v1.1.3-----------
 
