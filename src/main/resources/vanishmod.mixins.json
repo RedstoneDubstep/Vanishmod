@@ -6,8 +6,6 @@
   "server": [
     "chat.MixinEntityArgument",
     "chat.MixinListCommand",
-    "chat.MixinPlayerAdvancements",
-    "chat.MixinServerPlayNetHandler",
     "gui.MixinServerStatusNetHandler",
     "gui.MixinServerStatusResponsePlayers",
     "world.MixinChunkManagerEntityTracker",
