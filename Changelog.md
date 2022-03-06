@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.3.1-----------
+
+- Potentially fixed some instances of the server not starting when the Vanishmod is installed alongside other mods
+
 -----------Changelog for v1.1.3-----------
 
 - Added config to control whether other players should receive join/leave messages when a player (un-)vanishes
