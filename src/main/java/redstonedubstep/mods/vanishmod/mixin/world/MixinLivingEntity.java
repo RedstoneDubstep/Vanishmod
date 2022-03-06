@@ -2,15 +2,15 @@ package redstonedubstep.mods.vanishmod.mixin.world;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.network.IPacket;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import redstonedubstep.mods.vanishmod.VanishConfig;
 import redstonedubstep.mods.vanishmod.VanishUtil;
@@ -32,11 +32,10 @@ public abstract class MixinLivingEntity extends Entity {
 		return 0;
 	}
 
-	//Prevent pickup animation from being sent when a vanished player picks up an item. This fixes that the unvanished client thinks that it picked up an item while in reality a vanished player did (due to Minecraft's code)
-	@Redirect(method = "take", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/server/ServerChunkProvider;broadcast(Lnet/minecraft/entity/Entity;Lnet/minecraft/network/IPacket;)V"))
-	public void redirectBroadcast(ServerChunkProvider chunkProvider, Entity item, IPacket<?> packet) {
-		if (!VanishConfig.CONFIG.hidePlayersFromWorld.get() || !VanishUtil.isVanished(getUUID(), (ServerWorld)getCommandSenderWorld())) {
-			chunkProvider.broadcast(item, packet);
-		}
+	//Prevent pickup animation from being sent when a vanished player picks up an item. This fixes that the unvanished client thinks that it picked up an item (and thus shows a pickup animation for the local player) while in reality a vanished player did
+	@Inject(method = "take", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/server/ServerChunkProvider;broadcast(Lnet/minecraft/entity/Entity;Lnet/minecraft/network/IPacket;)V"), cancellable = true)
+	public void redirectBroadcast(Entity entity, int amount, CallbackInfo callbackInfo) {
+		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(getUUID(), (ServerWorld)getCommandSenderWorld()))
+			callbackInfo.cancel();
 	}
 }
