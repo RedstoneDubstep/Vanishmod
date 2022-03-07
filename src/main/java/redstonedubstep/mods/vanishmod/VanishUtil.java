@@ -51,6 +51,7 @@ public class VanishUtil {
 		}
 
 		currentPlayer.connection.send(new STitlePacket(Type.ACTIONBAR, VanishUtil.getVanishedStatusText(currentPlayer)));
+		currentPlayer.refreshTabListName();
 	}
 
 	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayerEntity> playerList, ServerPlayerEntity sender, boolean leaveMessage) {

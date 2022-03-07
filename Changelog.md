@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.4-----------
+
+- Added "Vanished" prefix to the tab list player name when the player is vanished
+
 -----------Changelog for v1.1.3.1-----------
 
 - Potentially fixed some instances of the server not starting when the Vanishmod is installed alongside other mods
