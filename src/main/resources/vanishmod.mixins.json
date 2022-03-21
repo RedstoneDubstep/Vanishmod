@@ -13,7 +13,8 @@
     "world.MixinPlayerEntity",
     "world.MixinServerWorld",
     "MixinPlayerList",
-    "MixinServerPlayerEntity"
+    "MixinServerPlayerEntity",
+    "MixinServerPlayNetHandler"
   ],
   "minVersion": "0.8"
 }

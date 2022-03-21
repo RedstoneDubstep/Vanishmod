@@ -27,30 +27,6 @@ public abstract class MixinPlayerList {
 	@Unique
 	private ServerPlayerEntity joiningPlayer;
 
-	//Remove vanished players from tab list information packet that is sent to all players on connect
-	@Redirect(method = "placeNewPlayer", at = @At(value = "NEW", target = "net/minecraft/network/play/server/SPlayerListItemPacket", ordinal = 0))
-	public SPlayerListItemPacket constructPacketToAll(SPlayerListItemPacket.Action actionIn, ServerPlayerEntity[] playersIn) {
-		return new SPlayerListItemPacket(actionIn, VanishUtil.formatPlayerList(Arrays.asList(playersIn)));
-	}
-
-	//Remove vanished players from tab list information packets that are sent to the joining player on connect. Includes an extra check to ensure that the vanished player gets information about itself
-	@Redirect(method = "placeNewPlayer", at = @At(value = "NEW", target = "net/minecraft/network/play/server/SPlayerListItemPacket", ordinal = 1))
-	public SPlayerListItemPacket constructPacketToJoinedPlayer(SPlayerListItemPacket.Action actionIn, ServerPlayerEntity[] playersIn, NetworkManager netManager, ServerPlayerEntity receiver) {
-		List<ServerPlayerEntity> list = Arrays.asList(playersIn);
-
-		if (!VanishUtil.isVanished(receiver) || !receiver.equals(playersIn[0])) {
-			list = VanishUtil.formatPlayerList(list);
-		}
-
-		return new SPlayerListItemPacket(actionIn, list);
-	}
-
-	//Remove vanished players from tab list information packet that is sent on disconnect
-	@Redirect(method = "remove", at = @At(value = "NEW", target = "net/minecraft/network/play/server/SPlayerListItemPacket"))
-	public SPlayerListItemPacket constructPacketOnLeave(SPlayerListItemPacket.Action actionIn, ServerPlayerEntity... playersIn) {
-		return new SPlayerListItemPacket(actionIn, VanishUtil.formatPlayerList(Arrays.asList(playersIn)));
-	}
-
 	//Prevent join, leave, death and advancement messages of vanished players from being broadcast
 	@Inject(method = "broadcastMessage", at = @At(value = "HEAD"), cancellable = true)
 	public void redirectBroadcastMessage(ITextComponent text, ChatType chatType, UUID uuid, CallbackInfo callbackInfo) {

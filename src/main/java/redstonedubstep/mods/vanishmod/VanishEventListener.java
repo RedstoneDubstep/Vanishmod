@@ -40,7 +40,7 @@ public class VanishEventListener {
 
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public static void onTabListName(TabListNameFormat event) {
-		if (VanishUtil.isVanished(event.getPlayer())) { //if the player is vanished, its tab list name will only be seen by itself
+		if (VanishUtil.isVanished(event.getPlayer())) { //Appending a prefix to the name here won't give away vanished players, as their tab list names are only displayed for players that are allowed to see vanished players
 			IFormattableTextComponent vanishedName = new StringTextComponent("").withStyle(TextFormatting.ITALIC);
 
 			vanishedName.append(new StringTextComponent("[").withStyle(TextFormatting.DARK_GRAY))

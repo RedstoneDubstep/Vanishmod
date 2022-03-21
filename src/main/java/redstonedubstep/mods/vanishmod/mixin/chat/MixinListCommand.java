@@ -1,7 +1,6 @@
 package redstonedubstep.mods.vanishmod.mixin.chat;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,12 +16,11 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(ListCommand.class)
 public abstract class MixinListCommand {
-
 	//Filter result of /list command when non-admins execute it
 	@Redirect(method = "format", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/PlayerList;getPlayers()Ljava/util/List;"))
 	private static List<ServerPlayerEntity> redirectGetPlayers(PlayerList playerList, CommandSource source) {
-		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get() && !source.hasPermission(1)) {
-			return VanishUtil.formatPlayerList(playerList.getPlayers());
+		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get()) {
+			return VanishUtil.formatPlayerList(playerList.getPlayers(), source.getEntity());
 		}
 
 		return playerList.getPlayers();
