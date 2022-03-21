@@ -15,7 +15,7 @@ public class Vanishmod {
 	public Vanishmod() {
 		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
 		MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, VanishConfig.SERVER_SPEC);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, VanishConfig.SERVER_SPEC, "vanishmod-server.toml");
 	}
 
 	public void registerCommands(RegisterCommandsEvent event) {

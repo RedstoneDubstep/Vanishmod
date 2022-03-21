@@ -31,6 +31,7 @@ public abstract class MixinPlayer extends LivingEntity {
 			world.playSound(player, x, y, z, soundIn, category, volume, pitch);
 	}
 
+	//Fixes that the night can be skipped in some instances when a vanished player is sleeping
 	@Inject(method = "isSleepingLongEnough", at = @At("HEAD"), cancellable = true)
 	private void onIsSleepingLongEnough(CallbackInfoReturnable<Boolean> callbackInfo) {
 		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(getCommandSenderWorld().getPlayerByUUID(getUUID())))
