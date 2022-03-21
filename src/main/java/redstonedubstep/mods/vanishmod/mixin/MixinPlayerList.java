@@ -76,7 +76,7 @@ public abstract class MixinPlayerList {
 	@Inject(method = "placeNewPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/PlayerList;broadcastMessage(Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ChatType;Ljava/util/UUID;)V"))
 	public void onSendJoinMessage(NetworkManager networkManager, ServerPlayerEntity player, CallbackInfo ci) {
 		if (VanishUtil.isVanished(player)) {
-			player.sendMessage(new StringTextComponent("Note: You are still vanished"), player.getUUID());
+			player.sendMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: You are still vanished"), player.getUUID());
 		}
 
 		joiningPlayer = player;
