@@ -3,7 +3,6 @@ package redstonedubstep.mods.vanishmod.mixin;
 import java.util.UUID;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,11 +17,8 @@ import net.minecraft.server.players.PlayerList;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import redstonedubstep.mods.vanishmod.VanishUtil;
 
-@Mixin(value = PlayerList.class, priority = 900) //these mixin methods (especially the upper ones) are pretty important for this mod to work, so we set the priority of these mixins to be higher so no mixins clash because of same priorities
+@Mixin(value = PlayerList.class)
 public abstract class MixinPlayerList {
-	@Shadow
-	public abstract ServerPlayer getPlayer(UUID p_11260_);
-
 	@Unique
 	private ServerPlayer joiningPlayer;
 
