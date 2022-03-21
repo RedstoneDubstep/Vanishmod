@@ -12,6 +12,7 @@
     "world.MixinLivingEntity",
     "world.MixinPlayer",
     "world.MixinServerLevel",
+    "world.MixinSleepStatus",
     "MixinPlayerList",
     "MixinServerPlayer"
   ],
