@@ -16,12 +16,11 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(EntityArgument.class)
 public abstract class MixinEntityArgument {
-
 	//Prevent non-admins from targeting vanished players through their name or a selector, admins bypass this filtering
 	@Redirect(method = "getPlayers", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"))
 	private static boolean redirectIsEmpty(List<ServerPlayer> list, CommandContext<CommandSourceStack> context) {
-		if (VanishConfig.CONFIG.hidePlayersFromCommandSelectors.get() && !context.getSource().hasPermission(1)) {
-			List<ServerPlayer> filteredList = VanishUtil.formatPlayerList(list);
+		if (VanishConfig.CONFIG.hidePlayersFromCommandSelectors.get()) {
+			List<ServerPlayer> filteredList = VanishUtil.formatPlayerList(list, context.getSource().getEntity());
 
 			return filteredList.isEmpty();
 		}

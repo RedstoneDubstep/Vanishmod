@@ -14,6 +14,6 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 public class MixinSleepStatus {
 	@ModifyVariable(method = "update", at = @At(value = "HEAD"), argsOnly = true)
 	public List<ServerPlayer> updatePlayers(List<ServerPlayer> original) {
-		return VanishUtil.formatPlayerList(original);
+		return VanishUtil.formatPlayerList(original, null);
 	}
 }

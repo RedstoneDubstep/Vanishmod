@@ -17,7 +17,6 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(LivingEntity.class)
 public abstract class MixinLivingEntity extends Entity {
-
 	//Entity needs a constructor, so here we go
 	private MixinLivingEntity(EntityType<?> entityType, Level world) {
 		super(entityType, world);
@@ -26,7 +25,7 @@ public abstract class MixinLivingEntity extends Entity {
 	//Prevent particles from being created when a vanished player falls
 	@Redirect(method = "checkFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I"))
 	public <T extends ParticleOptions> int redirectSendParticles(ServerLevel serverWorld, T type, double posX, double posY, double posZ, int particleCount, double xOffset, double yOffset, double zOffset, double speed) {
-		if (!VanishConfig.CONFIG.hidePlayersFromWorld.get() || !VanishUtil.isVanished(getUUID(), (ServerLevel)getCommandSenderWorld()))
+		if (!VanishConfig.CONFIG.hidePlayersFromWorld.get() || !VanishUtil.isVanished(getCommandSenderWorld().getPlayerByUUID(getUUID())))
 			serverWorld.sendParticles(type, posX, posY, posZ, particleCount, xOffset, yOffset, zOffset, speed);
 
 		return 0;
@@ -35,7 +34,7 @@ public abstract class MixinLivingEntity extends Entity {
 	//Prevent pickup animation from being sent when a vanished player picks up an item. This fixes that the unvanished client thinks that it picked up an item (and thus shows a pickup animation for the local player) while in reality a vanished player did
 	@Inject(method = "take", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerChunkCache;broadcast(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/network/protocol/Packet;)V"), cancellable = true)
 	public void redirectBroadcast(Entity entity, int amount, CallbackInfo callbackInfo) {
-		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(getUUID(), (ServerLevel)getCommandSenderWorld()))
+		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(getCommandSenderWorld().getPlayerByUUID(getUUID())))
 			callbackInfo.cancel();
 	}
 }

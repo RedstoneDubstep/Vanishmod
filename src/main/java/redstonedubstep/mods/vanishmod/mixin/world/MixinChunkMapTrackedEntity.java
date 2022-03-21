@@ -20,13 +20,12 @@ public abstract class MixinChunkMapTrackedEntity {
 	@Final
 	Entity entity;
 
-	//Prevent tracking of vanished players for other players, which prevents vanished players from being rendered for anyone but themselves.
+	//Prevent tracking of vanished players for other players, which prevents vanished players from being rendered for anyone but themselves and permitted players.
 	@Inject(method = "updatePlayer", at = @At("HEAD"), cancellable = true)
 	private void onUpdatePlayer(ServerPlayer otherPlayer, CallbackInfo info) {
 		if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
-			if (entity instanceof Player player && VanishUtil.isVanished(player)) {
+			if (entity instanceof Player player && VanishUtil.isVanished(player, otherPlayer))
 				info.cancel();
-			}
 		}
 	}
 }

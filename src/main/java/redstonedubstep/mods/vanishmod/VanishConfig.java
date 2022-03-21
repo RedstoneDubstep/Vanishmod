@@ -25,7 +25,9 @@ public class VanishConfig {
 		public BooleanValue hidePlayerNameInChat;
 		public BooleanValue sendJoinLeaveMessages;
 		public BooleanValue fixModCompat;
+		public BooleanValue vanishedPlayersSeeEachOther;
 		public IntValue requiredPermissionLevel;
+		public IntValue seeVanishedPermissionLevel;
 		public ConfigValue<String> onVanishMessage;
 		public ConfigValue<String> onUnvanishMessage;
 		public ConfigValue<String> onVanishQuery;
@@ -50,10 +52,16 @@ public class VanishConfig {
 			fixModCompat = builder
 					.comment("Should there be a (potential) fix for other mods uncovering the presence of vanished players? This may severely increase CPU usage and is thus not recommended")
 					.define("fixModCompat", false);
+			vanishedPlayersSeeEachOther = builder
+					.comment("Should vanished players be able to see each other?")
+					.define("vanishedPlayersSeeEachOther", false);
 
 			requiredPermissionLevel = builder
 					.comment("What op permission level should be the requirement for being able to execute /vanish?")
 					.defineInRange("requiredPermissionLevel", 2, 0, 4);
+			seeVanishedPermissionLevel = builder
+					.comment("What op permission level should be the requirement for being able to see vanished players? A value of -1 disables this feature.")
+					.defineInRange("seeVanishedPermissionLevel", -1, -1, 4);
 
 			onVanishMessage = builder
 					.comment("What message should the vanishing player receive if they vanish? (%s will get replaced with the name of the vanishing player)")

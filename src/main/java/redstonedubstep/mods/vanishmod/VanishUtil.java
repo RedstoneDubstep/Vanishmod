@@ -1,7 +1,6 @@
 package redstonedubstep.mods.vanishmod;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import net.minecraft.ChatFormatting;
@@ -28,8 +27,8 @@ import redstonedubstep.mods.vanishmod.compat.Mc2DiscordCompat;
 public class VanishUtil {
 	public static final MutableComponent VANISHMOD_PREFIX = (new TextComponent("[")).append(new TextComponent("Vanishmod").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/vanishmod")))).append("] ");
 
-	public static List<ServerPlayer> formatPlayerList(List<ServerPlayer> rawList) {
-		return rawList.stream().filter(player -> !isVanished(player)).collect(Collectors.toList());
+	public static List<ServerPlayer> formatPlayerList(List<ServerPlayer> rawList, Entity forPlayer) {
+		return rawList.stream().filter(player -> !isVanished(player, forPlayer)).collect(Collectors.toList());
 	}
 
 	public static void sendPacketsOnVanish(ServerPlayer currentPlayer, ServerLevel world, boolean vanished) {
@@ -39,13 +38,25 @@ public class VanishUtil {
 			ServerChunkCache chunkProvider = player.getLevel().getChunkSource();
 
 			if (!player.equals(currentPlayer)) { //prevent packet from being sent to the executor of the command
-				player.connection.send(new ClientboundPlayerInfoPacket(vanished ? Action.REMOVE_PLAYER : Action.ADD_PLAYER, currentPlayer));
+				if (!canSeeVanishedPlayers(player))
+					player.connection.send(new ClientboundPlayerInfoPacket(vanished ? Action.REMOVE_PLAYER : Action.ADD_PLAYER, currentPlayer));
+				if (isVanished(player))
+					currentPlayer.connection.send(new ClientboundPlayerInfoPacket(canSeeVanishedPlayers(currentPlayer) ? Action.ADD_PLAYER : Action.REMOVE_PLAYER, player)); //update the vanishing player's tab list in case the vanishing player can (not) see other vanished players now
+
 				if (!vanished) {
 					chunkProvider.chunkMap.entityMap.remove(currentPlayer.getId()); //we don't want an error in our log because the entity to be tracked is already on that list
 					chunkProvider.addEntity(currentPlayer);
 				}
-				else if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
-					player.connection.send(new ClientboundRemoveEntitiesPacket(currentPlayer.getId()));
+				else if (isVanished(player) && canSeeVanishedPlayers(currentPlayer)) {
+					chunkProvider.chunkMap.entityMap.remove(player.getId()); //we don't want an error in our log because the entity to be tracked is already on that list
+					chunkProvider.addEntity(player);
+				}
+
+				if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
+					if (vanished && !canSeeVanishedPlayers(player))
+						player.connection.send(new ClientboundRemoveEntitiesPacket(currentPlayer.getId())); //remove the vanishing player for the other players that cannot see vanished players
+					else if (isVanished(player) && !canSeeVanishedPlayers(currentPlayer))
+						currentPlayer.connection.send(new ClientboundRemoveEntitiesPacket(player.getId())); //if the vanishing players cannot see vanished players now, remove them for the vanishing player
 				}
 			}
 		}
@@ -85,20 +96,24 @@ public class VanishUtil {
 		return new TranslatableComponent(VanishUtil.isVanished(player) ? VanishConfig.CONFIG.onVanishQuery.get() : VanishConfig.CONFIG.onUnvanishQuery.get(), player.getDisplayName());
 	}
 
-	public static boolean isVanished(UUID uuid, ServerLevel world) {
-		Entity entity = world.getEntity(uuid);
-
+	public static boolean canSeeVanishedPlayers(Entity entity) {
 		if (entity instanceof Player player)
-			return isVanished(player);
+			return (VanishConfig.CONFIG.vanishedPlayersSeeEachOther.get() && VanishUtil.isVanished(player)) || (VanishConfig.CONFIG.seeVanishedPermissionLevel.get() >= 0 && player.hasPermissions(VanishConfig.CONFIG.seeVanishedPermissionLevel.get()));
 
 		return false;
 	}
 
 	public static boolean isVanished(Player player) {
-		if (player != null && !player.level.isClientSide) {
-			CompoundTag deathPersistedData = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+		return isVanished(player, null);
+	}
 
-			return deathPersistedData.getBoolean("Vanished");
+	public static boolean isVanished(Player player, Entity forPlayer) {
+		if (player != null && !player.level.isClientSide) {
+			boolean isVanished = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean("Vanished");
+
+			if (forPlayer != null)
+				return isVanished && !canSeeVanishedPlayers(forPlayer);
+			else return isVanished;
 		}
 
 		return false;
