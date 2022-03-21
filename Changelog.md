@@ -1,6 +1,7 @@
 -----------Changelog for v1.1.4-----------
 
 - Added "Vanished" prefix to the tab list player name when the player is vanished
+- Added "Vanished" prefix to the message that the joining player receives while being vanished
 
 -----------Changelog for v1.1.3.1-----------
 

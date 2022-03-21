@@ -11,6 +11,7 @@ import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.VanillaGameEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.TabListNameFormat;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
@@ -35,7 +36,7 @@ public class VanishEventListener {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOW)
 	public static void onTabListName(TabListNameFormat event) {
 		if (VanishUtil.isVanished(event.getPlayer())) { //if the player is vanished, its tab list name will only be seen by itself
 			MutableComponent vanishedName = new TextComponent("").withStyle(ChatFormatting.ITALIC);
