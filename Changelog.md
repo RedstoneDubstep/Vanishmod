@@ -2,6 +2,7 @@
 
 - Added "Vanished" prefix to the tab list player name when the player is vanished
 - Added "Vanished" prefix to the message that the joining player receives while being vanished
+- Potentially fixed that vanished players could not join a server when Disguiselib is installed
 
 -----------Changelog for v1.1.3.1-----------
 
