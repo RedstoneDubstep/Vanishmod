@@ -12,12 +12,12 @@ import net.minecraftforge.fml.network.FMLNetworkConstants;
 
 @Mod(Vanishmod.MODID)
 public class Vanishmod {
-	public static final String MODID = "vanishmod"; //This is Vanishmod v1.1.3.1 for 1.16.5!
+	public static final String MODID = "vmod"; //This is Vanishmod v1.1.3.1 for 1.16.5!
 
 	public Vanishmod() {
 		ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
 		MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, VanishConfig.SERVER_SPEC);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, VanishConfig.SERVER_SPEC, "vanishmod-server.toml");
 	}
 
 	public void registerCommands(RegisterCommandsEvent event) {

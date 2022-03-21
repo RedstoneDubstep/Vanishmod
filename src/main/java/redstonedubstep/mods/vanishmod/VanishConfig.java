@@ -35,7 +35,7 @@ public class VanishConfig {
 
 		Config(ForgeConfigSpec.Builder builder) {
 			hidePlayersFromWorld = builder
-					.comment("Should vanished players be physically hidden from the world? This includes sound and particle suppression")
+					.comment(" --- Vanishmod Config File --- ", "Should vanished players be physically hidden from the world? This includes sound and particle suppression")
 					.define("hidePlayersFromWorld", true);
 			hidePlayersFromPlayerLists = builder
 					.comment("Should vanished players be hidden from player lists such as the /list command and the list in the Multiplayer screen?")

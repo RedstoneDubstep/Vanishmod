@@ -3,6 +3,7 @@
 - Added "Vanished" prefix to the tab list player name when the player is vanished
 - Added "Vanished" prefix to the message that the joining player receives while being vanished
 - Added config option to enable that vanished players can see themselves, as well as a configurable op level at which players can see vanished players
+- Changed the mod id of this mod from "vanishmod" to "vmod", this should not affect players
 - Fixed that vanished players need to sleep in order for the night to be skipped
 - Potentially fixed that vanished players could not join a server when Disguiselib is installed
 
