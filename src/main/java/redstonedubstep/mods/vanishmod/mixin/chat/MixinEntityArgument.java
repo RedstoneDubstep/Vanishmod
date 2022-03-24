@@ -4,7 +4,8 @@ import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.At.Shift;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import com.mojang.brigadier.context.CommandContext;
 
@@ -16,15 +17,12 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(EntityArgument.class)
 public abstract class MixinEntityArgument {
-	//Prevent non-admins from targeting vanished players through their name or a selector, admins bypass this filtering
-	@Redirect(method = "getPlayers", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"))
-	private static boolean redirectIsEmpty(List<ServerPlayer> list, CommandContext<CommandSourceStack> context) {
-		if (VanishConfig.CONFIG.hidePlayersFromCommandSelectors.get()) {
-			List<ServerPlayer> filteredList = VanishUtil.formatPlayerList(list, context.getSource().getEntity());
+	//Prevent player that are not allowed to see vanished players from targeting them through their name or a selector
+	@ModifyVariable(method = "getPlayers", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", shift = Shift.BEFORE))
+	private static List<ServerPlayer> redirectIsEmpty(List<ServerPlayer> originalList, CommandContext<CommandSourceStack> context) {
+		if (VanishConfig.CONFIG.hidePlayersFromCommandSelectors.get() && context.getSource().getEntity() != null) //only filter commands from players, not command blocks/console/datapacks
+			originalList = VanishUtil.formatPlayerList(originalList, context.getSource().getEntity());
 
-			return filteredList.isEmpty();
-		}
-
-		return list.isEmpty();
+		return originalList;
 	}
 }
