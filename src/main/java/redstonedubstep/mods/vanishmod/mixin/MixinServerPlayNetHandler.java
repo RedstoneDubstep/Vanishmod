@@ -24,17 +24,20 @@ public class MixinServerPlayNetHandler {
 	@Shadow @Final
 	private MinecraftServer server;
 
-	//Prevent tab list information packet from being sent to other players if the player in the packet is vanished. Contains an extra check to ensure the joining/leaving player gets information about itself
+	//Prevent tab list information packet from being sent to other players if the player in the packet is vanished for the receiver.
+	//We don't filter latency packets, because they would break this method as there are multiple players in the "entries" argument of a latency update packet
+	//We also don't filter player removal packets, because this mod uses them to remove vanished players after their status has changed to be vanished,
+	//and it can be done safely because not suppressing these packets does not break this mod (in: a player removal packet sent too much wouldn't break this mod as much as a player addition packet)
 	@Inject(method = "send(Lnet/minecraft/network/IPacket;)V", at = @At("HEAD"), cancellable = true)
 	private void onSendPacket(IPacket<?> packet, CallbackInfo callbackInfo) {
 		if (packet instanceof SPlayerListItemPacket) {
 			SPlayerListItemPacket infoPacket = (SPlayerListItemPacket)packet;
 
-			if (infoPacket.action == Action.ADD_PLAYER || infoPacket.action == Action.REMOVE_PLAYER){
+			if (infoPacket.action != Action.UPDATE_LATENCY && infoPacket.action != Action.REMOVE_PLAYER) {
 				GameProfile sentPlayer = !infoPacket.entries.isEmpty() ? infoPacket.entries.get(0).getProfile() : null;
 
-				if (sentPlayer != null && VanishUtil.isVanished(server.getPlayerList().getPlayer(sentPlayer.getId()), player)) {
-					if (infoPacket.action == Action.ADD_PLAYER && !player.getUUID().equals(sentPlayer.getId()))
+				if (sentPlayer != null) {
+					if (VanishUtil.isVanished(server.getPlayerList().getPlayer(sentPlayer.getId()), player))
 						callbackInfo.cancel();
 				}
 			}
