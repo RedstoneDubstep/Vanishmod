@@ -111,9 +111,14 @@ public class VanishUtil {
 		if (player != null && !player.level.isClientSide) {
 			boolean isVanished = player.getPersistentData().getCompound(PlayerEntity.PERSISTED_NBT_TAG).getBoolean("Vanished");
 
-			if (forPlayer != null)
+			if (forPlayer != null) {
+				if (player.equals(forPlayer)) //No player should ever be vanished for themselves
+					return false;
+
 				return isVanished && !canSeeVanishedPlayers(forPlayer);
-			else return isVanished;
+			}
+
+			return isVanished;
 		}
 
 		return false;
