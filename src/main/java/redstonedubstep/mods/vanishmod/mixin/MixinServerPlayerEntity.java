@@ -25,7 +25,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity {
 	//hacky mixin that should improve mod compat: mods should always respect spectator mode when targeting players, and this mixin lets isSpectator also check if the player is vanished (and thus should also not be targeted); but don't interfere with Vanilla's isSpectator() calls, else weird glitches can happen
 	@Inject(method = "isSpectator", at = @At("HEAD"), cancellable = true)
 	public void onIsSpectator(CallbackInfoReturnable<Boolean> callback) {
-		if (VanishConfig.CONFIG.fixModCompat.get() && VanishUtil.isVanished(this)) {
+		if (VanishConfig.CONFIG.fixModCompatibility.get() && VanishUtil.isVanished(this)) {
 			StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 			String className = stackTrace[3].getClassName(); //0 is getStackTrace(), 1 is this mixin's lambda, 2 is isSpectator(), 3 is the caller of isSpectator()
 
