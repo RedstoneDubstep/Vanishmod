@@ -23,10 +23,10 @@ public class VanishConfig {
 		public BooleanValue hidePlayersFromPlayerLists;
 		public BooleanValue hidePlayersFromCommandSelectors;
 		public BooleanValue hidePlayerNameInChat;
-		public BooleanValue sendJoinLeaveMessages;
-		public BooleanValue fixModCompat;
+		public BooleanValue sendFakeJoinLeaveMessages;
+		public BooleanValue fixModCompatibility;
 		public BooleanValue vanishedPlayersSeeEachOther;
-		public IntValue requiredPermissionLevel;
+		public IntValue vanishCommandPermissionLevel;
 		public IntValue seeVanishedPermissionLevel;
 		public ConfigValue<String> onVanishMessage;
 		public ConfigValue<String> onUnvanishMessage;
@@ -46,19 +46,19 @@ public class VanishConfig {
 			hidePlayerNameInChat = builder
 					.comment("When vanished players send a chat message, should the name of the player that sent the message be replaced with \"vanished\" (in gray color)?")
 					.define("hidePlayerNameInChat", false);
-			sendJoinLeaveMessages = builder
+			sendFakeJoinLeaveMessages = builder
 					.comment("Should players see a fake join/leave message in their chat when another player (un-)vanishes?")
-					.define("sendJoinLeaveMessages", true);
-			fixModCompat = builder
+					.define("sendFakeJoinLeaveMessages", true);
+			fixModCompatibility = builder
 					.comment("Should there be a (potential) fix for other mods uncovering the presence of vanished players? This may severely increase CPU usage and is thus not recommended")
-					.define("fixModCompat", false);
+					.define("fixModCompatibility", false);
 			vanishedPlayersSeeEachOther = builder
 					.comment("Should vanished players be able to see each other?")
 					.define("vanishedPlayersSeeEachOther", false);
 
-			requiredPermissionLevel = builder
+			vanishCommandPermissionLevel = builder
 					.comment("What op permission level should be the requirement for being able to execute /vanish? (A value of 2 or lower allows command blocks to execute /vanish)")
-					.defineInRange("requiredPermissionLevel", 2, 0, 4);
+					.defineInRange("vanishCommandPermissionLevel", 2, 0, 4);
 			seeVanishedPermissionLevel = builder
 					.comment("What op permission level should be the requirement for being able to see vanished players, no matter if the player with that permission level is vanished or not? A value of -1 disables this feature.")
 					.defineInRange("seeVanishedPermissionLevel", -1, -1, 4);

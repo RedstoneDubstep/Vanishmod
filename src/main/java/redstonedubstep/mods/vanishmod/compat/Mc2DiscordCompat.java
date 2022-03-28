@@ -27,7 +27,7 @@ public class Mc2DiscordCompat {
 		}
 	}
 
-	public static void sendPlayerStatusMessage(ServerPlayer player, boolean left) {
+	public static void sendFakeJoinLeaveMessage(ServerPlayer player, boolean left) {
 		Player mc2dcplayer = new ml.denisd3d.mc2discord.core.entities.Player(player.getGameProfile().getName(), player.getDisplayName().getString(), player.getGameProfile().getId());
 		M2DConfig config = Mc2Discord.INSTANCE.config;
 

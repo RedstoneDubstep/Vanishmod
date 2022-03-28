@@ -66,7 +66,7 @@ public class VanishUtil {
 	}
 
 	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayer> playerList, ServerPlayer sender, boolean leaveMessage) {
-		if (VanishConfig.CONFIG.sendJoinLeaveMessages.get()) {
+		if (VanishConfig.CONFIG.sendFakeJoinLeaveMessages.get()) {
 			Component message = new TranslatableComponent(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).withStyle(ChatFormatting.YELLOW);
 
 			for (ServerPlayer receiver : playerList) {
@@ -74,7 +74,7 @@ public class VanishUtil {
 			}
 
 			if (ModList.get().isLoaded("mc2discord"))
-				Mc2DiscordCompat.sendPlayerStatusMessage(sender, leaveMessage);
+				Mc2DiscordCompat.sendFakeJoinLeaveMessage(sender, leaveMessage);
 		}
 	}
 
