@@ -27,6 +27,10 @@ import redstonedubstep.mods.vanishmod.compat.Mc2DiscordCompat;
 public class VanishUtil {
 	public static final IFormattableTextComponent VANISHMOD_PREFIX = (new StringTextComponent("[")).append(new StringTextComponent("Vanishmod").withStyle(s -> s.applyFormat(TextFormatting.GRAY).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/vanishmod")))).append("] ");
 
+	public static List<? extends Entity> formatEntityList(List<? extends Entity> rawList, Entity forPlayer) {
+		return rawList.stream().filter(entity -> !(entity instanceof PlayerEntity) || !isVanished(((PlayerEntity)entity), forPlayer)).collect(Collectors.toList());
+	}
+
 	public static List<ServerPlayerEntity> formatPlayerList(List<ServerPlayerEntity> rawList, Entity forPlayer) {
 		return rawList.stream().filter(player -> !isVanished(player, forPlayer)).collect(Collectors.toList());
 	}
