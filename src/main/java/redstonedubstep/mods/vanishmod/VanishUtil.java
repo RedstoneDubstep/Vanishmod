@@ -35,6 +35,8 @@ public class VanishUtil {
 		List<ServerPlayer> list = world.getServer().getPlayerList().getPlayers();
 		ServerChunkCache chunkProvider = currentPlayer.getLevel().getChunkSource();
 
+		currentPlayer.refreshTabListName();
+
 		for (ServerPlayer player : list) {
 			if (!player.equals(currentPlayer)) { //prevent packet from being sent to the executor of the command
 				if (!canSeeVanishedPlayers(player))
@@ -56,7 +58,6 @@ public class VanishUtil {
 		chunkProvider.addEntity(currentPlayer);
 
 		currentPlayer.connection.send(new ClientboundSetActionBarTextPacket(VanishUtil.getVanishedStatusText(currentPlayer)));
-		currentPlayer.refreshTabListName();
 	}
 
 	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayer> playerList, ServerPlayer sender, boolean leaveMessage) {
