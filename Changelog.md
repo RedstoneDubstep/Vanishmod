@@ -1,6 +1,7 @@
 -----------Changelog for v1.1.4.1-----------
 
 - Fixed several issues occurring when a player vanishes or unvanishes while other players are in another dimension
+- Fixed "Vanished" player name prefix being updated slightly too late, causing it to be briefly visible for other players when a player unvanishes
 
 -----------Changelog for v1.1.4-----------
 
