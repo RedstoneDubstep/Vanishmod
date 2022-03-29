@@ -40,7 +40,7 @@ public class VanishCommand {
 		if (vanishes)
 			player.sendMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: ").append(new TextComponent("(...)").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(note))))), Util.NIL_UUID);
 
-		VanishUtil.sendJoinOrLeaveMessageToPlayers(ctx.getSource().getLevel().players(), player, vanishes);
+		VanishUtil.sendJoinOrLeaveMessageToPlayers(ctx.getSource().getLevel().getServer().getPlayerList().getPlayers(), player, vanishes);
 		VanishUtil.sendPacketsOnVanish(player, ctx.getSource().getLevel(), vanishes);
 		return 1;
 	}

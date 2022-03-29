@@ -32,25 +32,15 @@ public class VanishUtil {
 	}
 
 	public static void sendPacketsOnVanish(ServerPlayer currentPlayer, ServerLevel world, boolean vanished) {
-		List<ServerPlayer> list = world.players();
+		List<ServerPlayer> list = world.getServer().getPlayerList().getPlayers();
+		ServerChunkCache chunkProvider = currentPlayer.getLevel().getChunkSource();
 
 		for (ServerPlayer player : list) {
-			ServerChunkCache chunkProvider = player.getLevel().getChunkSource();
-
 			if (!player.equals(currentPlayer)) { //prevent packet from being sent to the executor of the command
 				if (!canSeeVanishedPlayers(player))
 					player.connection.send(new ClientboundPlayerInfoPacket(vanished ? Action.REMOVE_PLAYER : Action.ADD_PLAYER, currentPlayer));
 				if (isVanished(player))
 					currentPlayer.connection.send(new ClientboundPlayerInfoPacket(canSeeVanishedPlayers(currentPlayer) ? Action.ADD_PLAYER : Action.REMOVE_PLAYER, player)); //update the vanishing player's tab list in case the vanishing player can (not) see other vanished players now
-
-				if (!vanished) {
-					chunkProvider.chunkMap.entityMap.remove(currentPlayer.getId()); //we don't want an error in our log because the entity to be tracked is already on that list
-					chunkProvider.addEntity(currentPlayer);
-				}
-				else if (isVanished(player) && canSeeVanishedPlayers(currentPlayer)) {
-					chunkProvider.chunkMap.entityMap.remove(player.getId()); //we don't want an error in our log because the entity to be tracked is already on that list
-					chunkProvider.addEntity(player);
-				}
 
 				if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
 					if (vanished && !canSeeVanishedPlayers(player))
@@ -60,6 +50,10 @@ public class VanishUtil {
 				}
 			}
 		}
+
+		//We can safely send the tracking update for the vanishing or unvanishing player to everyone, the more strict and player-aware filter gets applied in MixinChunkMapTrackedEntity
+		chunkProvider.chunkMap.entityMap.remove(currentPlayer.getId()); //we don't want an error in our log because the entity to be tracked is already on that list
+		chunkProvider.addEntity(currentPlayer);
 
 		currentPlayer.connection.send(new ClientboundSetActionBarTextPacket(VanishUtil.getVanishedStatusText(currentPlayer)));
 		currentPlayer.refreshTabListName();

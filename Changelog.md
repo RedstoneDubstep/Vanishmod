@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.4.1-----------
+
+- Fixed several issues occurring when a player vanishes or unvanishes while other players are in another dimension
+
 -----------Changelog for v1.1.4-----------
 
 Disclaimer: In this version, some config option names were changed, this may reset some config values so please make sure to update them appropriately!
