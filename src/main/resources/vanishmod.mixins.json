@@ -5,6 +5,7 @@
   "refmap": "vanishmod.refmap.json",
   "server": [
     "chat.MixinEntityArgument",
+    "chat.MixinEntitySelector",
     "chat.MixinListPlayersCommand",
     "gui.MixinServerStatusPacketListenerImpl",
     "gui.MixinServerStatusPlayers",
