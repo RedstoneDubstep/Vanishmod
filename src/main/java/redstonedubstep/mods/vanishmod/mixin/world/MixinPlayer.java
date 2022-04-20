@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -36,5 +37,14 @@ public abstract class MixinPlayer extends LivingEntity {
 	private void onIsSleepingLongEnough(CallbackInfoReturnable<Boolean> callbackInfo) {
 		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(getCommandSenderWorld().getPlayerByUUID(getUUID())))
 			callbackInfo.setReturnValue(false);
+	}
+
+	//Suppress burping sound when a vanished player finishes eating
+	@ModifyArg(method = "eat", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"))
+	private SoundEvent removeBurpSound(SoundEvent soundEvent) {
+		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(getCommandSenderWorld().getPlayerByUUID(getUUID())))
+			soundEvent = null;
+
+		return soundEvent;
 	}
 }
