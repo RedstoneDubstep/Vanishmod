@@ -41,13 +41,9 @@ public abstract class MixinPlayerList {
 		}
 	}
 
-	//Notify vanished players that they are still vanished when they join the server
+	//Helper for accessing the player in question in the method above, as you cannot get it from PlayerList#broadcastMessage
 	@Inject(method = "placeNewPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;broadcastMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/ChatType;Ljava/util/UUID;)V"))
 	public void onSendJoinMessage(Connection networkManager, ServerPlayer player, CallbackInfo ci) {
-		if (VanishUtil.isVanished(player)) {
-			player.sendMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: You are still vanished"), player.getUUID());
-		}
-
 		joiningPlayer = player;
 	}
 }

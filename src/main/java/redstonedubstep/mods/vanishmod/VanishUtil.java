@@ -1,6 +1,8 @@
 package redstonedubstep.mods.vanishmod;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.minecraft.ChatFormatting;
@@ -23,9 +25,11 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
 import redstonedubstep.mods.vanishmod.api.PlayerVanishEvent;
 import redstonedubstep.mods.vanishmod.compat.Mc2DiscordCompat;
+import redstonedubstep.mods.vanishmod.misc.SoundSuppressionHelper;
 
 public class VanishUtil {
 	public static final MutableComponent VANISHMOD_PREFIX = (new TextComponent("[")).append(new TextComponent("Vanishmod").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/vanishmod")))).append("] ");
+	private static final Set<ServerPlayer> vanishedPlayers = new HashSet<>();
 
 	public static List<? extends Entity> formatEntityList(List<? extends Entity> rawList, Entity forPlayer) {
 		return rawList.stream().filter(entity -> !(entity instanceof Player player) || !isVanished(player, forPlayer)).collect(Collectors.toList());
@@ -84,11 +88,20 @@ public class VanishUtil {
 		deathPersistentData.putBoolean("Vanished", vanished);
 		persistentData.put(Player.PERSISTED_NBT_TAG, deathPersistentData); //Because the deathPersistentData could have been created newly by getCompound if it didn't exist before
 
-		if (ModList.get().isLoaded("mc2discord")) {
+		if (ModList.get().isLoaded("mc2discord"))
 			Mc2DiscordCompat.hidePlayer(player, vanished);
-		}
 
+		updateVanishedPlayerList(player, vanished);
 		MinecraftForge.EVENT_BUS.post(new PlayerVanishEvent(player, vanished));
+	}
+
+	public static void updateVanishedPlayerList(ServerPlayer player, boolean vanished) {
+		if (vanished)
+			vanishedPlayers.add(player);
+		else
+			vanishedPlayers.remove(player);
+
+		SoundSuppressionHelper.updateVanishedPlayerMap(player, vanished);
 	}
 
 	public static TranslatableComponent getVanishedStatusText(ServerPlayer player) {
