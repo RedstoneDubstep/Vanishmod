@@ -5,6 +5,7 @@
 - Fixed several issues occurring when a player vanishes or unvanishes while other players are in another dimension
 - Fixed "Vanished" player name prefix being updated slightly too late, causing it to be briefly visible for other players when a player unvanishes
 - Fixed vanished players being targetable by players that cannot see them through certain (operator-only) commands
+- Fixed hostile mobs being able to target vanished players
 
 -----------Changelog for v1.1.4-----------
 

@@ -1,5 +1,6 @@
 package redstonedubstep.mods.vanishmod;
 
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -10,6 +11,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.GameType;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
+import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.TabListNameFormat;
@@ -93,6 +95,14 @@ public class VanishEventListener {
 
 			if (player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
 				SoundSuppressionHelper.updateEntityHitResult(player, event.getTarget());
+		}
+	}
+
+	@SubscribeEvent
+	public static void onSetAttackTarget(LivingSetAttackTargetEvent event) {
+		if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
+			if (event.getTarget() instanceof ServerPlayerEntity && event.getEntityLiving() instanceof MobEntity && VanishUtil.isVanished(((ServerPlayerEntity)event.getTarget())))
+				((MobEntity)event.getEntityLiving()).setTarget(null);
 		}
 	}
 }
