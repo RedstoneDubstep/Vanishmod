@@ -40,9 +40,8 @@ public class SoundSuppressionHelper {
 	}
 
 	public static void invalidateHitResults(ServerPlayerEntity player) {
-		if (VanishUtil.isVanished(player)) {
+		if (VanishUtil.isVanished(player))
 			vanishedPlayersAndHitResults.put(player, null);
-		}
 	}
 
 	public static boolean areVanishedPlayersAt(World world, Vector3d pos) {

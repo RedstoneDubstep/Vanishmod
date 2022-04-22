@@ -68,7 +68,7 @@ public class VanishEventListener {
 
 	@SubscribeEvent
 	public static void onInteractBlock(RightClickBlock event) {
-		if (event.getPlayer() instanceof ServerPlayerEntity) {
+		if (VanishConfig.CONFIG.indirectSoundSuppression.get() && event.getPlayer() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = ((ServerPlayerEntity)event.getPlayer());
 
 			if (player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
@@ -78,7 +78,7 @@ public class VanishEventListener {
 
 	@SubscribeEvent
 	public static void onInteractEntity(EntityInteract event) {
-		if (event.getPlayer() instanceof ServerPlayerEntity) {
+		if (VanishConfig.CONFIG.indirectSoundSuppression.get() && event.getPlayer() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = ((ServerPlayerEntity)event.getPlayer());
 
 			if (player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
@@ -88,7 +88,7 @@ public class VanishEventListener {
 
 	@SubscribeEvent
 	public static void onAttackEntity(AttackEntityEvent event) {
-		if (event.getPlayer() instanceof ServerPlayerEntity) {
+		if (VanishConfig.CONFIG.indirectSoundSuppression.get() && event.getPlayer() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = ((ServerPlayerEntity)event.getPlayer());
 
 			if (player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
