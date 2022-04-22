@@ -1,4 +1,4 @@
------------Changelog for v1.1.4.1-----------
+-----------Changelog for v1.1.5-----------
 
 - Added better sound suppression for eating sounds
 - Added indirect sound suppression which aims to suppress sounds that are indirectly caused by vanished players, and a config option to disable it
