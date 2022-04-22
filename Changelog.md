@@ -1,6 +1,7 @@
 -----------Changelog for v1.1.4.1-----------
 
 - Added better sound suppression for eating sounds
+- Added indirect sound suppression which aims to suppress sounds that are indirectly caused by vanished players, and a config option to disable it
 - Fixed several issues occurring when a player vanishes or unvanishes while other players are in another dimension
 - Fixed "Vanished" player name prefix being updated slightly too late, causing it to be briefly visible for other players when a player unvanishes
 - Fixed vanished players being targetable by players that cannot see them through certain (operator-only) commands

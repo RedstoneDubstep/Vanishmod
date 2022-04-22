@@ -40,9 +40,8 @@ public class SoundSuppressionHelper {
 	}
 
 	public static void invalidateHitResults(ServerPlayer player) {
-		if (VanishUtil.isVanished(player)) {
+		if (VanishUtil.isVanished(player))
 			vanishedPlayersAndHitResults.put(player, null);
-		}
 	}
 
 	public static boolean areVanishedPlayersAt(Level level, Vec3 pos) {

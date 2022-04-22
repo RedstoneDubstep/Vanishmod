@@ -66,6 +66,9 @@ public abstract class MixinServerLevel extends Level {
 	//Returns true if it is determined that a vanished player was indirectly causing a sound, and that it thus should not be broadcast
 	@Unique
 	private boolean shouldSuppressSoundEvent(Either<Vec3, Entity> soundOrigin) {
+		if (!VanishConfig.CONFIG.indirectSoundSuppression.get())
+			return false;
+
 		if (soundOrigin.map(vec -> SoundSuppressionHelper.areVanishedPlayersAt(this, vec), entity -> SoundSuppressionHelper.areVanishedPlayersAt(this, entity.position())))
 			return true;
 		else if (soundOrigin.map(vec -> SoundSuppressionHelper.vanishedPlayerVehicleAt(this, vec), SoundSuppressionHelper::isVanishedPlayerVehicle))
@@ -81,6 +84,7 @@ public abstract class MixinServerLevel extends Level {
 	private boolean shouldSuppressLevelEvent(Optional<Player> player, BlockPos soundOrigin) {
 		if (player.isPresent() && VanishUtil.isVanished(player.get()))
 			return true;
-		else return SoundSuppressionHelper.areVanishedPlayersAt(this, new Vec3(soundOrigin.getX(), soundOrigin.getY(), soundOrigin.getZ())) || SoundSuppressionHelper.vanishedPlayersInteractWith(this, soundOrigin);
+		else
+			return VanishConfig.CONFIG.indirectSoundSuppression.get() && SoundSuppressionHelper.areVanishedPlayersAt(this, new Vec3(soundOrigin.getX(), soundOrigin.getY(), soundOrigin.getZ())) || SoundSuppressionHelper.vanishedPlayersInteractWith(this, soundOrigin);
 	}
 }

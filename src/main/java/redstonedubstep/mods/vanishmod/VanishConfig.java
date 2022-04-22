@@ -26,6 +26,7 @@ public class VanishConfig {
 		public BooleanValue sendFakeJoinLeaveMessages;
 		public BooleanValue fixModCompatibility;
 		public BooleanValue vanishedPlayersSeeEachOther;
+		public BooleanValue indirectSoundSuppression;
 		public IntValue vanishCommandPermissionLevel;
 		public IntValue seeVanishedPermissionLevel;
 		public ConfigValue<String> onVanishMessage;
@@ -55,6 +56,9 @@ public class VanishConfig {
 			vanishedPlayersSeeEachOther = builder
 					.comment("Should vanished players be able to see each other?")
 					.define("vanishedPlayersSeeEachOther", false);
+			indirectSoundSuppression = builder
+					.comment("Should this mod try to detect and suppress sounds that are indirectly caused by vanished players (e.g. pressing a button or hitting an entity)? This detection might accidentally suppress a few sounds unrelated to vanished players, disable this detection if too many sound bugs occur")
+					.define("indirectSoundSuppression", true);
 
 			vanishCommandPermissionLevel = builder
 					.comment("What op permission level should be the requirement for being able to execute /vanish? (A value of 2 or lower allows command blocks to execute /vanish)")
