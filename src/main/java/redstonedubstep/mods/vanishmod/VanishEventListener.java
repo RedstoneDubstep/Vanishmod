@@ -7,18 +7,33 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.GameType;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.TabListNameFormat;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import redstonedubstep.mods.vanishmod.misc.SoundSuppressionHelper;
 
 @EventBusSubscriber(modid = Vanishmod.MODID)
 public class VanishEventListener {
+	@SubscribeEvent
+	public static void onPlayerJoin(PlayerLoggedInEvent event) {
+		if (event.getPlayer() instanceof ServerPlayerEntity && VanishUtil.isVanished(event.getPlayer())) {
+			ServerPlayerEntity player = ((ServerPlayerEntity)event.getPlayer());
+
+			player.sendMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: You are still vanished"), player.getUUID());
+			VanishUtil.updateVanishedPlayerList(player, true);
+		}
+	}
 
 	@SubscribeEvent
-	public static void onPlaySoundAtEntity(PlaySoundAtEntityEvent event) {
+	public static void onPlaySound(PlaySoundAtEntityEvent event) {
 		if (event.getEntity() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity)event.getEntity();
 
@@ -48,6 +63,36 @@ public class VanishEventListener {
 					.append(new StringTextComponent("] ").withStyle(TextFormatting.DARK_GRAY))
 					.append(event.getDisplayName() == null ? ScorePlayerTeam.formatNameForTeam(event.getPlayer().getTeam(), event.getPlayer().getName()) : event.getDisplayName());
 			event.setDisplayName(vanishedName);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onInteractBlock(RightClickBlock event) {
+		if (event.getPlayer() instanceof ServerPlayerEntity) {
+			ServerPlayerEntity player = ((ServerPlayerEntity)event.getPlayer());
+
+			if (player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
+				SoundSuppressionHelper.updateBlockHitResult(player, event.getHitVec());
+		}
+	}
+
+	@SubscribeEvent
+	public static void onInteractEntity(EntityInteract event) {
+		if (event.getPlayer() instanceof ServerPlayerEntity) {
+			ServerPlayerEntity player = ((ServerPlayerEntity)event.getPlayer());
+
+			if (player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
+				SoundSuppressionHelper.updateEntityHitResult(player, event.getTarget());
+		}
+	}
+
+	@SubscribeEvent
+	public static void onAttackEntity(AttackEntityEvent event) {
+		if (event.getPlayer() instanceof ServerPlayerEntity) {
+			ServerPlayerEntity player = ((ServerPlayerEntity)event.getPlayer());
+
+			if (player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
+				SoundSuppressionHelper.updateEntityHitResult(player, event.getTarget());
 		}
 	}
 }

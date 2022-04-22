@@ -12,7 +12,8 @@
     "world.MixinChunkManagerEntityTracker",
     "world.MixinLivingEntity",
     "world.MixinPlayerEntity",
-    "world.MixinServerWorld",
+    "sound.MixinEntity",
+    "sound.MixinServerWorld",
     "MixinPlayerList",
     "MixinServerPlayerEntity",
     "MixinServerPlayNetHandler"
