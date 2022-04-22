@@ -9,11 +9,11 @@
     "chat.MixinListCommand",
     "gui.MixinServerStatusNetHandler",
     "gui.MixinServerStatusResponsePlayers",
+    "sound.MixinEntity",
+    "sound.MixinServerWorld",
     "world.MixinChunkManagerEntityTracker",
     "world.MixinLivingEntity",
     "world.MixinPlayerEntity",
-    "sound.MixinEntity",
-    "sound.MixinServerWorld",
     "MixinPlayerList",
     "MixinServerPlayerEntity",
     "MixinServerPlayNetHandler"
