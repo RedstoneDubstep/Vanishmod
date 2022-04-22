@@ -3,6 +3,7 @@ package redstonedubstep.mods.vanishmod.mixin.world;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -10,6 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.IParticleData;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import redstonedubstep.mods.vanishmod.VanishConfig;
@@ -36,5 +38,14 @@ public abstract class MixinLivingEntity extends Entity {
 	public void redirectBroadcast(Entity entity, int amount, CallbackInfo callbackInfo) {
 		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(getCommandSenderWorld().getPlayerByUUID(getUUID())))
 			callbackInfo.cancel();
+	}
+
+	//Suppress eating sound when a vanished player finishes eating
+	@ModifyArg(method = "eat", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/player/PlayerEntity;DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FF)V"))
+	private SoundEvent removeEatingSound(SoundEvent soundEvent) {
+		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(getCommandSenderWorld().getPlayerByUUID(getUUID())))
+			soundEvent = null;
+
+		return soundEvent;
 	}
 }
