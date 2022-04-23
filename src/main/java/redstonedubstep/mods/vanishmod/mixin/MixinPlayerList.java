@@ -41,9 +41,12 @@ public abstract class MixinPlayerList {
 		}
 	}
 
-	//Helper for accessing the player in question in the method above, as you cannot get it from PlayerList#broadcastMessage
+	//Vanishes any unvanished players that are on the vanishing queue. Also acts as a helper for accessing the player in question in the method above, as you cannot get it from PlayerList#broadcastMessage
 	@Inject(method = "placeNewPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;broadcastMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/ChatType;Ljava/util/UUID;)V"))
 	public void onSendJoinMessage(Connection networkManager, ServerPlayer player, CallbackInfo ci) {
+		if (VanishUtil.removeFromQueue(player.getGameProfile().getName()) && !VanishUtil.isVanished(player))
+			VanishUtil.toggleVanish(player);
+
 		joiningPlayer = player;
 	}
 }

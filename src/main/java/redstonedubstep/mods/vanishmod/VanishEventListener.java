@@ -28,7 +28,7 @@ public class VanishEventListener {
 	@SubscribeEvent
 	public static void onPlayerJoin(PlayerLoggedInEvent event) {
 		if (event.getPlayer() instanceof ServerPlayer player && VanishUtil.isVanished(player)) {
-			player.sendMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: You are still vanished"), player.getUUID());
+			player.sendMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: You are currently vanished"), player.getUUID());
 			VanishUtil.updateVanishedPlayerList(player, true);
 		}
 	}

@@ -6,9 +6,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -28,8 +30,9 @@ import redstonedubstep.mods.vanishmod.compat.Mc2DiscordCompat;
 import redstonedubstep.mods.vanishmod.misc.SoundSuppressionHelper;
 
 public class VanishUtil {
-	public static final MutableComponent VANISHMOD_PREFIX = (new TextComponent("[")).append(new TextComponent("Vanishmod").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/vanishmod")))).append("] ");
+	public static final MutableComponent VANISHMOD_PREFIX = new TextComponent("").append(new TextComponent("[").withStyle(ChatFormatting.WHITE)).append(new TextComponent("Vanishmod").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/vanishmod")))).append(new TextComponent("] ").withStyle(ChatFormatting.WHITE));
 	private static final Set<ServerPlayer> vanishedPlayers = new HashSet<>();
+	private static final Set<String> vanishingQueue = new HashSet<>();
 
 	public static List<? extends Entity> formatEntityList(List<? extends Entity> rawList, Entity forPlayer) {
 		return rawList.stream().filter(entity -> !(entity instanceof Player player) || !isVanished(player, forPlayer)).collect(Collectors.toList());
@@ -37,6 +40,19 @@ public class VanishUtil {
 
 	public static List<ServerPlayer> formatPlayerList(List<ServerPlayer> rawList, Entity forPlayer) {
 		return rawList.stream().filter(player -> !isVanished(player, forPlayer)).collect(Collectors.toList());
+	}
+
+	public static void toggleVanish(ServerPlayer player) {
+		boolean vanishes = !VanishUtil.isVanished(player);
+		String note = "Note: You can still see yourself in the tab list for technical reasons, but you are vanished for other players. \nNote: Be careful when producing noise near other players, because while most sounds will get suppressed, some won't due to technical limitations.";
+
+		VanishUtil.updateVanishedStatus(player, vanishes);
+
+		if (vanishes)
+			player.sendMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: ").append(new TextComponent("(...)").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(note))))), Util.NIL_UUID);
+
+		VanishUtil.sendJoinOrLeaveMessageToPlayers(player.getLevel().getServer().getPlayerList().getPlayers(), player, vanishes);
+		VanishUtil.sendPacketsOnVanish(player, player.getLevel(), vanishes);
 	}
 
 	public static void sendPacketsOnVanish(ServerPlayer currentPlayer, ServerLevel world, boolean vanished) {
@@ -61,15 +77,17 @@ public class VanishUtil {
 			}
 		}
 
-		//We can safely send the tracking update for the vanishing or unvanishing player to everyone, the more strict and player-aware filter gets applied in MixinChunkMapTrackedEntity
-		chunkProvider.chunkMap.entityMap.remove(currentPlayer.getId()); //we don't want an error in our log because the entity to be tracked is already on that list
-		chunkProvider.addEntity(currentPlayer);
+		//We can safely send the tracking update for the vanishing or unvanishing player to everyone, the more strict and player-aware filter gets applied in MixinChunkMapTrackedEntity. But we don't need to do that ourselves if the player has not been added yet (for example before it has fully joined the server)
+		if (chunkProvider.chunkMap.entityMap.containsKey(currentPlayer.getId())) {
+			chunkProvider.chunkMap.entityMap.remove(currentPlayer.getId()); //we don't want an error in our log because the entity to be tracked is already on that list
+			chunkProvider.addEntity(currentPlayer);
+		}
 
 		currentPlayer.connection.send(new ClientboundSetActionBarTextPacket(VanishUtil.getVanishedStatusText(currentPlayer)));
 	}
 
 	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayer> playerList, ServerPlayer sender, boolean leaveMessage) {
-		if (VanishConfig.CONFIG.sendFakeJoinLeaveMessages.get()) {
+		if (VanishConfig.CONFIG.sendFakeJoinLeaveMessages.get() && sender.server.getPlayerList().getPlayers().contains(sender)) { //Only send fake messages if the player has actually "joined" the server before this method is invoked
 			Component message = new TranslatableComponent(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).withStyle(ChatFormatting.YELLOW);
 
 			for (ServerPlayer receiver : playerList) {
@@ -106,6 +124,14 @@ public class VanishUtil {
 
 	public static TranslatableComponent getVanishedStatusText(ServerPlayer player) {
 		return new TranslatableComponent(VanishUtil.isVanished(player) ? VanishConfig.CONFIG.onVanishQuery.get() : VanishConfig.CONFIG.onUnvanishQuery.get(), player.getDisplayName());
+	}
+
+	public static boolean addToQueue(String playerName) {
+		return vanishingQueue.add(playerName);
+	}
+
+	public static boolean removeFromQueue(String playerName) {
+		return vanishingQueue.remove(playerName);
 	}
 
 	public static boolean canSeeVanishedPlayers(Entity entity) {

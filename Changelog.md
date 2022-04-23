@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.6-----------
+
+- Added "queue" command argument to be able to add players that are not online to a vanishing queue. The players in that queue will be vanished as soon as they join the server
+
 -----------Changelog for v1.1.5-----------
 
 - Added better sound suppression for eating sounds
