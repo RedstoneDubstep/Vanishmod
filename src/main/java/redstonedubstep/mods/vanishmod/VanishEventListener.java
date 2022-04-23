@@ -29,7 +29,7 @@ public class VanishEventListener {
 		if (event.getPlayer() instanceof ServerPlayerEntity && VanishUtil.isVanished(event.getPlayer())) {
 			ServerPlayerEntity player = ((ServerPlayerEntity)event.getPlayer());
 
-			player.sendMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: You are still vanished"), player.getUUID());
+			player.sendMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: You are currently vanished"), player.getUUID());
 			VanishUtil.updateVanishedPlayerList(player, true);
 		}
 	}

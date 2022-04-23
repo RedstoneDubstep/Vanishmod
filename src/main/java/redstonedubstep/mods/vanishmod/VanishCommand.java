@@ -1,22 +1,19 @@
 package redstonedubstep.mods.vanishmod;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.play.server.STitlePacket;
 import net.minecraft.network.play.server.STitlePacket.Type;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.util.text.event.HoverEvent;
-import net.minecraft.util.text.event.HoverEvent.Action;
 
 public class VanishCommand {
 	public static void register(CommandDispatcher<CommandSource> dispatcher) {
@@ -29,21 +26,14 @@ public class VanishCommand {
 				.then(Commands.literal("toggle").executes(ctx -> vanish(ctx, ctx.getSource().getPlayerOrException()))
 						.then(Commands.argument("player", EntityArgument.player()).executes(ctx -> vanish(ctx, EntityArgument.getPlayer(ctx, "player")))))
 				.then(Commands.literal("get").executes(ctx -> getVanishedStatus(ctx, ctx.getSource().getPlayerOrException()))
-						.then(Commands.argument("player", EntityArgument.player()).executes(ctx -> getVanishedStatus(ctx, EntityArgument.getPlayer(ctx, "player")))));
+						.then(Commands.argument("player", EntityArgument.player()).executes(ctx -> getVanishedStatus(ctx, EntityArgument.getPlayer(ctx, "player")))))
+				.then(Commands.literal("queue").executes(ctx -> queue(ctx, ctx.getSource().getPlayerOrException().getGameProfile().getName()))
+						.then(Commands.argument("player", StringArgumentType.word()).suggests((ctx, suggestionsBuilder) -> ISuggestionProvider.suggest(ctx.getSource().getServer().getPlayerNames(), suggestionsBuilder)).executes(ctx -> queue(ctx, StringArgumentType.getString(ctx, "player")))));
 	}
 
 	private static int vanish(CommandContext<CommandSource> ctx, ServerPlayerEntity player) {
-		boolean vanishes = !VanishUtil.isVanished(player);
-		String note = "Note: You can still see yourself in the tab list for technical reasons, but you are vanished for other players. \nNote: Be careful when producing noise near other players, because while most sounds will get suppressed, some won't due to technical limitations.";
-
-		VanishUtil.updateVanishedStatus(player, vanishes);
-		ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslationTextComponent(vanishes ? VanishConfig.CONFIG.onVanishMessage.get() : VanishConfig.CONFIG.onUnvanishMessage.get(), player.getDisplayName())), true);
-
-		if (vanishes)
-			player.sendMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: ").append(new StringTextComponent("(...)").withStyle(s -> s.applyFormat(TextFormatting.GRAY).withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new StringTextComponent(note))))), Util.NIL_UUID);
-
-		VanishUtil.sendJoinOrLeaveMessageToPlayers(ctx.getSource().getLevel().getServer().getPlayerList().getPlayers(), player, vanishes);
-		VanishUtil.sendPacketsOnVanish(player, ctx.getSource().getLevel(), vanishes);
+		ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslationTextComponent(!VanishUtil.isVanished(player) ? VanishConfig.CONFIG.onVanishMessage.get() : VanishConfig.CONFIG.onUnvanishMessage.get(), player.getDisplayName())), true);
+		VanishUtil.toggleVanish(player);
 		return 1;
 	}
 
@@ -55,6 +45,26 @@ public class VanishCommand {
 
 		if (currentEntity instanceof ServerPlayerEntity)
 			((ServerPlayerEntity)currentEntity).connection.send(new STitlePacket(Type.ACTIONBAR, vanishedStatus));
+
+		return 1;
+	}
+
+	private static int queue(CommandContext<CommandSource> ctx, String playerName) {
+		ServerPlayerEntity player = ctx.getSource().getServer().getPlayerList().getPlayerByName(playerName);
+
+		if (player != null) {
+			 if (!VanishUtil.isVanished(player))
+				 vanish(ctx, player);
+			 else
+				 ctx.getSource().sendFailure(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslationTextComponent("Could not add already vanished player %s to the vanishing queue", playerName)));
+
+			return 1;
+		}
+
+		if (VanishUtil.addToQueue(playerName))
+			ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslationTextComponent("Added %s to the vanishing queue", playerName)), true);
+		else
+			ctx.getSource().sendFailure(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslationTextComponent("Could not add already added player %s to the vanishing queue", playerName)));
 
 		return 1;
 	}
