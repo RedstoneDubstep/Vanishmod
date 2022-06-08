@@ -7,7 +7,6 @@ import com.mojang.brigadier.context.CommandContext;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -28,7 +27,7 @@ public class VanishCommand {
 				.then(Commands.literal("get").executes(ctx -> getVanishedStatus(ctx, ctx.getSource().getPlayerOrException()))
 						.then(Commands.argument("player", EntityArgument.player()).executes(ctx -> getVanishedStatus(ctx, EntityArgument.getPlayer(ctx, "player")))))
 				.then(Commands.literal("queue").executes(ctx -> queue(ctx, ctx.getSource().getPlayerOrException().getGameProfile().getName()))
-						.then(Commands.argument("player", StringArgumentType.word()).suggests((ctx, suggestionsBuilder) -> ISuggestionProvider.suggest(ctx.getSource().getServer().getPlayerNames(), suggestionsBuilder)).executes(ctx -> queue(ctx, StringArgumentType.getString(ctx, "player")))));
+						.then(Commands.argument("player", StringArgumentType.word()).executes(ctx -> queue(ctx, StringArgumentType.getString(ctx, "player")))));
 	}
 
 	private static int vanish(CommandContext<CommandSource> ctx, ServerPlayerEntity player) {
@@ -61,10 +60,10 @@ public class VanishCommand {
 			return 1;
 		}
 
-		if (VanishUtil.addToQueue(playerName))
+		if (VanishUtil.removeFromQueue(playerName))
+			ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslationTextComponent("Removed %s from the vanishing queue", playerName)), true);
+		else if (VanishUtil.addToQueue(playerName))
 			ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslationTextComponent("Added %s to the vanishing queue", playerName)), true);
-		else
-			ctx.getSource().sendFailure(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslationTextComponent("Could not add already added player %s to the vanishing queue", playerName)));
 
 		return 1;
 	}
