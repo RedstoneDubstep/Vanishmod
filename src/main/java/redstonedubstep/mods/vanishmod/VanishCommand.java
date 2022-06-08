@@ -7,7 +7,6 @@ import com.mojang.brigadier.context.CommandContext;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
@@ -26,7 +25,7 @@ public class VanishCommand {
 				.then(Commands.literal("get").executes(ctx -> getVanishedStatus(ctx, ctx.getSource().getPlayerOrException()))
 						.then(Commands.argument("player", EntityArgument.player()).executes(ctx -> getVanishedStatus(ctx, EntityArgument.getPlayer(ctx, "player")))))
 				.then(Commands.literal("queue").executes(ctx -> queue(ctx, ctx.getSource().getPlayerOrException().getGameProfile().getName()))
-						.then(Commands.argument("player", StringArgumentType.word()).suggests((ctx, suggestionsBuilder) -> SharedSuggestionProvider.suggest(ctx.getSource().getServer().getPlayerNames(), suggestionsBuilder)).executes(ctx -> queue(ctx, StringArgumentType.getString(ctx, "player")))));
+						.then(Commands.argument("player", StringArgumentType.word()).executes(ctx -> queue(ctx, StringArgumentType.getString(ctx, "player")))));
 	}
 
 	private static int vanish(CommandContext<CommandSourceStack> ctx, ServerPlayer player) {
@@ -58,10 +57,10 @@ public class VanishCommand {
 			return 1;
 		}
 
-		if (VanishUtil.addToQueue(playerName))
+		if (VanishUtil.removeFromQueue(playerName))
+			ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslatableComponent("Removed %s from the vanishing queue", playerName)), true);
+		else if (VanishUtil.addToQueue(playerName))
 			ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslatableComponent("Added %s to the vanishing queue", playerName)), true);
-		else
-			ctx.getSource().sendFailure(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslatableComponent("Could not add already added player %s to the vanishing queue", playerName)));
 
 		return 1;
 	}
