@@ -36,16 +36,16 @@ public abstract class MixinServerLevel extends Level {
 	}
 
 	//Prevents some sound events that are produced by, but not directly related to a vanished player from being broadcast. The player argument is to be ignored because it is always null if the sound event is of relevance for us (see VanishEventListener#onPlaySound)
-	@Inject(method = "playSound(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;broadcast(Lnet/minecraft/world/entity/player/Player;DDDDLnet/minecraft/resources/ResourceKey;Lnet/minecraft/network/protocol/Packet;)V"), cancellable = true)
-	private void onBroadcastSoundEvent(Player caster, double x, double y, double z, SoundEvent sound, SoundSource category, float volume, float pitch, CallbackInfo callbackInfo) {
-		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && shouldSuppressSoundEvent(Either.left(new Vec3(x, y, z))))
+	@Inject(method = "playSeededSound(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FFJ)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;broadcast(Lnet/minecraft/world/entity/player/Player;DDDDLnet/minecraft/resources/ResourceKey;Lnet/minecraft/network/protocol/Packet;)V"), cancellable = true)
+	private void onBroadcastSoundEvent(Player caster, double x, double y, double z, SoundEvent sound, SoundSource category, float volume, float pitch, long seed, CallbackInfo callbackInfo) {
+		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && shouldSuppressSoundEvent(caster, Either.left(new Vec3(x, y, z))))
 			callbackInfo.cancel();
 	}
 
 	//Prevents some sound events that are produced by, but not directly related to a vanished player from being broadcast. The player argument is to be ignored because it is always null if the sound event is of relevance for us (see VanishEventListener#onPlaySound)
-	@Inject(method = "playSound(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;broadcast(Lnet/minecraft/world/entity/player/Player;DDDDLnet/minecraft/resources/ResourceKey;Lnet/minecraft/network/protocol/Packet;)V"), cancellable = true)
-	private void onBroadcastEntitySoundEvent(Player caster, Entity entity, SoundEvent sound, SoundSource category, float volume, float pitch, CallbackInfo callbackInfo) {
-		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && shouldSuppressSoundEvent(Either.right(entity)))
+	@Inject(method = "playSeededSound(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FFJ)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;broadcast(Lnet/minecraft/world/entity/player/Player;DDDDLnet/minecraft/resources/ResourceKey;Lnet/minecraft/network/protocol/Packet;)V"), cancellable = true)
+	private void onBroadcastEntitySoundEvent(Player caster, Entity entity, SoundEvent sound, SoundSource category, float volume, float pitch, long seed, CallbackInfo callbackInfo) {
+		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && shouldSuppressSoundEvent(caster, Either.right(entity)))
 			callbackInfo.cancel();
 	}
 
@@ -63,9 +63,12 @@ public abstract class MixinServerLevel extends Level {
 			callbackInfo.cancel();
 	}
 
-	//Returns true if it is determined that a vanished player was indirectly causing a sound, and that it thus should not be broadcast
+	//Returns true if a vanished player directly produced the sound, or if it is determined that a vanished player was indirectly causing a sound, and that it thus should not be broadcast
 	@Unique
-	private boolean shouldSuppressSoundEvent(Either<Vec3, Entity> soundOrigin) {
+	private boolean shouldSuppressSoundEvent(Player player, Either<Vec3, Entity> soundOrigin) {
+		if (VanishUtil.isVanished(player))
+			return true;
+
 		if (!VanishConfig.CONFIG.indirectSoundSuppression.get())
 			return false;
 
