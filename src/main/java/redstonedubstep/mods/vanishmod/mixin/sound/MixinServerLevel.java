@@ -31,8 +31,8 @@ import redstonedubstep.mods.vanishmod.misc.SoundSuppressionHelper;
 @Mixin(ServerLevel.class)
 public abstract class MixinServerLevel extends Level {
 	//Level needs a constructor, so here we go
-	private MixinServerLevel(WritableLevelData pLevelData, ResourceKey<Level> pDimension, Holder<DimensionType> pDimensionTypeRegistration, Supplier<ProfilerFiller> pProfiler, boolean pIsClientSide, boolean pIsDebug, long pBiomeZoomSeed) {
-		super(pLevelData, pDimension, pDimensionTypeRegistration, pProfiler, pIsClientSide, pIsDebug, pBiomeZoomSeed);
+	private MixinServerLevel(WritableLevelData levelData, ResourceKey<Level> dimension, Holder<DimensionType> dimensionType, Supplier<ProfilerFiller> profiler, boolean isClientSide, boolean isDebug, long biomeZoomSeed, int maxChainedNeighborUpdates) {
+		super(levelData, dimension, dimensionType, profiler, isClientSide, isDebug, biomeZoomSeed, maxChainedNeighborUpdates);
 	}
 
 	//Prevents some sound events that are produced by, but not directly related to a vanished player from being broadcast. The player argument is to be ignored because it is always null if the sound event is of relevance for us (see VanishEventListener#onPlaySound)
