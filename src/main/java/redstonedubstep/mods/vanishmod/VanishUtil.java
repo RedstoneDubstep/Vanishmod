@@ -6,14 +6,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.Action;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
@@ -30,7 +27,7 @@ import redstonedubstep.mods.vanishmod.compat.Mc2DiscordCompat;
 import redstonedubstep.mods.vanishmod.misc.SoundSuppressionHelper;
 
 public class VanishUtil {
-	public static final MutableComponent VANISHMOD_PREFIX = new TextComponent("").append(new TextComponent("[").withStyle(ChatFormatting.WHITE)).append(new TextComponent("Vanishmod").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/vanishmod")))).append(new TextComponent("] ").withStyle(ChatFormatting.WHITE));
+	public static final MutableComponent VANISHMOD_PREFIX = Component.literal("").append(Component.literal("[").withStyle(ChatFormatting.WHITE)).append(Component.literal("Vanishmod").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/vanishmod")))).append(Component.literal("] ").withStyle(ChatFormatting.WHITE));
 	private static final Set<ServerPlayer> vanishedPlayers = new HashSet<>();
 	private static final Set<String> vanishingQueue = new HashSet<>();
 
@@ -49,7 +46,7 @@ public class VanishUtil {
 		VanishUtil.updateVanishedStatus(player, vanishes);
 
 		if (vanishes)
-			player.sendMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: ").append(new TextComponent("(...)").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(note))))), Util.NIL_UUID);
+			player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: ").append(Component.literal("(...)").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(note))))));
 
 		VanishUtil.sendJoinOrLeaveMessageToPlayers(player.getLevel().getServer().getPlayerList().getPlayers(), player, vanishes);
 		VanishUtil.sendPacketsOnVanish(player, player.getLevel(), vanishes);
@@ -88,10 +85,10 @@ public class VanishUtil {
 
 	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayer> playerList, ServerPlayer sender, boolean leaveMessage) {
 		if (VanishConfig.CONFIG.sendFakeJoinLeaveMessages.get() && sender.server.getPlayerList().getPlayers().contains(sender)) { //Only send fake messages if the player has actually "joined" the server before this method is invoked
-			Component message = new TranslatableComponent(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).withStyle(ChatFormatting.YELLOW);
+			Component message = Component.translatable(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).withStyle(ChatFormatting.YELLOW);
 
 			for (ServerPlayer receiver : playerList) {
-				receiver.sendMessage(message, sender.getUUID());
+				receiver.sendSystemMessage(message);
 			}
 
 			if (ModList.get().isLoaded("mc2discord"))
@@ -122,8 +119,8 @@ public class VanishUtil {
 		SoundSuppressionHelper.updateVanishedPlayerMap(player, vanished);
 	}
 
-	public static TranslatableComponent getVanishedStatusText(ServerPlayer player) {
-		return new TranslatableComponent(VanishUtil.isVanished(player) ? VanishConfig.CONFIG.onVanishQuery.get() : VanishConfig.CONFIG.onUnvanishQuery.get(), player.getDisplayName());
+	public static MutableComponent getVanishedStatusText(ServerPlayer player) {
+		return Component.translatable(VanishUtil.isVanished(player) ? VanishConfig.CONFIG.onVanishQuery.get() : VanishConfig.CONFIG.onUnvanishQuery.get(), player.getDisplayName());
 	}
 
 	public static boolean addToQueue(String playerName) {

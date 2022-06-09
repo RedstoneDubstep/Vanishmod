@@ -8,7 +8,8 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -29,13 +30,13 @@ public class VanishCommand {
 	}
 
 	private static int vanish(CommandContext<CommandSourceStack> ctx, ServerPlayer player) {
-		ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslatableComponent(!VanishUtil.isVanished(player) ? VanishConfig.CONFIG.onVanishMessage.get() : VanishConfig.CONFIG.onUnvanishMessage.get(), player.getDisplayName())), true);
+		ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable(!VanishUtil.isVanished(player) ? VanishConfig.CONFIG.onVanishMessage.get() : VanishConfig.CONFIG.onUnvanishMessage.get(), player.getDisplayName())), true);
 		VanishUtil.toggleVanish(player);
 		return 1;
 	}
 
 	private static int getVanishedStatus(CommandContext<CommandSourceStack> ctx, ServerPlayer player) {
-		TranslatableComponent vanishedStatus = VanishUtil.getVanishedStatusText(player);
+		MutableComponent vanishedStatus = VanishUtil.getVanishedStatusText(player);
 
 		ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(vanishedStatus), false);
 
@@ -52,15 +53,15 @@ public class VanishCommand {
 			 if (!VanishUtil.isVanished(player))
 				 vanish(ctx, player);
 			 else
-				 ctx.getSource().sendFailure(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslatableComponent("Could not add already vanished player %s to the vanishing queue", playerName)));
+				 ctx.getSource().sendFailure(VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable("Could not add already vanished player %s to the vanishing queue", playerName)));
 
 			return 1;
 		}
 
 		if (VanishUtil.removeFromQueue(playerName))
-			ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslatableComponent("Removed %s from the vanishing queue", playerName)), true);
+			ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable("Removed %s from the vanishing queue", playerName)), true);
 		else if (VanishUtil.addToQueue(playerName))
-			ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslatableComponent("Added %s to the vanishing queue", playerName)), true);
+			ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable("Added %s to the vanishing queue", playerName)), true);
 
 		return 1;
 	}
