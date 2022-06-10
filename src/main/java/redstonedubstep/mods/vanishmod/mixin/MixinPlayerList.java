@@ -4,9 +4,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.ChatSender;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -15,6 +18,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import redstonedubstep.mods.vanishmod.VanishConfig;
 import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(value = PlayerList.class)
@@ -48,5 +52,13 @@ public abstract class MixinPlayerList {
 			VanishUtil.toggleVanish(player);
 
 		joiningPlayer = player;
+	}
+
+	@Redirect(method = "broadcastChatMessage(Lnet/minecraft/server/network/FilteredText;Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/resources/ResourceKey;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;asChatSender()Lnet/minecraft/network/chat/ChatSender;"))
+	public ChatSender redirectAsChatSender(ServerPlayer player) {
+		if (VanishUtil.isVanished(player) && VanishConfig.CONFIG.hidePlayerNameInChat.get())
+			return ChatSender.system(Component.literal("vanished").withStyle(ChatFormatting.GRAY));
+
+		return player.asChatSender();
 	}
 }

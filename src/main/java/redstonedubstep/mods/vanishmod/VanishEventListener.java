@@ -3,12 +3,10 @@ package redstonedubstep.mods.vanishmod;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.scores.PlayerTeam;
-import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.VanillaGameEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -28,16 +26,6 @@ public class VanishEventListener {
 		if (event.getPlayer() instanceof ServerPlayer player && VanishUtil.isVanished(player)) {
 			player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: You are currently vanished"));
 			VanishUtil.updateVanishedPlayerList(player, true);
-		}
-	}
-
-	@SubscribeEvent
-	public static void onServerChat(ServerChatEvent event) {
-		if (VanishUtil.isVanished(event.getPlayer()) && VanishConfig.CONFIG.hidePlayerNameInChat.get()) {
-			Component message = event.getComponent();
-
-			if (message instanceof MutableComponent component && component.getContents() instanceof TranslatableContents content && content.getKey().contains("chat.type.text"))
-				event.setComponent(Component.translatable("chat.type.text", Component.literal("vanished").withStyle(ChatFormatting.GRAY), content.getArgs()[1]));
 		}
 	}
 
