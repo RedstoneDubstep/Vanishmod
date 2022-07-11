@@ -1,3 +1,8 @@
+-----------Changelog for v1.1.7-----------
+
+- Added chat message suppression, which prevents chat messages sent by vanished players from being received by everyone
+- Fixed fake join/leave messages being passed to mc2discord even though there is no connection to Discord
+
 -----------Changelog for v1.1.6-----------
 
 - Added "queue" command argument to be able to add players that are not online to a vanishing queue. The players in that queue will be vanished as soon as they join the server

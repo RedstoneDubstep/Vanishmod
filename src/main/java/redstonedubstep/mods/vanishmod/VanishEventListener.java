@@ -43,11 +43,11 @@ public class VanishEventListener {
 
 	@SubscribeEvent
 	public static void onServerChat(ServerChatEvent event) {
-		if (VanishUtil.isVanished(event.getPlayer()) && VanishConfig.CONFIG.hidePlayerNameInChat.get()) {
+		if (VanishConfig.CONFIG.hidePlayerNameInChat.get() && VanishUtil.isVanished(event.getPlayer())) {
 			Component message = event.getComponent();
 
-			if (message instanceof TranslatableComponent component && component.getKey().contains("chat.type.text"))
-				event.setComponent(new TranslatableComponent("chat.type.text", new TextComponent("vanished").withStyle(ChatFormatting.GRAY), ((TranslatableComponent)message).getArgs()[1]));
+			if (message instanceof TranslatableComponent component && component.getKey().contains("chat.type.announcement"))
+				event.setComponent(new TranslatableComponent("chat.type.announcement", new TextComponent("vanished").withStyle(ChatFormatting.GRAY), ((TranslatableComponent)message).getArgs()[1]));
 		}
 	}
 

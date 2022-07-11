@@ -44,7 +44,7 @@ public class VanishUtil {
 
 	public static void toggleVanish(ServerPlayer player) {
 		boolean vanishes = !VanishUtil.isVanished(player);
-		String note = "Note: You can still see yourself in the tab list for technical reasons, but you are vanished for other players. \nNote: Be careful when producing noise near other players, because while most sounds will get suppressed, some won't due to technical limitations.";
+		String note = "Note: You can still see yourself in the tab list for technical reasons, but you are vanished for other players. \nNote: Be careful when producing noise near other players, because while most sounds will get suppressed, some won't due to technical limitations. \nNote: While vanished, only players that are able to see you will receive your chat messages. If you want to chat with everyone, use the /say command.";
 
 		VanishUtil.updateVanishedStatus(player, vanishes);
 
