@@ -13,9 +13,11 @@ import net.minecraft.network.chat.ChatSender;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.FilteredText;
 import net.minecraft.server.players.PlayerList;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import redstonedubstep.mods.vanishmod.VanishConfig;
@@ -54,9 +56,10 @@ public abstract class MixinPlayerList {
 		joiningPlayer = player;
 	}
 
+	//Conceals the vanished sender of a message sent by the /say command by putting a system chat sender with the name "vanished" as the sender
 	@Redirect(method = "broadcastChatMessage(Lnet/minecraft/server/network/FilteredText;Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/resources/ResourceKey;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;asChatSender()Lnet/minecraft/network/chat/ChatSender;"))
-	public ChatSender redirectAsChatSender(ServerPlayer player) {
-		if (VanishUtil.isVanished(player) && VanishConfig.CONFIG.hidePlayerNameInChat.get())
+	public ChatSender redirectAsChatSender(ServerPlayer player, FilteredText<PlayerChatMessage> filteredText, ServerPlayer samePlayer, ResourceKey<ChatType> chatType) {
+		if (VanishConfig.CONFIG.hidePlayerNameInChat.get() && VanishUtil.isVanished(player) && chatType == ChatType.SAY_COMMAND)
 			return ChatSender.system(Component.literal("vanished").withStyle(ChatFormatting.GRAY));
 
 		return player.asChatSender();
