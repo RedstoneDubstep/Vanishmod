@@ -31,6 +31,7 @@ public class Mc2DiscordCompat {
 		Player mc2dcplayer = new ml.denisd3d.mc2discord.core.entities.Player(player.getGameProfile().getName(), player.getDisplayName().getString(), player.getGameProfile().getId());
 		M2DConfig config = Mc2Discord.INSTANCE.config;
 
-		Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(left ? config.messages.leave : config.messages.join, Collections.singletonList(mc2dcplayer)));
+		if (Mc2Discord.INSTANCE.isDiscordRunning())
+			Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(left ? config.messages.leave : config.messages.join, Collections.singletonList(mc2dcplayer)));
 	}
 }
