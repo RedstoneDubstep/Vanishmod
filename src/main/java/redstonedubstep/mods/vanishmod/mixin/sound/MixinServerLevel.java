@@ -1,6 +1,5 @@
 package redstonedubstep.mods.vanishmod.mixin.sound;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -52,14 +51,14 @@ public abstract class MixinServerLevel extends Level {
 	//Prevent some (sound) level events produced by vanished players from being heard. This mixin needs to exist because the PlaySoundAtEntityEvent doesn't fire if a level event happens
 	@Inject(method = "globalLevelEvent", at = @At(value = "HEAD"), cancellable = true)
 	private void onBroadcastGlobalLevelEvent(int type, BlockPos pos, int data, CallbackInfo callbackInfo) {
-		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && shouldSuppressLevelEvent(Optional.empty(), pos))
+		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && shouldSuppressLevelEvent(null, pos))
 			callbackInfo.cancel();
 	}
 
 	//Prevent some (sound) level events produced by vanished players from being heard. This mixin needs to exist because the PlaySoundAtEntityEvent doesn't fire if a level event happens
 	@Inject(method = "levelEvent", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;broadcast(Lnet/minecraft/world/entity/player/Player;DDDDLnet/minecraft/resources/ResourceKey;Lnet/minecraft/network/protocol/Packet;)V"), cancellable = true)
 	private void onBroadcastLevelEvent(Player caster, int type, BlockPos pos, int data, CallbackInfo callbackInfo) {
-		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && shouldSuppressLevelEvent(Optional.ofNullable(caster), pos))
+		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && shouldSuppressLevelEvent(caster, pos))
 			callbackInfo.cancel();
 	}
 
@@ -72,20 +71,18 @@ public abstract class MixinServerLevel extends Level {
 		if (!VanishConfig.CONFIG.indirectSoundSuppression.get())
 			return false;
 
-		if (soundOrigin.map(vec -> SoundSuppressionHelper.areVanishedPlayersAt(this, vec), entity -> SoundSuppressionHelper.areVanishedPlayersAt(this, entity.position())))
+		if (SoundSuppressionHelper.areVanishedPlayersAt(this, soundOrigin.map(vec -> vec, Entity::position)))
 			return true;
 		else if (soundOrigin.map(vec -> SoundSuppressionHelper.vanishedPlayerVehicleAt(this, vec), SoundSuppressionHelper::isVanishedPlayerVehicle))
 			return true;
-		else if (soundOrigin.map(vec -> SoundSuppressionHelper.vanishedPlayersInteractWith(this, new BlockPos(vec)), entity -> false))
-			return true;
 		else
-			return soundOrigin.map(pos -> false, entity -> SoundSuppressionHelper.vanishedPlayersInteractWith(this, entity));
+			return soundOrigin.map(vec -> SoundSuppressionHelper.vanishedPlayersInteractWith(this, new BlockPos(vec)), entity -> SoundSuppressionHelper.vanishedPlayersInteractWith(this, entity));
 	}
 
 	//Returns true if a vanished player directly produced the event, or if it is determined that a vanished player was indirectly causing it, and that it thus should not be broadcast
 	@Unique
-	private boolean shouldSuppressLevelEvent(Optional<Player> player, BlockPos soundOrigin) {
-		if (player.isPresent() && VanishUtil.isVanished(player.get()))
+	private boolean shouldSuppressLevelEvent(Player player, BlockPos soundOrigin) {
+		if (VanishUtil.isVanished(player))
 			return true;
 		else
 			return VanishConfig.CONFIG.indirectSoundSuppression.get() && SoundSuppressionHelper.areVanishedPlayersAt(this, new Vec3(soundOrigin.getX(), soundOrigin.getY(), soundOrigin.getZ())) || SoundSuppressionHelper.vanishedPlayersInteractWith(this, soundOrigin);
