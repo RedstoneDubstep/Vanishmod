@@ -24,7 +24,7 @@ public abstract class MixinPlayerList {
 
 	//Prevent join, leave, death and advancement messages of vanished players from being broadcast
 	@Inject(method = "broadcastMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/ChatType;Ljava/util/UUID;)V", at = @At(value = "HEAD"), cancellable = true)
-	public void redirectBroadcastMessage(Component text, ChatType chatType, UUID uuid, CallbackInfo callbackInfo) {
+	public void redirectBroadcastMessage(Component text, ChatType chatType, UUID uuid, CallbackInfo callbackInfo) { //TODO this doesn't seem to cover death messages sent with team option "sendToAllExceptTeam" and similar, verify pls; also please for the love of god rename this
 		if (text instanceof TranslatableComponent component) {
 			if (component.getKey().startsWith("multiplayer.player.joined") && VanishUtil.isVanished(joiningPlayer)) {
 				joiningPlayer = null;
