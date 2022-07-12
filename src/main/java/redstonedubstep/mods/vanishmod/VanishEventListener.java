@@ -23,7 +23,7 @@ import redstonedubstep.mods.vanishmod.misc.SoundSuppressionHelper;
 public class VanishEventListener {
 	@SubscribeEvent
 	public static void onPlayerJoin(PlayerLoggedInEvent event) {
-		if (event.getPlayer() instanceof ServerPlayer player && VanishUtil.isVanished(player)) {
+		if (event.getEntity() instanceof ServerPlayer player && VanishUtil.isVanished(player)) {
 			player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: You are currently vanished"));
 			VanishUtil.updateVanishedPlayerList(player, true);
 		}
@@ -31,39 +31,39 @@ public class VanishEventListener {
 
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public static void onTabListName(TabListNameFormat event) {
-		if (VanishUtil.isVanished(event.getPlayer())) { //Appending a prefix to the name here won't give away vanished players, as their tab list names are only displayed for players that are allowed to see vanished players
+		if (VanishUtil.isVanished(event.getEntity())) { //Appending a prefix to the name here won't give away vanished players, as their tab list names are only displayed for players that are allowed to see vanished players
 			MutableComponent vanishedName = Component.literal("").withStyle(ChatFormatting.ITALIC);
 
 			vanishedName.append(Component.literal("[").withStyle(ChatFormatting.DARK_GRAY))
 					.append(Component.literal("Vanished").withStyle(ChatFormatting.GRAY))
 					.append(Component.literal("] ").withStyle(ChatFormatting.DARK_GRAY))
-					.append(event.getDisplayName() == null ? PlayerTeam.formatNameForTeam(event.getPlayer().getTeam(), event.getPlayer().getName()) : event.getDisplayName());
+					.append(event.getDisplayName() == null ? PlayerTeam.formatNameForTeam(event.getEntity().getTeam(), event.getEntity().getName()) : event.getDisplayName());
 			event.setDisplayName(vanishedName);
 		}
 	}
 
 	@SubscribeEvent
 	public static void onInteractBlock(RightClickBlock event) {
-		if (VanishConfig.CONFIG.indirectSoundSuppression.get() && event.getPlayer() instanceof ServerPlayer player && player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
+		if (VanishConfig.CONFIG.indirectSoundSuppression.get() && event.getEntity() instanceof ServerPlayer player && player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
 			SoundSuppressionHelper.updateBlockHitResult(player, event.getHitVec());
 	}
 
 	@SubscribeEvent
 	public static void onInteractEntity(EntityInteract event) {
-		if (VanishConfig.CONFIG.indirectSoundSuppression.get() && event.getPlayer() instanceof ServerPlayer player && player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
+		if (VanishConfig.CONFIG.indirectSoundSuppression.get() && event.getEntity() instanceof ServerPlayer player && player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
 			SoundSuppressionHelper.updateEntityHitResult(player, event.getTarget());
 	}
 
 	@SubscribeEvent
 	public static void onAttackEntity(AttackEntityEvent event) {
-		if (VanishConfig.CONFIG.indirectSoundSuppression.get() && event.getPlayer() instanceof ServerPlayer player && player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
+		if (VanishConfig.CONFIG.indirectSoundSuppression.get() && event.getEntity() instanceof ServerPlayer player && player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
 			SoundSuppressionHelper.updateEntityHitResult(player, event.getTarget());
 	}
 
 	@SubscribeEvent
 	public static void onSetAttackTarget(LivingSetAttackTargetEvent event) {
 		if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
-			if (event.getTarget() instanceof ServerPlayer player && event.getEntityLiving() instanceof Mob mob && VanishUtil.isVanished(player))
+			if (event.getTarget() instanceof ServerPlayer player && event.getEntity() instanceof Mob mob && VanishUtil.isVanished(player))
 				mob.setTarget(null);
 		}
 	}

@@ -2,6 +2,7 @@
 
 - Added chat message suppression, which prevents chat messages sent by vanished players from being received by everyone
 - Fixed fake join/leave messages being passed to mc2discord even though there is no connection to Discord
+- The minimum required Forge version is now 41.0.94
 
 -----------Changelog for v1.1.6-----------
 
