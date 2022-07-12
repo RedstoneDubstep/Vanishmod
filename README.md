@@ -17,8 +17,6 @@ Usage:
 
 **IMPORTANT: In the current version of the mod, most sounds will get suppressed (like placing and breaking blocks, direct block interactions), but some (like finishing to eat, indirect block interactions like powering a dispenser, etc.) won't due to technical limitations.**
 
-It is also wise to not write chat messages while vanished, as these won't get suppressed and other players then know that you're still on the server.
-
 This mod uses a ton of mixins, so there will be bugs. If you encounter one, please report it on the Mod's GitHub issue tracker.
 
 The Vanishmod only needs to be installed on the server to work.
