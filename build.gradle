@@ -118,7 +118,7 @@ dependencies {
     // These dependencies get remapped to your current MCP mappings
     // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 
-    implementation fg.deobf("curse.maven:mc2discord-325235:3855155")
+    //implementation fg.deobf("curse.maven:mc2discord-325235:3855155")
 
     compileOnly 'com.austinv11.servicer:Servicer:1.0.3' //fixer for the minecraft2discord dependency
 
