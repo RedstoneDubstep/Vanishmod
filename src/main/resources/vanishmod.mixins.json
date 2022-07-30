@@ -1,23 +1,24 @@
 {
-  "required": true,
-  "package": "redstonedubstep.mods.vanishmod.mixin",
-  "compatibilityLevel": "JAVA_17",
-  "refmap": "vanishmod.refmap.json",
-  "server": [
-    "chat.MixinEntityArgument",
-    "chat.MixinEntitySelector",
-    "chat.MixinListPlayersCommand",
-    "gui.MixinServerStatusPacketListenerImpl",
-    "gui.MixinServerStatusPlayers",
-    "sound.MixinEntity",
-    "sound.MixinServerLevel",
-    "world.MixinChunkMapTrackedEntity",
-    "world.MixinLivingEntity",
-    "world.MixinPlayer",
-    "world.MixinSleepStatus",
-    "MixinPlayerList",
-    "MixinServerGamePacketListenerImpl",
-    "MixinServerPlayer"
-  ],
-  "minVersion": "0.8"
+	"required": true,
+	"package": "redstonedubstep.mods.vanishmod.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"refmap": "vanishmod.refmap.json",
+	"server": [
+		"chat.MixinEntityArgument",
+		"chat.MixinEntitySelector",
+		"chat.MixinListPlayersCommand",
+		"chat.MixinOutgoingPlayerChatMessageTracked",
+		"gui.MixinServerStatusPacketListenerImpl",
+		"gui.MixinServerStatusPlayers",
+		"sound.MixinEntity",
+		"sound.MixinServerLevel",
+		"world.MixinChunkMapTrackedEntity",
+		"world.MixinLivingEntity",
+		"world.MixinPlayer",
+		"world.MixinSleepStatus",
+		"MixinPlayerList",
+		"MixinServerGamePacketListenerImpl",
+		"MixinServerPlayer"
+	],
+	"minVersion": "0.8"
 }
