@@ -60,10 +60,10 @@ public class SoundSuppressionHelper {
 	}
 
 	public static boolean vanishedPlayersInteractWith(Level level, BlockPos pos) {
-		return vanishedPlayersAndHitResults.entrySet().stream().filter(e -> e.getKey().level.equals(level)).anyMatch(p -> p.getValue() != null && p.getValue().getLeft().equals(pos));
+		return vanishedPlayersAndHitResults.entrySet().stream().filter(e -> e.getKey().level.equals(level)).anyMatch(p -> p.getValue() != null && pos.equals(p.getValue().getLeft()));
 	}
 
 	public static boolean vanishedPlayersInteractWith(Level level, Entity entity) {
-		return vanishedPlayersAndHitResults.entrySet().stream().filter(e -> e.getKey().level.equals(level)).anyMatch(p -> p.getValue() != null && p.getValue().getRight().equals(entity));
+		return vanishedPlayersAndHitResults.entrySet().stream().filter(e -> e.getKey().level.equals(level)).anyMatch(p -> p.getValue() != null && entity.equals(p.getValue().getRight()));
 	}
 }
