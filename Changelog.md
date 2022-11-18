@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.8-----------
+
+- Fixed occasional crash when trying to interact with blocks or entities while vanished
+
 -----------Changelog for v1.1.7-----------
 
 - Added chat message suppression, which prevents chat messages sent by vanished players from being received by everyone
