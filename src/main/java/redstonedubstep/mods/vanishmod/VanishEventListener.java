@@ -4,11 +4,10 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.event.VanillaGameEvent;
-import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.TabListNameFormat;
@@ -61,10 +60,10 @@ public class VanishEventListener {
 	}
 
 	@SubscribeEvent
-	public static void onSetAttackTarget(LivingSetAttackTargetEvent event) {
+	public static void onChangeTarget(LivingChangeTargetEvent event) {
 		if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
-			if (event.getTarget() instanceof ServerPlayer player && event.getEntity() instanceof Mob mob && VanishUtil.isVanished(player))
-				mob.setTarget(null);
+			if (event.getNewTarget() instanceof ServerPlayer player && VanishUtil.isVanished(player))
+				event.setCanceled(true);
 		}
 	}
 

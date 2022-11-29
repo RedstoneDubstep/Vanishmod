@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.9-----------
+
+- The minimum required Forge version is now 43.1.8
+
 -----------Changelog for v1.1.8-----------
 
 - Fixed occasional crash when trying to interact with blocks or entities while vanished
