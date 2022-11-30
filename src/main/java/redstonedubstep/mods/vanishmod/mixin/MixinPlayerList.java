@@ -15,11 +15,19 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
+import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import redstonedubstep.mods.vanishmod.VanishConfig;
 import redstonedubstep.mods.vanishmod.VanishUtil;
+import redstonedubstep.mods.vanishmod.misc.SoundSuppressionHelper;
 
 @Mixin(value = PlayerList.class)
 public abstract class MixinPlayerList {
@@ -61,5 +69,12 @@ public abstract class MixinPlayerList {
 			return ChatType.bind(VanishUtil.getChatTypeRegistryKey(original, player), player.level.registryAccess(), Component.literal("vanished").withStyle(ChatFormatting.GRAY));
 
 		return original;
+	}
+
+	//Stores the player that is exempted from broadcasting a given sound packet, which most likely is the one causing the packet to be sent, so the information can be used later for sound suppression
+	@Inject(method = "broadcast", at = @At("HEAD"))
+	public void onBroadcast(Player except, double x, double y, double z, double radius, ResourceKey<Level> dimension, Packet<?> packet, CallbackInfo callbackInfo) {
+		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && except != null && (packet instanceof ClientboundSoundPacket || packet instanceof ClientboundSoundEntityPacket || packet instanceof ClientboundLevelEventPacket))
+			SoundSuppressionHelper.putSoundPacket(packet, except);
 	}
 }
