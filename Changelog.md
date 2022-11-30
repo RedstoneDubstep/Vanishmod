@@ -1,6 +1,7 @@
 -----------Changelog for v1.1.9-----------
 
 - Made vanished players hear the sounds they produce
+- Fixed chests and ender chests visually opening when being opened by a vanished player
 - Fixed some entities like passive mobs or pufferfish detecting vanished players
 - The minimum required Forge version is now 43.1.8
 
