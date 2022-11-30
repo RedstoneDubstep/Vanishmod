@@ -145,12 +145,12 @@ public class VanishUtil {
 		return player.level.registryAccess().registryOrThrow(Registry.CHAT_TYPE_REGISTRY).getResourceKey(chatType.chatType()).orElse(ChatType.CHAT);
 	}
 
-	public static boolean isVanished(Player player) {
+	public static boolean isVanished(Entity player) {
 		return isVanished(player, null);
 	}
 
-	public static boolean isVanished(Player player, Entity forPlayer) {
-		if (player != null && !player.level.isClientSide) {
+	public static boolean isVanished(Entity player, Entity forPlayer) {
+		if (player instanceof Player && !player.level.isClientSide) {
 			boolean isVanished = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean("Vanished");
 
 			if (forPlayer != null) {
