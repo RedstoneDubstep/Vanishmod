@@ -4,6 +4,7 @@
 	"compatibilityLevel": "JAVA_17",
 	"refmap": "vanishmod.refmap.json",
 	"server": [
+		"chat.MixinCombatTracker",
 		"chat.MixinEntityArgument",
 		"chat.MixinEntitySelector",
 		"chat.MixinListPlayersCommand",
