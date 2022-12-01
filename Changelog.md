@@ -5,6 +5,7 @@
 - Fixed vanished players not receiving join/leave/death messages of other vanished players if they are allowed to see them
 - Fixed chests and ender chests visually opening when being opened by a vanished player
 - Fixed some entities like passive mobs or pufferfish detecting vanished players
+- Fixed other players being able to see particles related to vanished players
 - The minimum required Forge version is now 43.1.8
 
 -----------Changelog for v1.1.8-----------

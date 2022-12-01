@@ -66,6 +66,8 @@ public class MixinServerGamePacketListenerImpl {
 				callbackInfo.cancel();
 			else if (packet instanceof ClientboundBlockEventPacket eventPacket && SoundSuppressionHelper.shouldSuppressSoundEventFor(null, player.level, Vec3.atCenterOf(eventPacket.getPos()), player))
 				callbackInfo.cancel();
+			else if (packet instanceof ClientboundLevelParticlesPacket particlesPacket && SoundSuppressionHelper.shouldSuppressParticlesFor(null, player.level, particlesPacket.getX(), particlesPacket.getY(), particlesPacket.getZ(), player))
+				callbackInfo.cancel();
 		}
 	}
 
