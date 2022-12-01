@@ -84,13 +84,13 @@ public class SoundSuppressionHelper {
 
 
 	public static boolean areVanishedPlayersAt(Level level, Vec3 pos) {
-		VoxelShape shape = Shapes.block().move(pos.x, pos.y, pos.z);
+		VoxelShape shape = Shapes.block().move(pos.x - 0.5D, pos.y - 0.5D, pos.z - 0.5D);
 		return vanishedPlayersAndHitResults.keySet().stream().filter(p -> p.level.equals(level) && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR).anyMatch(p -> Shapes.joinIsNotEmpty(shape, Shapes.create(p.getBoundingBox()), BooleanOp.AND));
 	}
 
 
 	public static boolean vanishedPlayerVehicleAt(Level level, Vec3 pos) {
-		VoxelShape shape = Shapes.block().move(pos.x, pos.y, pos.z);
+		VoxelShape shape = Shapes.block().move(pos.x - 0.5D, pos.y - 0.5D, pos.z - 0.5D);
 		return vanishedPlayersAndHitResults.keySet().stream().filter(p -> p.level.equals(level) && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR).map(Entity::getVehicle).filter(Objects::nonNull).anyMatch(v -> Shapes.joinIsNotEmpty(shape, Shapes.create(v.getBoundingBox()), BooleanOp.AND));
 	}
 
