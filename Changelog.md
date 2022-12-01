@@ -1,5 +1,6 @@
 -----------Changelog for v1.1.9-----------
 
+- Made vanished players hear the sounds they produce
 - The minimum required Forge version is now 40.1.84
   
 -----------Changelog for v1.1.8-----------
