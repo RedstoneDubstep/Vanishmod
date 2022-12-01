@@ -1,6 +1,7 @@
 package redstonedubstep.mods.vanishmod.misc;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 
@@ -30,7 +31,10 @@ public class SoundSuppressionHelper {
 			vanishedPlayersAndHitResults.put(player, null);
 		else
 			vanishedPlayersAndHitResults.remove(player);
+
+		new HashSet<>(vanishedPlayersAndHitResults.keySet()).stream().filter(Entity::isRemoved).forEach(vanishedPlayersAndHitResults::remove);
 	}
+
 	public static void updateBlockHitResult(ServerPlayer player, BlockHitResult hitResult) {
 		if (VanishUtil.isVanished(player)) {
 			Pair<BlockPos, Entity> oldHitResults = vanishedPlayersAndHitResults.get(player);
@@ -82,12 +86,10 @@ public class SoundSuppressionHelper {
 		return SoundSuppressionHelper.areVanishedPlayersAt(level, soundOrigin.position()) || SoundSuppressionHelper.isVanishedPlayerVehicle(soundOrigin) || SoundSuppressionHelper.vanishedPlayersInteractWith(level, soundOrigin);
 	}
 
-
 	public static boolean areVanishedPlayersAt(Level level, Vec3 pos) {
 		VoxelShape shape = Shapes.block().move(pos.x - 0.5D, pos.y - 0.5D, pos.z - 0.5D);
 		return vanishedPlayersAndHitResults.keySet().stream().filter(p -> p.level.equals(level) && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR).anyMatch(p -> Shapes.joinIsNotEmpty(shape, Shapes.create(p.getBoundingBox()), BooleanOp.AND));
 	}
-
 
 	public static boolean vanishedPlayerVehicleAt(Level level, Vec3 pos) {
 		VoxelShape shape = Shapes.block().move(pos.x - 0.5D, pos.y - 0.5D, pos.z - 0.5D);
