@@ -5,7 +5,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.core.particles.ParticleOptions;
@@ -32,13 +31,6 @@ public abstract class MixinLivingEntity extends Entity {
 			serverWorld.sendParticles(type, posX, posY, posZ, particleCount, xOffset, yOffset, zOffset, speed);
 
 		return 0;
-	}
-
-	//Prevent pickup animation from being sent when a vanished player picks up an item. This fixes that the unvanished client thinks that it picked up an item (and thus shows a pickup animation for the local player) while in reality a vanished player did
-	@Inject(method = "take", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerChunkCache;broadcast(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/network/protocol/Packet;)V"), cancellable = true)
-	public void redirectBroadcast(Entity entity, int amount, CallbackInfo callbackInfo) {
-		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(this))
-			callbackInfo.cancel();
 	}
 
 	//Suppress eating sound when a vanished player finishes eating

@@ -17,6 +17,7 @@ import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.Action;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.PlayerUpdate;
 import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -32,9 +33,10 @@ public class MixinServerGamePacketListenerImpl {
 	@Shadow @Final
 	private MinecraftServer server;
 
-	//Filter any packets that we wish to not send to certain clients, mainly consisting of player info and sound packets.
+	//Filter any packets that we wish to not send to players that cannot see vanished players, mainly consisting of player info and sound packets.
 	//We don't filter player info removal packets, because this mod uses them to remove players after their status has changed to be vanished,
 	//and it can be done safely because not suppressing these packets does not break this mod (in: a player removal packet sent too much wouldn't break this mod as much as a player addition packet)
+	//We need to filter the item entity packets because otherwise all other clients think that they picked up an item (and thus show a pickup animation for the local player), while in reality a vanished player did
 	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;)V", at = @At("HEAD"), cancellable = true)
 	private void onSendPacket(Packet<?> packet, CallbackInfo callbackInfo) {
 		if (packet instanceof ClientboundPlayerInfoPacket infoPacket && infoPacket.getAction() != Action.REMOVE_PLAYER) {
@@ -45,6 +47,8 @@ public class MixinServerGamePacketListenerImpl {
 			else if (!vanishedPacketEntries.isEmpty())
 				infoPacket.getEntries().removeAll(vanishedPacketEntries);
 		}
+		else if (packet instanceof ClientboundTakeItemEntityPacket pickupPacket && VanishUtil.isVanished(player.level.getEntity(pickupPacket.getPlayerId()), player))
+			callbackInfo.cancel();
 		else if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
 			if (packet instanceof ClientboundSoundPacket soundPacket && SoundSuppressionHelper.shouldSuppressSoundEventFor(SoundSuppressionHelper.getPlayerForPacket(soundPacket), player.level, soundPacket.getX(), soundPacket.getY(), soundPacket.getZ(), player))
 				callbackInfo.cancel();
