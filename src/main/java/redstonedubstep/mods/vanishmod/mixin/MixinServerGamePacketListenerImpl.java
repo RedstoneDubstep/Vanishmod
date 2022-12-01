@@ -16,6 +16,7 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockEventPacket;
 import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
+import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.Action;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.PlayerUpdate;
@@ -51,10 +52,8 @@ public class MixinServerGamePacketListenerImpl {
 
 			if (filteredPacketEntries.isEmpty())
 				callbackInfo.cancel();
-			else if (!filteredPacketEntries.equals(infoPacket.getEntries())) {
-				infoPacket.getEntries().clear();
-				infoPacket.getEntries().addAll(filteredPacketEntries);
-			}
+			else if (!filteredPacketEntries.equals(infoPacket.getEntries()))
+				infoPacket.entries = filteredPacketEntries;
 		}
 		else if (packet instanceof ClientboundTakeItemEntityPacket pickupPacket && VanishUtil.isVanished(player.level.getEntity(pickupPacket.getPlayerId()), player))
 			callbackInfo.cancel();
