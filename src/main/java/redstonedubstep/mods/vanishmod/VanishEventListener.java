@@ -65,19 +65,19 @@ public class VanishEventListener {
 
 	@SubscribeEvent
 	public static void onInteractBlock(RightClickBlock event) {
-		if (VanishConfig.CONFIG.indirectSoundSuppression.get() && event.getPlayer() instanceof ServerPlayer player && player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
+		if (SoundSuppressionHelper.shouldCapturePlayers() && event.getEntity() instanceof ServerPlayer player && player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
 			SoundSuppressionHelper.updateBlockHitResult(player, event.getHitVec());
 	}
 
 	@SubscribeEvent
 	public static void onInteractEntity(EntityInteract event) {
-		if (VanishConfig.CONFIG.indirectSoundSuppression.get() && event.getPlayer() instanceof ServerPlayer player && player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
+		if (SoundSuppressionHelper.shouldCapturePlayers() && event.getEntity() instanceof ServerPlayer player && player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
 			SoundSuppressionHelper.updateEntityHitResult(player, event.getTarget());
 	}
 
 	@SubscribeEvent
 	public static void onAttackEntity(AttackEntityEvent event) {
-		if (VanishConfig.CONFIG.indirectSoundSuppression.get() && event.getPlayer() instanceof ServerPlayer player && player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
+		if (SoundSuppressionHelper.shouldCapturePlayers() && event.getEntity() instanceof ServerPlayer player && player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)
 			SoundSuppressionHelper.updateEntityHitResult(player, event.getTarget());
 	}
 

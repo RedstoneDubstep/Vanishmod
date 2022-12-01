@@ -27,6 +27,7 @@ public class VanishConfig {
 		public BooleanValue fixModCompatibility;
 		public BooleanValue vanishedPlayersSeeEachOther;
 		public BooleanValue indirectSoundSuppression;
+		public BooleanValue indirectParticleSuppression;
 		public IntValue vanishCommandPermissionLevel;
 		public IntValue seeVanishedPermissionLevel;
 		public ConfigValue<String> onVanishMessage;
@@ -59,6 +60,9 @@ public class VanishConfig {
 			indirectSoundSuppression = builder
 					.comment("Should this mod try to detect and suppress sounds that are indirectly caused by vanished players (e.g. pressing a button or hitting an entity)? This detection might accidentally suppress a few sounds unrelated to vanished players, disable this detection if too many sound bugs occur")
 					.define("indirectSoundSuppression", true);
+			indirectParticleSuppression = builder
+					.comment("Should this mod try to detect and suppress particles that are indirectly caused by vanished players (e.g. eating or block breaking particles)? This detection might accidentally suppress particles unrelated to vanished players, disable this detection if too many visual bugs occur")
+					.define("indirectParticleSuppression", true);
 
 			vanishCommandPermissionLevel = builder
 					.comment("What op permission level should be the requirement for being able to execute /vanish? (A value of 2 or lower allows command blocks to execute /vanish)")

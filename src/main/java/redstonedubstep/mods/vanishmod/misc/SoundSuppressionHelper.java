@@ -26,6 +26,10 @@ public class SoundSuppressionHelper {
 	private static final Map<ServerPlayer, Pair<BlockPos, Entity>> vanishedPlayersAndHitResults = new HashMap<>();
 	private static Pair<Packet<?>, Player> packetOrigin = null;
 
+	public static boolean shouldCapturePlayers() {
+		return VanishConfig.CONFIG.indirectSoundSuppression.get() || VanishConfig.CONFIG.indirectParticleSuppression.get();
+	}
+
 	public static void updateVanishedPlayerMap(ServerPlayer player, boolean vanished) {
 		if (vanished)
 			vanishedPlayersAndHitResults.put(player, null);
@@ -84,6 +88,18 @@ public class SoundSuppressionHelper {
 			return false;
 
 		return SoundSuppressionHelper.areVanishedPlayersAt(level, soundOrigin.position()) || SoundSuppressionHelper.isVanishedPlayerVehicle(soundOrigin) || SoundSuppressionHelper.vanishedPlayersInteractWith(level, soundOrigin);
+	}
+
+	public static boolean shouldSuppressParticlesFor(Player player, Level level, double x, double y, double z, Player forPlayer) {
+		Vec3 soundOrigin = new Vec3(x, y, z);
+
+		if (VanishUtil.isVanished(player, forPlayer))
+			return true;
+
+		if (!VanishConfig.CONFIG.indirectParticleSuppression.get() || VanishUtil.canSeeVanishedPlayers(forPlayer))
+			return false;
+
+		return SoundSuppressionHelper.areVanishedPlayersAt(level, soundOrigin) || SoundSuppressionHelper.vanishedPlayerVehicleAt(level, soundOrigin) || SoundSuppressionHelper.vanishedPlayersInteractWith(level, new BlockPos(soundOrigin));
 	}
 
 	public static boolean areVanishedPlayersAt(Level level, Vec3 pos) {
