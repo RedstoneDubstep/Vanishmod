@@ -75,7 +75,7 @@ public class MixinServerGamePacketListenerImpl {
 	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V", at = @At("HEAD"), cancellable = true)
 	private void onSendPacket(Packet<?> packet, PacketSendListener listener, CallbackInfo callbackInfo) {
 		if (packet instanceof ClientboundSystemChatPacket chatPacket && chatPacket.content() instanceof MutableComponent component && component.getContents() instanceof TranslatableContents content) {
-			if (content.getKey().startsWith("multiplayer.player.joined") && VanishUtil.isVanished(FieldHolder.joiningPlayer)) {
+			if (content.getKey().startsWith("multiplayer.player.joined") && VanishUtil.isVanished(FieldHolder.joiningPlayer, player)) {
 				FieldHolder.joiningPlayer = null;
 				callbackInfo.cancel();
 			}
