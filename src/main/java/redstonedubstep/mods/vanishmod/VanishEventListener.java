@@ -10,7 +10,6 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.VanillaGameEvent;
-import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
@@ -29,14 +28,6 @@ public class VanishEventListener {
 		if (event.getPlayer() instanceof ServerPlayer player && VanishUtil.isVanished(player)) {
 			player.sendMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: You are currently vanished"), player.getUUID());
 			VanishUtil.updateVanishedPlayerList(player, true);
-		}
-	}
-
-	@SubscribeEvent
-	public static void onPlaySound(PlaySoundAtEntityEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
-			if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(player))
-				event.setCanceled(true);
 		}
 	}
 

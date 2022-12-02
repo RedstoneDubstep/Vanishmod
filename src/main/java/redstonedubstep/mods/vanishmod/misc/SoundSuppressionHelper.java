@@ -14,6 +14,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -117,10 +119,23 @@ public class SoundSuppressionHelper {
 	}
 
 	public static boolean vanishedPlayersInteractWith(Level level, BlockPos pos) {
-		return vanishedPlayersAndHitResults.entrySet().stream().filter(e -> e.getKey().level.equals(level)).anyMatch(p -> p.getValue() != null && pos.equals(p.getValue().getLeft()));
+		return vanishedPlayersAndHitResults.entrySet().stream().filter(e -> e.getKey().level.equals(level)).anyMatch(p -> p.getValue() != null && equalsThisOrConnected(pos, level, p.getValue().getLeft()));
 	}
 
 	public static boolean vanishedPlayersInteractWith(Level level, Entity entity) {
 		return vanishedPlayersAndHitResults.entrySet().stream().filter(e -> e.getKey().level.equals(level)).anyMatch(p -> p.getValue() != null && entity.equals(p.getValue().getRight()));
+	}
+
+	public static boolean equalsThisOrConnected(BlockPos soundPos, Level level, BlockPos interactPos) {
+		if (soundPos.equals(interactPos))
+			return true;
+		else if (interactPos != null) {
+			BlockState state = level.getBlockState(interactPos);
+
+			if (state.getBlock() instanceof ChestBlock)
+				return soundPos.equals(interactPos.relative(ChestBlock.getConnectedDirection(state)));
+		}
+
+		return false;
 	}
 }
