@@ -36,7 +36,7 @@ public class VanishCommand {
 	}
 
 	private static int getVanishedStatus(CommandContext<CommandSourceStack> ctx, ServerPlayer player) {
-		MutableComponent vanishedStatus = VanishUtil.getVanishedStatusText(player);
+		MutableComponent vanishedStatus = VanishUtil.getVanishedStatusText(player, VanishUtil.isVanished(player));
 
 		ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(vanishedStatus), false);
 
@@ -50,10 +50,10 @@ public class VanishCommand {
 		ServerPlayer player = ctx.getSource().getServer().getPlayerList().getPlayerByName(playerName);
 
 		if (player != null) {
-			 if (!VanishUtil.isVanished(player))
-				 vanish(ctx, player);
-			 else
-				 ctx.getSource().sendFailure(VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable("Could not add already vanished player %s to the vanishing queue", playerName)));
+			if (!VanishUtil.isVanished(player))
+				vanish(ctx, player);
+			else
+				ctx.getSource().sendFailure(VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable("Could not add already vanished player %s to the vanishing queue", playerName)));
 
 			return 1;
 		}
