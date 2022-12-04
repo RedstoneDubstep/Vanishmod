@@ -7,9 +7,11 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.VanillaGameEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
@@ -76,6 +78,14 @@ public class VanishEventListener {
 	public static void onChangeTarget(LivingChangeTargetEvent event) {
 		if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
 			if (event.getNewTarget() instanceof ServerPlayer player && VanishUtil.isVanished(player))
+				event.setCanceled(true);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onProjectileImpact(ProjectileImpactEvent event) {
+		if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
+			if (event.getRayTraceResult() instanceof EntityHitResult hitResult && VanishUtil.isVanished(hitResult.getEntity(), event.getProjectile().getOwner()))
 				event.setCanceled(true);
 		}
 	}
