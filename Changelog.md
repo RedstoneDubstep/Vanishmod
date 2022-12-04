@@ -7,6 +7,7 @@
 - Fixed some entities like passive mobs or pufferfish detecting vanished players
 - Fixed other players being able to see particles related to vanished players
 - Fixed death messages of unvanished players potentially revealing vanished players
+- Fixed projectiles being able to hit vanished players and reveal their location
 - The minimum required Forge version is now 43.1.8
 
 -----------Changelog for v1.1.8-----------
