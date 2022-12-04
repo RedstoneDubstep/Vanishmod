@@ -35,7 +35,7 @@ public class VanishCommand {
 	}
 
 	private static int getVanishedStatus(CommandContext<CommandSourceStack> ctx, ServerPlayer player) {
-		TranslatableComponent vanishedStatus = VanishUtil.getVanishedStatusText(player);
+		TranslatableComponent vanishedStatus = VanishUtil.getVanishedStatusText(player, VanishUtil.isVanished(player));
 
 		ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(vanishedStatus), false);
 
