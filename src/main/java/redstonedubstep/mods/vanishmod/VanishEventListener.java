@@ -21,6 +21,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBloc
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import redstonedubstep.mods.vanishmod.misc.FieldHolder;
 import redstonedubstep.mods.vanishmod.misc.SoundSuppressionHelper;
 
 @EventBusSubscriber(modid = Vanishmod.MODID)
@@ -31,6 +32,9 @@ public class VanishEventListener {
 			player.sendMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: You are currently vanished"), player.getUUID());
 			VanishUtil.updateVanishedPlayerList(player, true);
 		}
+
+		if (event.getEntity().equals(FieldHolder.joiningPlayer))
+			FieldHolder.joiningPlayer = null; //Reset the joiningPlayer field due to it being obsolete at the time the event is fired
 	}
 
 	@SubscribeEvent
