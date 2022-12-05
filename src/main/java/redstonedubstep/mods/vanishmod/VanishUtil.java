@@ -46,38 +46,31 @@ public class VanishUtil {
 		boolean vanishes = !VanishUtil.isVanished(player);
 		String note = "Note: You can still see yourself in the tab list for technical reasons, but you are vanished for other players. \nNote: Be careful when producing noise near other players, because while most sounds will get suppressed, some won't due to technical limitations. \nNote: While vanished, only players that are able to see you will receive your chat messages. If you want to chat with everyone, use the /say command.";
 
-		//When player unvanishes, update vanished status as early as possible to let all packets/messages related to unvanishing through
-		if (!vanishes)
-			VanishUtil.updateVanishedStatus(player, false);
-
 		if (vanishes)
 			player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: ").append(Component.literal("(...)").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(note))))));
 
-		VanishUtil.sendJoinOrLeaveMessageToPlayers(player.getLevel().getServer().getPlayerList().getPlayers(), player, vanishes);
-		VanishUtil.sendPacketsOnVanish(player, player.getLevel(), vanishes);
+		VanishUtil.sendJoinOrLeaveMessageToPlayers(player.getLevel().getServer().getPlayerList().getPlayers(), player, vanishes, false);
+		VanishUtil.updateVanishedStatus(player, vanishes);
+		VanishUtil.sendJoinOrLeaveMessageToPlayers(player.getLevel().getServer().getPlayerList().getPlayers(), player, vanishes, true); //We always need to send fake join/leave messages when the player is in an unvanished state, thus we try twice and return early (within that method) if the player is vanished
 
-		//When player vanishes, update vanished status as late as possible to let all packets/messages related to vanishing through
-		if (vanishes)
-			VanishUtil.updateVanishedStatus(player, true);
+		VanishUtil.sendPacketsOnVanish(player, player.getLevel(), vanishes);
 	}
 
 	public static void sendPacketsOnVanish(ServerPlayer currentPlayer, ServerLevel world, boolean vanishes) {
 		List<ServerPlayer> list = world.getServer().getPlayerList().getPlayers();
 		ServerChunkCache chunkProvider = currentPlayer.getLevel().getChunkSource();
 
-		currentPlayer.refreshTabListName();
-
 		for (ServerPlayer player : list) {
 			if (!player.equals(currentPlayer)) { //prevent packet from being sent to the executor of the command
 				if (!canSeeVanishedPlayers(player))
 					player.connection.send(new ClientboundPlayerInfoPacket(vanishes ? Action.REMOVE_PLAYER : Action.ADD_PLAYER, currentPlayer));
 				if (isVanished(player))
-					currentPlayer.connection.send(new ClientboundPlayerInfoPacket(canSeeVanishedPlayers(currentPlayer) ? Action.ADD_PLAYER : Action.REMOVE_PLAYER, player)); //update the vanishing player's tab list in case the vanishing player can (not) see other vanished players now
+					currentPlayer.connection.send(new ClientboundPlayerInfoPacket(canSeeVanishedPlayers(currentPlayer, vanishes) ? Action.ADD_PLAYER : Action.REMOVE_PLAYER, player)); //update the vanishing player's tab list in case the vanishing player can (not) see other vanished players now
 
 				if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
 					if (vanishes && !canSeeVanishedPlayers(player))
 						player.connection.send(new ClientboundRemoveEntitiesPacket(currentPlayer.getId())); //remove the vanishing player for the other players that cannot see vanished players
-					else if (isVanished(player) && !canSeeVanishedPlayers(currentPlayer))
+					else if (isVanished(player) && !canSeeVanishedPlayers(currentPlayer, vanishes))
 						currentPlayer.connection.send(new ClientboundRemoveEntitiesPacket(player.getId())); //if the vanishing players cannot see vanished players now, remove them for the vanishing player
 				}
 			}
@@ -92,8 +85,8 @@ public class VanishUtil {
 		currentPlayer.connection.send(new ClientboundSetActionBarTextPacket(VanishUtil.getVanishedStatusText(currentPlayer, vanishes)));
 	}
 
-	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayer> playerList, ServerPlayer sender, boolean leaveMessage) {
-		if (VanishConfig.CONFIG.sendFakeJoinLeaveMessages.get() && sender.server.getPlayerList().getPlayers().contains(sender)) { //Only send fake messages if the player has actually "joined" the server before this method is invoked
+	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayer> playerList, ServerPlayer sender, boolean leaveMessage, boolean beforeStatusChange) {
+		if (VanishConfig.CONFIG.sendFakeJoinLeaveMessages.get() && leaveMessage != beforeStatusChange && sender.server.getPlayerList().getPlayers().contains(sender)) { //Only send fake messages if the player has actually fully joined the server before this method is invoked
 			Component message = Component.translatable(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).withStyle(ChatFormatting.YELLOW);
 
 			for (ServerPlayer receiver : playerList) {
@@ -117,6 +110,7 @@ public class VanishUtil {
 
 		updateVanishedPlayerList(player, vanished);
 		MinecraftForge.EVENT_BUS.post(new PlayerVanishEvent(player, vanished));
+		player.refreshTabListName();
 	}
 
 	public static void updateVanishedPlayerList(ServerPlayer player, boolean vanished) {
@@ -141,8 +135,12 @@ public class VanishUtil {
 	}
 
 	public static boolean canSeeVanishedPlayers(Entity entity) {
+		return canSeeVanishedPlayers(entity, isVanished(entity));
+	}
+
+	public static boolean canSeeVanishedPlayers(Entity entity, boolean isVanished) {
 		if (entity instanceof Player player)
-			return (VanishConfig.CONFIG.vanishedPlayersSeeEachOther.get() && VanishUtil.isVanished(player)) || (VanishConfig.CONFIG.seeVanishedPermissionLevel.get() >= 0 && player.hasPermissions(VanishConfig.CONFIG.seeVanishedPermissionLevel.get()));
+			return (VanishConfig.CONFIG.vanishedPlayersSeeEachOther.get() && isVanished) || (VanishConfig.CONFIG.seeVanishedPermissionLevel.get() >= 0 && player.hasPermissions(VanishConfig.CONFIG.seeVanishedPermissionLevel.get()));
 
 		return false;
 	}

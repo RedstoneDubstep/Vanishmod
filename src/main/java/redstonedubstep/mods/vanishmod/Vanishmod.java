@@ -12,7 +12,7 @@ import net.minecraftforge.network.NetworkConstants;
 public class Vanishmod {
 	public static final String MODID = "vmod"; //This is Vanishmod v1.1.8 for 1.19.2!
 
-	public Vanishmod() {
+	public Vanishmod() { //TODO for some places it makes sense that the vanished player is hidden for itself, check these (with update to VanishUtil#isVanished, overload method with boolean parameter whether to exclude/include self?)
 		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
 		MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, VanishConfig.SERVER_SPEC, "vanishmod-server.toml");
