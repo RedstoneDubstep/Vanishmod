@@ -1,7 +1,3 @@
------------Changelog for v1.1.9.1-----------
-
-- Actually fixed death messages of unvanished players potentially revealing vanished players
-
 -----------Changelog for v1.1.9-----------
 
 - Fixed vanished players not hearing the sounds they produce

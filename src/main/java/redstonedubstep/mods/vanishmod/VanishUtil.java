@@ -6,15 +6,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.Action;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.resources.ResourceKey;
@@ -63,9 +63,9 @@ public class VanishUtil {
 		for (ServerPlayer player : list) {
 			if (!player.equals(currentPlayer)) { //prevent packet from being sent to the executor of the command
 				if (!canSeeVanishedPlayers(player))
-					player.connection.send(new ClientboundPlayerInfoPacket(vanishes ? Action.REMOVE_PLAYER : Action.ADD_PLAYER, currentPlayer));
+					player.connection.send(vanishes ? new ClientboundPlayerInfoRemovePacket(List.of(currentPlayer.getUUID())) : ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(currentPlayer)));
 				if (isVanished(player))
-					currentPlayer.connection.send(new ClientboundPlayerInfoPacket(canSeeVanishedPlayers(currentPlayer, vanishes) ? Action.ADD_PLAYER : Action.REMOVE_PLAYER, player)); //update the vanishing player's tab list in case the vanishing player can (not) see other vanished players now
+					currentPlayer.connection.send(canSeeVanishedPlayers(currentPlayer, vanishes) ? ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(player)) : new ClientboundPlayerInfoRemovePacket(List.of(player.getUUID()))); //update the vanishing player's tab list in case the vanishing player can (not) see other vanished players now
 
 				if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
 					if (vanishes && !canSeeVanishedPlayers(player))
@@ -83,6 +83,7 @@ public class VanishUtil {
 		}
 
 		currentPlayer.connection.send(new ClientboundSetActionBarTextPacket(VanishUtil.getVanishedStatusText(currentPlayer, vanishes)));
+		currentPlayer.refreshTabListName();
 	}
 
 	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayer> playerList, ServerPlayer sender, boolean leaveMessage, boolean beforeStatusChange) {
@@ -110,7 +111,6 @@ public class VanishUtil {
 
 		updateVanishedPlayerList(player, vanished);
 		MinecraftForge.EVENT_BUS.post(new PlayerVanishEvent(player, vanished));
-		player.refreshTabListName();
 	}
 
 	public static void updateVanishedPlayerList(ServerPlayer player, boolean vanished) {
@@ -146,7 +146,7 @@ public class VanishUtil {
 	}
 
 	public static ResourceKey<ChatType> getChatTypeRegistryKey(ChatType.Bound chatType, Player player) {
-		return player.level.registryAccess().registryOrThrow(Registry.CHAT_TYPE_REGISTRY).getResourceKey(chatType.chatType()).orElse(ChatType.CHAT);
+		return player.level.registryAccess().registryOrThrow(Registries.CHAT_TYPE).getResourceKey(chatType.chatType()).orElse(ChatType.CHAT);
 	}
 
 	public static boolean isVanished(Entity player) {

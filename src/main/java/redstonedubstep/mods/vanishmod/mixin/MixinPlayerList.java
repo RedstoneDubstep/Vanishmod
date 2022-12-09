@@ -46,6 +46,15 @@ public abstract class MixinPlayerList {
 		return original;
 	}
 
+	//Fixes clients that are not allowed to see vanished players disconnecting when receiving a message from vanished players due to the sender UUID not being present on these clients
+	@ModifyVariable(method = "broadcastChatMessage(Lnet/minecraft/network/chat/PlayerChatMessage;Lnet/minecraft/commands/CommandSourceStack;Lnet/minecraft/network/chat/ChatType$Bound;)V", at = @At(value = "HEAD"), argsOnly = true)
+	public PlayerChatMessage modifyChatSender(PlayerChatMessage original, PlayerChatMessage chatMessage, CommandSourceStack commandSource) {
+		if (commandSource.getEntity() instanceof ServerPlayer player && VanishUtil.isVanished(player))
+			return PlayerChatMessage.system(original.signedContent());
+
+		return original;
+	}
+
 	//Stores the player that is exempted from broadcasting a given sound packet, which most likely is the one causing the packet to be sent, so the information can be used later for sound suppression
 	@Inject(method = "broadcast", at = @At("HEAD"))
 	public void onBroadcast(Player except, double x, double y, double z, double radius, ResourceKey<Level> dimension, Packet<?> packet, CallbackInfo callbackInfo) {

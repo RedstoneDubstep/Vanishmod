@@ -10,7 +10,6 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.ProfilePublicKey;
 import net.minecraft.world.level.Level;
 import redstonedubstep.mods.vanishmod.VanishConfig;
 import redstonedubstep.mods.vanishmod.VanishUtil;
@@ -18,8 +17,8 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 @Mixin(ServerPlayer.class)
 public abstract class MixinServerPlayer extends Player {
 	//player entity needs a constructor, so here we go
-	public MixinServerPlayer(Level world, BlockPos pos, float angle, GameProfile gameProfile, ProfilePublicKey profilePublicKey) {
-		super(world, pos, angle, gameProfile, profilePublicKey);
+	public MixinServerPlayer(Level world, BlockPos pos, float angle, GameProfile gameProfile) {
+		super(world, pos, angle, gameProfile);
 	}
 
 	//hacky mixin that should improve mod compat: mods should always respect spectator mode when targeting players, and this mixin lets isSpectator also check if the player is vanished (and thus should also not be targeted); but don't interfere with Vanilla's isSpectator() calls, else weird glitches can happen

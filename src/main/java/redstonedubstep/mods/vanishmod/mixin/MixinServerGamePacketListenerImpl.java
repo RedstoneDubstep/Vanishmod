@@ -17,9 +17,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockEventPacket;
 import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.Action;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.PlayerUpdate;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
@@ -47,12 +45,12 @@ public class MixinServerGamePacketListenerImpl {
 	//We need to filter the item entity packets because otherwise all other clients think that they picked up an item (and thus show a pickup animation for the local player), while in reality a vanished player did
 	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;)V", at = @At("HEAD"), cancellable = true)
 	private void onSendPacket(Packet<?> packet, CallbackInfo callbackInfo) {
-		if (packet instanceof ClientboundPlayerInfoPacket infoPacket && infoPacket.getAction() != Action.REMOVE_PLAYER) {
-			List<PlayerUpdate> filteredPacketEntries = infoPacket.getEntries().stream().filter(p -> !VanishUtil.isVanished(server.getPlayerList().getPlayer(p.getProfile().getId()), player)).toList();
+		if (packet instanceof ClientboundPlayerInfoUpdatePacket infoPacket) {
+			List<ClientboundPlayerInfoUpdatePacket.Entry> filteredPacketEntries = infoPacket.entries().stream().filter(e -> !VanishUtil.isVanished(server.getPlayerList().getPlayer(e.profileId()), player)).toList();
 
 			if (filteredPacketEntries.isEmpty())
 				callbackInfo.cancel();
-			else if (!filteredPacketEntries.equals(infoPacket.getEntries()))
+			else if (!filteredPacketEntries.equals(infoPacket.entries()))
 				infoPacket.entries = filteredPacketEntries;
 		}
 		else if (packet instanceof ClientboundTakeItemEntityPacket pickupPacket && VanishUtil.isVanished(player.level.getEntity(pickupPacket.getPlayerId()), player))

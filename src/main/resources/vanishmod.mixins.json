@@ -8,7 +8,7 @@
 		"chat.MixinEntityArgument",
 		"chat.MixinEntitySelector",
 		"chat.MixinListPlayersCommand",
-		"chat.MixinOutgoingPlayerChatMessageTracked",
+		"chat.MixinOutgoingPlayerChatMessage",
 		"gui.MixinServerStatusPacketListenerImpl",
 		"gui.MixinServerStatusPlayers",
 		"sound.MixinEntity",
