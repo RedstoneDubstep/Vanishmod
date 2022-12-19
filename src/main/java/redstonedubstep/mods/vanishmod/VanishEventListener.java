@@ -1,15 +1,12 @@
 package redstonedubstep.mods.vanishmod;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.scores.PlayerTeam;
-import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.VanillaGameEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
@@ -35,16 +32,6 @@ public class VanishEventListener {
 
 		if (event.getEntity().equals(FieldHolder.joiningPlayer))
 			FieldHolder.joiningPlayer = null; //Reset the joiningPlayer field due to it being obsolete at the time the event is fired
-	}
-
-	@SubscribeEvent
-	public static void onServerChat(ServerChatEvent event) {
-		if (VanishConfig.CONFIG.hidePlayerNameInChat.get() && VanishUtil.isVanished(event.getPlayer())) {
-			Component message = event.getComponent();
-
-			if (message instanceof TranslatableComponent component && component.getKey().contains("chat.type.announcement"))
-				event.setComponent(new TranslatableComponent("chat.type.announcement", new TextComponent("vanished").withStyle(ChatFormatting.GRAY), ((TranslatableComponent)message).getArgs()[1]));
-		}
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOW)

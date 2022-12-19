@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.9.2-----------
+
+- Several fixes to chat suppression and modification
+
 -----------Changelog for v1.1.9.1-----------
 
 - Actually fixed death messages of unvanished players potentially revealing vanished players
