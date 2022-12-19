@@ -1,5 +1,6 @@
 -----------Changelog for v1.1.9.2-----------
 
+- Changed name and comments of some config options to be less ambiguous
 - Several fixes to chat suppression and modification
 
 -----------Changelog for v1.1.9.1-----------
