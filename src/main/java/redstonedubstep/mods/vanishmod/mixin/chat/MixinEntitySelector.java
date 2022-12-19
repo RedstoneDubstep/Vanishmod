@@ -19,7 +19,7 @@ public class MixinEntitySelector {
 	//Prevent players that are not allowed to see vanished players from targeting them through their name or a selector (3/4)
 	@ModifyVariable(method = "findSingleEntity", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", shift = Shift.BEFORE))
 	private List<? extends Entity> modifyEntityList(List<? extends Entity> originalList, CommandSourceStack source) {
-		if (VanishConfig.CONFIG.hidePlayersFromCommandSelectors.get() && source.getEntity() != null) //only filter commands from players, not command blocks/console/datapacks
+		if (VanishConfig.CONFIG.disableCommandTargeting.get() && source.getEntity() != null) //only filter commands from players, not command blocks/console/datapacks
 			originalList = VanishUtil.formatEntityList(originalList, source.getEntity());
 
 		return originalList;
@@ -28,7 +28,7 @@ public class MixinEntitySelector {
 	//Prevent players that are not allowed to see vanished players from targeting them through their name or a selector (4/4)
 	@ModifyVariable(method = "findSinglePlayer", at = @At(value = "INVOKE", target = "Ljava/util/List;size()I", shift = Shift.BEFORE))
 	private List<ServerPlayer> modifyPlayerList(List<ServerPlayer> originalList, CommandSourceStack source) {
-		if (VanishConfig.CONFIG.hidePlayersFromCommandSelectors.get() && source.getEntity() != null) //only filter commands from players, not command blocks/console/datapacks
+		if (VanishConfig.CONFIG.disableCommandTargeting.get() && source.getEntity() != null) //only filter commands from players, not command blocks/console/datapacks
 			originalList = VanishUtil.formatPlayerList(originalList, source.getEntity());
 
 		return originalList;

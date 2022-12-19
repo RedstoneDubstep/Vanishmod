@@ -1,6 +1,7 @@
 -----------Changelog for v1.1.9.2-----------
 
 - Updated to 1.19.3
+- Changed name and comments of some config options to be less ambiguous
 - Fixed /teammsg messages from vanished players not getting suppressed
 
 -----------Changelog for v1.1.9.1-----------
