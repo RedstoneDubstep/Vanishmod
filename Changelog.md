@@ -1,3 +1,12 @@
+-----------Changelog for v1.1.9.2-----------
+
+- Updated to 1.19.3
+- Fixed /teammsg messages from vanished players not getting suppressed
+
+-----------Changelog for v1.1.9.1-----------
+
+- Actually fixed death messages of unvanished players potentially revealing vanished players
+
 -----------Changelog for v1.1.9-----------
 
 - Fixed vanished players not hearing the sounds they produce
