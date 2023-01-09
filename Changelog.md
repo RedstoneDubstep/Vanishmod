@@ -1,3 +1,8 @@
+-----------Changelog for v1.1.9.3-----------
+
+- Re-enabled mc2discord compatibility
+- Minor optimizations and code cleanup
+
 -----------Changelog for v1.1.9.2-----------
 
 - Updated to 1.19.3
