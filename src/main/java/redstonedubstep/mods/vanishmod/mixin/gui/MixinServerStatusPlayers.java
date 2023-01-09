@@ -16,7 +16,7 @@ public abstract class MixinServerStatusPlayers {
 	@Shadow
 	public int numPlayers;
 
-	//update the onlinePlayerCount when setting the players, players should be already filtered by MixinServerStatusNetHandler; also makes use of an AT to un-final onlinePlayerCount
+	//Update the number of online players when setting the players, players should be already filtered by MixinServerStatusPacketListenerImpl; also makes use of an AT to un-final onlinePlayerCount
 	@Inject(method = "setSample", at = @At("HEAD"))
 	private void onSetSample(GameProfile[] players, CallbackInfo info) {
 		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get()) {

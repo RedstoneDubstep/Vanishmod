@@ -36,7 +36,8 @@ import redstonedubstep.mods.vanishmod.misc.SoundSuppressionHelper;
 public class MixinServerGamePacketListenerImpl {
 	@Shadow
 	public ServerPlayer player;
-	@Shadow @Final
+	@Shadow
+	@Final
 	private MinecraftServer server;
 
 	//Filter any packets that we wish to not send to players that cannot see vanished players, mainly consisting of player info and sound packets.

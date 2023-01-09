@@ -16,7 +16,7 @@ public class MixinEntity {
 	//Invalidates the hit results of a vanished player if its position changes, because then their crosshair is most likely on a different block
 	@Inject(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setPos(DDD)V", ordinal = 1))
 	private void onActualMove(MoverType type, Vec3 pos, CallbackInfo callbackInfo) {
-		if (SoundSuppressionHelper.shouldCapturePlayers() && (Object)this instanceof ServerPlayer player && !player.hasContainerOpen())
+		if (SoundSuppressionHelper.shouldCapturePlayers() && (Object) this instanceof ServerPlayer player && !player.hasContainerOpen())
 			SoundSuppressionHelper.invalidateHitResults(player);
 	}
 }
