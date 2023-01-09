@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.9.3-----------
+
+- Minor optimizations and code cleanup
+
 -----------Changelog for v1.1.9.2-----------
 
 - Changed name and comments of some config options to be less ambiguous

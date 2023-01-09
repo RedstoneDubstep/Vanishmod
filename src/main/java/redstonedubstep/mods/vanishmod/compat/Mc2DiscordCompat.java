@@ -15,7 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class Mc2DiscordCompat {
 	public static void hidePlayer(ServerPlayer player, boolean hide) {
-		HiddenPlayerList list = ((MinecraftImpl)Mc2Discord.INSTANCE.iMinecraft).hiddenPlayerList;
+		HiddenPlayerList list = ((MinecraftImpl) Mc2Discord.INSTANCE.iMinecraft).hiddenPlayerList;
 		GameProfile profile = player.getGameProfile();
 
 		if (hide) {

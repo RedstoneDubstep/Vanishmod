@@ -49,10 +49,10 @@ public class VanishCommand {
 		ServerPlayer player = ctx.getSource().getServer().getPlayerList().getPlayerByName(playerName);
 
 		if (player != null) {
-			 if (!VanishUtil.isVanished(player))
-				 vanish(ctx, player);
-			 else
-				 ctx.getSource().sendFailure(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslatableComponent("Could not add already vanished player %s to the vanishing queue", playerName)));
+			if (!VanishUtil.isVanished(player))
+				vanish(ctx, player);
+			else
+				ctx.getSource().sendFailure(VanishUtil.VANISHMOD_PREFIX.copy().append(new TranslatableComponent("Could not add already vanished player %s to the vanishing queue", playerName)));
 
 			return 1;
 		}
