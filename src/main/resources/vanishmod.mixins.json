@@ -9,7 +9,6 @@
 		"chat.MixinEntitySelector",
 		"chat.MixinListPlayersCommand",
 		"gui.MixinServerStatusPacketListenerImpl",
-		"gui.MixinServerStatusPlayers",
 		"sound.MixinEntity",
 		"world.MixinChunkMapTrackedEntity",
 		"world.MixinLivingEntity",

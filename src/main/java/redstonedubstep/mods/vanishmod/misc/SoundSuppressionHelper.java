@@ -78,7 +78,7 @@ public class SoundSuppressionHelper {
 		if (!VanishConfig.CONFIG.indirectSoundSuppression.get() || VanishUtil.canSeeVanishedPlayers(forPlayer))
 			return false;
 
-		return SoundSuppressionHelper.areVanishedPlayersAt(level, soundOrigin) || SoundSuppressionHelper.vanishedPlayerVehicleAt(level, soundOrigin) || SoundSuppressionHelper.vanishedPlayersInteractWith(level, new BlockPos(soundOrigin));
+		return SoundSuppressionHelper.areVanishedPlayersAt(level, soundOrigin) || SoundSuppressionHelper.vanishedPlayerVehicleAt(level, soundOrigin) || SoundSuppressionHelper.vanishedPlayersInteractWith(level, BlockPos.containing(soundOrigin));
 	}
 
 	//Returns true if a vanished player directly produced the sound, or if it is determined that a vanished player was indirectly causing a sound, and that it thus should not be broadcast
@@ -101,7 +101,7 @@ public class SoundSuppressionHelper {
 		if (!VanishConfig.CONFIG.indirectParticleSuppression.get() || VanishUtil.canSeeVanishedPlayers(forPlayer))
 			return false;
 
-		return SoundSuppressionHelper.areVanishedPlayersAt(level, soundOrigin) || SoundSuppressionHelper.vanishedPlayerVehicleAt(level, soundOrigin) || SoundSuppressionHelper.vanishedPlayersInteractWith(level, new BlockPos(soundOrigin));
+		return SoundSuppressionHelper.areVanishedPlayersAt(level, soundOrigin) || SoundSuppressionHelper.vanishedPlayerVehicleAt(level, soundOrigin) || SoundSuppressionHelper.vanishedPlayersInteractWith(level, BlockPos.containing(soundOrigin));
 	}
 
 	public static boolean areVanishedPlayersAt(Level level, Vec3 pos) {
