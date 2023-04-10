@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.10-----------
+
+- Fixed Vanishmod not working in a singleplayer environment
+
 -----------Changelog for v1.1.9.3-----------
 
 - Re-enabled mc2discord compatibility
