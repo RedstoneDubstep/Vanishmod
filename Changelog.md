@@ -1,6 +1,7 @@
 -----------Changelog for v1.1.10-----------
 
 - Fixed Vanishmod not working in a singleplayer environment
+- Fixed potential crash when dying under specific circumstances
 
 -----------Changelog for v1.1.9.3-----------
 
