@@ -10,7 +10,7 @@ import net.minecraftforge.network.NetworkConstants;
 
 @Mod(Vanishmod.MODID)
 public class Vanishmod {
-	public static final String MODID = "vmod"; //This is Vanishmod v1.1.9.3 for 1.19.4!
+	public static final String MODID = "vmod"; //This is Vanishmod v1.1.10 for 1.19.4!
 
 	public Vanishmod() {
 		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
