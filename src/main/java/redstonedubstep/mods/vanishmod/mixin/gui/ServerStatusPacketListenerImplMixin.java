@@ -19,14 +19,14 @@ import redstonedubstep.mods.vanishmod.VanishConfig;
 import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(ServerStatusPacketListenerImpl.class)
-public abstract class MixinServerStatusPacketListenerImpl {
+public class ServerStatusPacketListenerImplMixin {
 	@Shadow
 	@Final
 	private MinecraftServer server;
 
 	//Stop server from sending the names of vanished players to the Multiplayer screen
 	@Redirect(method = "handleStatusRequest", at = @At(value = "NEW", target = "net/minecraft/network/protocol/status/ClientboundStatusResponsePacket"))
-	public ClientboundStatusResponsePacket constructSServerInfoPacket(ServerStatus response) {
+	public ClientboundStatusResponsePacket vanishmod$constructSServerInfoPacket(ServerStatus response) {
 		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get()) {
 			PlayerList list = server.getPlayerList();
 			GameProfile[] players = response.getPlayers().getSample();

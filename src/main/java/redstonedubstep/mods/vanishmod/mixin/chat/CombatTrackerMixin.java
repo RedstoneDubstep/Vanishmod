@@ -14,10 +14,10 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(CombatTracker.class)
-public abstract class MixinCombatTracker {
+public class CombatTrackerMixin {
 	//Change the death message of an unvanished player to the generic one if it was killed by a vanished player
 	@ModifyVariable(method = "getDeathMessage", slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatEntry;getAttackerName()Lnet/minecraft/network/chat/Component;")), at = @At(value = "RETURN", shift = Shift.BEFORE), ordinal = 1)
-	private Component modifyDeathMessage(Component deathMessage) {
+	private Component vanishmod$modifyDeathMessage(Component deathMessage) {
 		if (deathMessage instanceof TranslatableComponent component && component.getArgs().length > 1 && component.getArgs()[1] instanceof Component playerName) {
 			for (ServerPlayer killer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
 				if (killer.getDisplayName().getString().equals(playerName.getString()) && VanishUtil.isVanished(killer))

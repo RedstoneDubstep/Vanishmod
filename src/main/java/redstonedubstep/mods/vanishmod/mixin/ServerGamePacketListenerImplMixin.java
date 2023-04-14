@@ -34,7 +34,7 @@ import redstonedubstep.mods.vanishmod.misc.FieldHolder;
 import redstonedubstep.mods.vanishmod.misc.SoundSuppressionHelper;
 
 @Mixin(ServerGamePacketListenerImpl.class)
-public class MixinServerGamePacketListenerImpl {
+public class ServerGamePacketListenerImplMixin {
 	@Shadow
 	public ServerPlayer player;
 	@Shadow
@@ -46,7 +46,7 @@ public class MixinServerGamePacketListenerImpl {
 	//and it can be done safely because not suppressing these packets does not break this mod (in: a player removal packet sent too much wouldn't break this mod as much as a player addition packet)
 	//We need to filter the item entity packets because otherwise all other clients think that they picked up an item (and thus show a pickup animation for the local player), while in reality a vanished player did
 	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;)V", at = @At("HEAD"), cancellable = true)
-	private void onSendPacket(Packet<?> packet, CallbackInfo callbackInfo) {
+	private void vanishmod$onSendPacket(Packet<?> packet, CallbackInfo callbackInfo) {
 		if (packet instanceof ClientboundPlayerInfoPacket infoPacket && infoPacket.getAction() != Action.REMOVE_PLAYER) {
 			List<PlayerUpdate> filteredPacketEntries = infoPacket.getEntries().stream().filter(p -> !VanishUtil.isVanished(server.getPlayerList().getPlayer(p.getProfile().getId()), player)).toList();
 
@@ -73,7 +73,7 @@ public class MixinServerGamePacketListenerImpl {
 
 	//Prevent join, leave, death and advancement messages of vanished players from being broadcast
 	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V", at = @At("HEAD"), cancellable = true)
-	private void onSendPacket(Packet<?> packet, GenericFutureListener<?> listener, CallbackInfo callbackInfo) {
+	private void vanishmod$onSendPacket(Packet<?> packet, GenericFutureListener<?> listener, CallbackInfo callbackInfo) {
 		if (packet instanceof ClientboundChatPacket chatPacket && chatPacket.getMessage() instanceof TranslatableComponent component) {
 			if (component.getKey().startsWith("multiplayer.player.joined") && VanishUtil.isVanished(FieldHolder.joiningPlayer, player)) {
 				FieldHolder.joiningPlayer = null;

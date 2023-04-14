@@ -15,14 +15,14 @@ import redstonedubstep.mods.vanishmod.VanishConfig;
 import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(TrackedEntity.class)
-public abstract class MixinChunkMapTrackedEntity {
+public class ChunkMapTrackedEntityMixin {
 	@Shadow
 	@Final
 	Entity entity;
 
 	//Prevent tracking of vanished players for other players, which prevents vanished players from being rendered for anyone but themselves and permitted players.
 	@Inject(method = "updatePlayer", at = @At("HEAD"), cancellable = true)
-	private void onUpdatePlayer(ServerPlayer otherPlayer, CallbackInfo info) {
+	private void vanishmod$onUpdatePlayer(ServerPlayer otherPlayer, CallbackInfo info) {
 		if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
 			if (entity instanceof Player player && VanishUtil.isVanished(player, otherPlayer))
 				info.cancel();
