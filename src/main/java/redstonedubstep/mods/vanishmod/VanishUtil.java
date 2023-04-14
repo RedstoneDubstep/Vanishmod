@@ -76,7 +76,7 @@ public class VanishUtil {
 			}
 		}
 
-		//We can safely send the tracking update for the vanishing or unvanishing player to everyone, the more strict and player-aware filter gets applied in MixinChunkMapTrackedEntity. But we don't need to do that ourselves if the player has not been added yet (for example before it has fully joined the server)
+		//We can safely send the tracking update for the vanishing or unvanishing player to everyone, the more strict and player-aware filter gets applied in ChunkMapTrackedEntityMixin. But we don't need to do that ourselves if the player has not been added yet (for example before it has fully joined the server)
 		if (chunkProvider.chunkMap.entityMap.containsKey(currentPlayer.getId())) {
 			chunkProvider.chunkMap.entityMap.remove(currentPlayer.getId()); //we don't want an error in our log because the entity to be tracked is already on that list
 			chunkProvider.addEntity(currentPlayer);

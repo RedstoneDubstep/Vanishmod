@@ -4,19 +4,19 @@
 	"compatibilityLevel": "JAVA_17",
 	"refmap": "vanishmod.refmap.json",
 	"mixins": [
-		"chat.MixinCombatTracker",
-		"chat.MixinEntityArgument",
-		"chat.MixinEntitySelector",
-		"chat.MixinListPlayersCommand",
-		"gui.MixinServerStatusPacketListenerImpl",
-		"sound.MixinEntity",
-		"world.MixinChunkMapTrackedEntity",
-		"world.MixinLivingEntity",
-		"world.MixinPlayer",
-		"world.MixinSleepStatus",
-		"MixinPlayerList",
-		"MixinServerGamePacketListenerImpl",
-		"MixinServerPlayer"
+		"chat.CombatTrackerMixin",
+		"chat.EntityArgumentMixin",
+		"chat.EntitySelectorMixin",
+		"chat.ListPlayersCommandMixin",
+		"gui.ServerStatusPacketListenerImplMixin",
+		"sound.EntityMixin",
+		"world.ChunkMapTrackedEntityMixin",
+		"world.LivingEntityMixin",
+		"world.PlayerMixin",
+		"world.SleepStatusMixin",
+		"PlayerListMixin",
+		"ServerGamePacketListenerImplMixin",
+		"ServerPlayerMixin"
 	],
 	"minVersion": "0.8"
 }

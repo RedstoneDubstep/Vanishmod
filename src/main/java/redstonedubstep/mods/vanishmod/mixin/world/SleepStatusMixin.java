@@ -11,10 +11,10 @@ import net.minecraft.server.players.SleepStatus;
 import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(SleepStatus.class)
-public class MixinSleepStatus {
+public class SleepStatusMixin {
 	//Fixes that vanished players are taken into account when calculating the amount of players needed for the night to be skipped
 	@ModifyVariable(method = "update", at = @At(value = "HEAD"), argsOnly = true)
-	public List<ServerPlayer> updatePlayers(List<ServerPlayer> original) {
+	public List<ServerPlayer> vanishmod$updatePlayers(List<ServerPlayer> original) {
 		return VanishUtil.formatPlayerList(original, null);
 	}
 }
