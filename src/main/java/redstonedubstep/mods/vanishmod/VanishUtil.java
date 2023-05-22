@@ -23,6 +23,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
 import redstonedubstep.mods.vanishmod.api.PlayerVanishEvent;
@@ -56,34 +57,41 @@ public class VanishUtil {
 		VanishUtil.sendPacketsOnVanish(player, player.getLevel(), vanishes);
 	}
 
-	public static void sendPacketsOnVanish(ServerPlayer currentPlayer, ServerLevel world, boolean vanishes) {
+	public static void sendPacketsOnVanish(ServerPlayer changingPlayer, ServerLevel world, boolean vanishes) {
 		List<ServerPlayer> list = world.getServer().getPlayerList().getPlayers();
-		ServerChunkCache chunkProvider = currentPlayer.getLevel().getChunkSource();
+		ServerChunkCache chunkProvider = changingPlayer.getLevel().getChunkSource();
 
-		for (ServerPlayer player : list) {
-			if (!player.equals(currentPlayer)) { //prevent packet from being sent to the executor of the command
-				if (!canSeeVanishedPlayers(player))
-					player.connection.send(vanishes ? new ClientboundPlayerInfoRemovePacket(List.of(currentPlayer.getUUID())) : ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(currentPlayer)));
-				if (isVanished(player))
-					currentPlayer.connection.send(canSeeVanishedPlayers(currentPlayer, vanishes) ? ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(player)) : new ClientboundPlayerInfoRemovePacket(List.of(player.getUUID()))); //update the vanishing player's tab list in case the vanishing player can (not) see other vanished players now
+		for (ServerPlayer otherPlayer : list) {
+			boolean otherPlayerVanished = isVanished(otherPlayer);
+			boolean otherAllowedToSeeChanging = allowedToSeePlayer(otherPlayer, changingPlayer, otherPlayerVanished, vanishes);
+			boolean changingAllowedToSeeOther = allowedToSeePlayer(changingPlayer, otherPlayer, vanishes, otherPlayerVanished);
+
+			if (!otherPlayer.equals(changingPlayer)) { //prevent packets from being sent to the executor of the command
+				//If the other player can or cannot see the changing player now, add or remove the changing player to/from the other player's client side info list
+				otherPlayer.connection.send(otherAllowedToSeeChanging ? ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(changingPlayer)) : new ClientboundPlayerInfoRemovePacket(List.of(changingPlayer.getUUID())));
+				//If the changing player can or cannot see the other player now, add or remove the other player to/from the changing player's client side info list
+				if (isVanished(otherPlayer))
+					changingPlayer.connection.send(changingAllowedToSeeOther ? ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(otherPlayer)) : new ClientboundPlayerInfoRemovePacket(List.of(otherPlayer.getUUID())));
 
 				if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
-					if (vanishes && !canSeeVanishedPlayers(player))
-						player.connection.send(new ClientboundRemoveEntitiesPacket(currentPlayer.getId())); //remove the vanishing player for the other players that cannot see vanished players
-					else if (isVanished(player) && !canSeeVanishedPlayers(currentPlayer, vanishes))
-						currentPlayer.connection.send(new ClientboundRemoveEntitiesPacket(player.getId())); //if the vanishing players cannot see vanished players now, remove them for the vanishing player
+					//If the other player cannot see the vanishing player, destroy the changing player entity for the other player
+					if (vanishes && !otherAllowedToSeeChanging)
+						otherPlayer.connection.send(new ClientboundRemoveEntitiesPacket(changingPlayer.getId()));
+					//If the unvanishing player cannot see other vanished players now, remove their entities for the unvanishing player
+					else if (!vanishes && !changingAllowedToSeeOther)
+						changingPlayer.connection.send(new ClientboundRemoveEntitiesPacket(otherPlayer.getId()));
 				}
 			}
 		}
 
-		//We can safely send the tracking update for the vanishing or unvanishing player to everyone, the more strict and player-aware filter gets applied in ChunkMapTrackedEntityMixin. But we don't need to do that ourselves if the player has not been added yet (for example before it has fully joined the server)
-		if (chunkProvider.chunkMap.entityMap.containsKey(currentPlayer.getId())) {
-			chunkProvider.chunkMap.entityMap.remove(currentPlayer.getId()); //we don't want an error in our log because the entity to be tracked is already on that list
-			chunkProvider.addEntity(currentPlayer);
+		//We can safely send the tracking update for the changing player to everyone, the more strict and player-aware filter gets applied in ChunkMapTrackedEntityMixin. But we don't need to do that ourselves if the player has not been added yet (for example before it has fully joined the server)
+		if (chunkProvider.chunkMap.entityMap.containsKey(changingPlayer.getId())) {
+			chunkProvider.chunkMap.entityMap.remove(changingPlayer.getId()); //we don't want an error in our log because the entity to be tracked is already on that list
+			chunkProvider.addEntity(changingPlayer);
 		}
 
-		currentPlayer.connection.send(new ClientboundSetActionBarTextPacket(VanishUtil.getVanishedStatusText(currentPlayer, vanishes)));
-		currentPlayer.refreshTabListName();
+		changingPlayer.connection.send(new ClientboundSetActionBarTextPacket(VanishUtil.getVanishedStatusText(changingPlayer, vanishes)));
+		changingPlayer.refreshTabListName();
 	}
 
 	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayer> playerList, ServerPlayer sender, boolean leaveMessage, boolean beforeStatusChange) {
@@ -134,15 +142,27 @@ public class VanishUtil {
 		return vanishingQueue.remove(playerName);
 	}
 
-	public static boolean canSeeVanishedPlayers(Entity entity) {
-		return canSeeVanishedPlayers(entity, isVanished(entity));
+	public static boolean allowedToSeePlayer(Entity player, Entity otherPlayer, boolean isVanished, boolean isOtherVanished) {
+		if (player.equals(otherPlayer)) //All players should be able to see each other
+			return true;
+
+		return !isOtherVanished || canSeeAllVanishedPlayers(player, isVanished) || checkTeamVisibility(player, otherPlayer);
 	}
 
-	public static boolean canSeeVanishedPlayers(Entity entity, boolean isVanished) {
+	public static boolean canSeeAllVanishedPlayers(Entity entity, boolean isVanished) {
 		if (entity instanceof Player player)
 			return (VanishConfig.CONFIG.vanishedPlayersSeeEachOther.get() && isVanished) || (VanishConfig.CONFIG.seeVanishedPermissionLevel.get() >= 0 && player.hasPermissions(VanishConfig.CONFIG.seeVanishedPermissionLevel.get()));
 
 		return false;
+	}
+
+	public static boolean checkTeamVisibility(Entity player, Entity otherPlayer) {
+		if (!VanishConfig.CONFIG.seeVanishedTeamPlayers.get())
+			return false;
+
+		Team team = player.getTeam();
+
+		return team != null && team.canSeeFriendlyInvisibles() && team.getPlayers().contains(otherPlayer.getScoreboardName());
 	}
 
 	public static ResourceKey<ChatType> getChatTypeRegistryKey(ChatType.Bound chatType, Player player) {
@@ -157,12 +177,8 @@ public class VanishUtil {
 		if (player instanceof Player && !player.level.isClientSide) {
 			boolean isVanished = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean("Vanished");
 
-			if (forPlayer != null) {
-				if (player.equals(forPlayer)) //No player should ever be vanished for themselves
-					return false;
-
-				return isVanished && !canSeeVanishedPlayers(forPlayer);
-			}
+			if (forPlayer != null)
+				return !allowedToSeePlayer(forPlayer, player, isVanished(forPlayer), isVanished);
 
 			return isVanished;
 		}
