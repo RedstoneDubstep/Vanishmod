@@ -26,6 +26,7 @@ public class VanishConfig {
 		public BooleanValue sendFakeJoinLeaveMessages;
 		public BooleanValue fixModCompatibility;
 		public BooleanValue vanishedPlayersSeeEachOther;
+		public BooleanValue seeVanishedTeamPlayers;
 		public BooleanValue indirectSoundSuppression;
 		public BooleanValue indirectParticleSuppression;
 		public IntValue vanishCommandPermissionLevel;
@@ -57,6 +58,9 @@ public class VanishConfig {
 			vanishedPlayersSeeEachOther = builder
 					.comment("Should vanished players be able to see each other?")
 					.define("vanishedPlayersSeeEachOther", false);
+			seeVanishedTeamPlayers = builder
+					.comment("Should players be able to see vanished players in the same vanilla team, if the \"seeFriendlyInvisibles\" option is enabled for that team?")
+					.define("seeVanishedTeamPlayers", false);
 			indirectSoundSuppression = builder
 					.comment("Should this mod try to detect and suppress sounds that are indirectly caused by vanished players (e.g. pressing a button or hitting an entity)? This detection might accidentally suppress a few sounds unrelated to vanished players, disable this detection if too many sound bugs occur")
 					.define("indirectSoundSuppression", true);

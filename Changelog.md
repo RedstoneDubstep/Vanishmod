@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.11-----------
+
+- Added vanilla team support: Players can now see vanished teammates if the relevant config option and team setting is set to true
+
 -----------Changelog for v1.1.10-----------
 
 - Fixed Vanishmod not working in a singleplayer environment

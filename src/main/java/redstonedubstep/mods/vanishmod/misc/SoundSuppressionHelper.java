@@ -72,58 +72,58 @@ public class SoundSuppressionHelper {
 
 	//Returns true if a vanished player directly produced the sound, or if it is determined that a vanished player was indirectly causing a sound, and that it thus should not be broadcast
 	public static boolean shouldSuppressSoundEventFor(Player player, Level level, Vec3 soundOrigin, Player forPlayer) {
-		if (VanishUtil.isVanished(player, forPlayer))
-			return true;
+		if (player != null)
+			return VanishUtil.isVanished(player, forPlayer);
 
-		if (!VanishConfig.CONFIG.indirectSoundSuppression.get() || VanishUtil.canSeeVanishedPlayers(forPlayer))
+		if (!VanishConfig.CONFIG.indirectSoundSuppression.get())
 			return false;
 
-		return SoundSuppressionHelper.areVanishedPlayersAt(level, soundOrigin) || SoundSuppressionHelper.vanishedPlayerVehicleAt(level, soundOrigin) || SoundSuppressionHelper.vanishedPlayersInteractWith(level, new BlockPos(soundOrigin));
+		return SoundSuppressionHelper.areVanishedPlayersAt(level, soundOrigin, forPlayer) || SoundSuppressionHelper.vanishedPlayerVehicleAt(level, soundOrigin, forPlayer) || SoundSuppressionHelper.vanishedPlayersInteractWith(level, new BlockPos(soundOrigin), forPlayer);
 	}
 
 	//Returns true if a vanished player directly produced the sound, or if it is determined that a vanished player was indirectly causing a sound, and that it thus should not be broadcast
 	public static boolean shouldSuppressSoundEventFor(Player player, Level level, Entity soundOrigin, Player forPlayer) {
-		if (VanishUtil.isVanished(player, forPlayer))
-			return true;
+		if (player != null)
+			return VanishUtil.isVanished(player, forPlayer);
 
-		if (!VanishConfig.CONFIG.indirectSoundSuppression.get() || VanishUtil.canSeeVanishedPlayers(forPlayer))
+		if (!VanishConfig.CONFIG.indirectSoundSuppression.get())
 			return false;
 
-		return SoundSuppressionHelper.areVanishedPlayersAt(level, soundOrigin.position()) || SoundSuppressionHelper.isVanishedPlayerVehicle(soundOrigin) || SoundSuppressionHelper.vanishedPlayersInteractWith(level, soundOrigin);
+		return SoundSuppressionHelper.areVanishedPlayersAt(level, soundOrigin.position(), forPlayer) || SoundSuppressionHelper.isVanishedPlayerVehicle(soundOrigin, forPlayer) || SoundSuppressionHelper.vanishedPlayersInteractWith(level, soundOrigin, forPlayer);
 	}
 
 	public static boolean shouldSuppressParticlesFor(Player player, Level level, double x, double y, double z, Player forPlayer) {
-		Vec3 soundOrigin = new Vec3(x, y, z);
+		Vec3 particleOrigin = new Vec3(x, y, z);
 
-		if (VanishUtil.isVanished(player, forPlayer))
-			return true;
+		if (player != null)
+			return VanishUtil.isVanished(player, forPlayer);
 
-		if (!VanishConfig.CONFIG.indirectParticleSuppression.get() || VanishUtil.canSeeVanishedPlayers(forPlayer))
+		if (!VanishConfig.CONFIG.indirectParticleSuppression.get())
 			return false;
 
-		return SoundSuppressionHelper.areVanishedPlayersAt(level, soundOrigin) || SoundSuppressionHelper.vanishedPlayerVehicleAt(level, soundOrigin) || SoundSuppressionHelper.vanishedPlayersInteractWith(level, new BlockPos(soundOrigin));
+		return SoundSuppressionHelper.areVanishedPlayersAt(level, particleOrigin, forPlayer) || SoundSuppressionHelper.vanishedPlayerVehicleAt(level, particleOrigin, forPlayer) || SoundSuppressionHelper.vanishedPlayersInteractWith(level, new BlockPos(particleOrigin), forPlayer);
 	}
 
-	public static boolean areVanishedPlayersAt(Level level, Vec3 pos) {
+	public static boolean areVanishedPlayersAt(Level level, Vec3 pos, Player forPlayer) {
 		VoxelShape shape = Shapes.block().move(pos.x - 0.5D, pos.y - 0.5D, pos.z - 0.5D);
-		return vanishedPlayersAndHitResults.keySet().stream().filter(p -> p.level.equals(level) && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR).anyMatch(p -> Shapes.joinIsNotEmpty(shape, Shapes.create(p.getBoundingBox()), BooleanOp.AND));
+		return vanishedPlayersAndHitResults.keySet().stream().anyMatch(p -> p.level.equals(level) && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && VanishUtil.isVanished(p, forPlayer) && Shapes.joinIsNotEmpty(shape, Shapes.create(p.getBoundingBox()), BooleanOp.AND));
 	}
 
-	public static boolean vanishedPlayerVehicleAt(Level level, Vec3 pos) {
+	public static boolean vanishedPlayerVehicleAt(Level level, Vec3 pos, Player forPlayer) {
 		VoxelShape shape = Shapes.block().move(pos.x - 0.5D, pos.y - 0.5D, pos.z - 0.5D);
-		return vanishedPlayersAndHitResults.keySet().stream().filter(p -> p.level.equals(level) && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR).map(Entity::getVehicle).filter(Objects::nonNull).anyMatch(v -> Shapes.joinIsNotEmpty(shape, Shapes.create(v.getBoundingBox()), BooleanOp.AND));
+		return vanishedPlayersAndHitResults.keySet().stream().filter(p -> p.level.equals(level) && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && VanishUtil.isVanished(p, forPlayer)).map(Entity::getVehicle).filter(Objects::nonNull).anyMatch(v -> Shapes.joinIsNotEmpty(shape, Shapes.create(v.getBoundingBox()), BooleanOp.AND));
 	}
 
-	public static boolean isVanishedPlayerVehicle(Entity entity) {
-		return vanishedPlayersAndHitResults.keySet().stream().anyMatch(p -> p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && entity.equals(p.getVehicle()));
+	public static boolean isVanishedPlayerVehicle(Entity entity, Player forPlayer) {
+		return vanishedPlayersAndHitResults.keySet().stream().anyMatch(p -> p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR  && VanishUtil.isVanished(p, forPlayer) && entity.equals(p.getVehicle()));
 	}
 
-	public static boolean vanishedPlayersInteractWith(Level level, BlockPos pos) {
-		return vanishedPlayersAndHitResults.entrySet().stream().filter(e -> e.getKey().level.equals(level)).anyMatch(p -> p.getValue() != null && equalsThisOrConnected(pos, level, p.getValue().getLeft()));
+	public static boolean vanishedPlayersInteractWith(Level level, BlockPos pos, Player forPlayer) {
+		return vanishedPlayersAndHitResults.entrySet().stream().anyMatch(e -> e.getKey().level.equals(level) && VanishUtil.isVanished(e.getKey(), forPlayer) && e.getValue() != null && equalsThisOrConnected(pos, level, e.getValue().getLeft()));
 	}
 
-	public static boolean vanishedPlayersInteractWith(Level level, Entity entity) {
-		return vanishedPlayersAndHitResults.entrySet().stream().filter(e -> e.getKey().level.equals(level)).anyMatch(p -> p.getValue() != null && entity.equals(p.getValue().getRight()));
+	public static boolean vanishedPlayersInteractWith(Level level, Entity entity, Player forPlayer) {
+		return vanishedPlayersAndHitResults.entrySet().stream().anyMatch(e -> e.getKey().level.equals(level) && VanishUtil.isVanished(e.getKey(), forPlayer) && e.getValue() != null && entity.equals(e.getValue().getRight()));
 	}
 
 	public static boolean equalsThisOrConnected(BlockPos soundPos, Level level, BlockPos interactPos) {
