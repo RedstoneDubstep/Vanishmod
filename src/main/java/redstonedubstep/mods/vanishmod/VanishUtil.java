@@ -70,7 +70,7 @@ public class VanishUtil {
 				//If the other player can or cannot see the changing player now, add or remove the changing player to/from the other player's client side info list
 				otherPlayer.connection.send(new ClientboundPlayerInfoPacket(otherAllowedToSeeChanging ? Action.ADD_PLAYER : Action.REMOVE_PLAYER, changingPlayer));
 				//If the changing player can or cannot see the other player now, add or remove the other player to/from the changing player's client side info list
-				if (isVanished(otherPlayer))
+				if (otherPlayerVanished)
 					changingPlayer.connection.send(new ClientboundPlayerInfoPacket(changingAllowedToSeeOther ? Action.ADD_PLAYER : Action.REMOVE_PLAYER, otherPlayer));
 
 				if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
