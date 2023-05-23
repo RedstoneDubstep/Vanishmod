@@ -6,15 +6,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.Action;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.resources.ResourceKey;
@@ -68,10 +68,10 @@ public class VanishUtil {
 
 			if (!otherPlayer.equals(changingPlayer)) { //prevent packets from being sent to the executor of the command
 				//If the other player can or cannot see the changing player now, add or remove the changing player to/from the other player's client side info list
-				otherPlayer.connection.send(otherAllowedToSeeChanging ? ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(changingPlayer)) : new ClientboundPlayerInfoRemovePacket(List.of(changingPlayer.getUUID())));
+				otherPlayer.connection.send(new ClientboundPlayerInfoPacket(otherAllowedToSeeChanging ? Action.ADD_PLAYER : Action.REMOVE_PLAYER, changingPlayer));
 				//If the changing player can or cannot see the other player now, add or remove the other player to/from the changing player's client side info list
-				if (isVanished(otherPlayer))
-					changingPlayer.connection.send(changingAllowedToSeeOther ? ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(otherPlayer)) : new ClientboundPlayerInfoRemovePacket(List.of(otherPlayer.getUUID())));
+				if (otherPlayerVanished)
+					changingPlayer.connection.send(new ClientboundPlayerInfoPacket(changingAllowedToSeeOther ? Action.ADD_PLAYER : Action.REMOVE_PLAYER, otherPlayer));
 
 				if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
 					//If the other player cannot see the vanishing player, destroy the changing player entity for the other player
@@ -166,7 +166,7 @@ public class VanishUtil {
 	}
 
 	public static ResourceKey<ChatType> getChatTypeRegistryKey(ChatType.Bound chatType, Player player) {
-		return player.level.registryAccess().registryOrThrow(Registries.CHAT_TYPE).getResourceKey(chatType.chatType()).orElse(ChatType.CHAT);
+		return player.level.registryAccess().registryOrThrow(Registry.CHAT_TYPE_REGISTRY).getResourceKey(chatType.chatType()).orElse(ChatType.CHAT);
 	}
 
 	public static boolean isVanished(Entity player) {

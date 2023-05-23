@@ -1,9 +1,10 @@
 package redstonedubstep.mods.vanishmod.mixin.gui;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Arrays;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -11,33 +12,34 @@ import com.mojang.authlib.GameProfile;
 
 import net.minecraft.network.protocol.status.ClientboundStatusResponsePacket;
 import net.minecraft.network.protocol.status.ServerStatus;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerStatusPacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import redstonedubstep.mods.vanishmod.VanishConfig;
 import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(ServerStatusPacketListenerImpl.class)
 public class ServerStatusPacketListenerImplMixin {
+	@Shadow
+	@Final
+	private MinecraftServer server;
+
 	//Stop server from sending the names of vanished players to the Multiplayer screen
 	@Redirect(method = "handleStatusRequest", at = @At(value = "NEW", target = "net/minecraft/network/protocol/status/ClientboundStatusResponsePacket"))
-	public ClientboundStatusResponsePacket vanishmod$constructSServerInfoPacket(ServerStatus status, String cachedStatus) {
+	public ClientboundStatusResponsePacket vanishmod$constructSServerInfoPacket(ServerStatus response) {
 		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get()) {
-			PlayerList list = ServerLifecycleHooks.getCurrentServer().getPlayerList();
-			Optional<ServerStatus.Players> players = status.players();
+			PlayerList list = server.getPlayerList();
+			GameProfile[] players = response.getPlayers().getSample();
 
-			if (players.isPresent()) {
-				List<GameProfile> gameProfiles = players.get().sample();
-
-				List<GameProfile> newGameProfiles = gameProfiles.stream()
+			if (players != null) {
+				GameProfile[] newPlayers = Arrays.stream(players)
 						.filter(p -> !VanishUtil.isVanished(list.getPlayer(p.getId())))
-						.toList();
+						.toArray(GameProfile[]::new);
 
-				status = new ServerStatus(status.description(), Optional.of(new ServerStatus.Players(players.get().max(), newGameProfiles.size() , newGameProfiles)), status.version(), status.favicon(), status.enforcesSecureChat(), status.forgeData());
-				cachedStatus = null;
+				response.getPlayers().setSample(newPlayers);
 			}
 		}
 
-		return new ClientboundStatusResponsePacket(status, cachedStatus);
+		return new ClientboundStatusResponsePacket(response);
 	}
 }
