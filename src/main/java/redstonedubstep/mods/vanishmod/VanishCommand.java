@@ -30,7 +30,7 @@ public class VanishCommand {
 	}
 
 	private static int vanish(CommandContext<CommandSourceStack> ctx, ServerPlayer player) {
-		ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable(!VanishUtil.isVanished(player) ? VanishConfig.CONFIG.onVanishMessage.get() : VanishConfig.CONFIG.onUnvanishMessage.get(), player.getDisplayName())), true);
+		ctx.getSource().sendSuccess(() -> VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable(!VanishUtil.isVanished(player) ? VanishConfig.CONFIG.onVanishMessage.get() : VanishConfig.CONFIG.onUnvanishMessage.get(), player.getDisplayName())), true);
 		VanishUtil.toggleVanish(player);
 		return 1;
 	}
@@ -38,7 +38,7 @@ public class VanishCommand {
 	private static int getVanishedStatus(CommandContext<CommandSourceStack> ctx, ServerPlayer player) {
 		MutableComponent vanishedStatus = VanishUtil.getVanishedStatusText(player, VanishUtil.isVanished(player));
 
-		ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(vanishedStatus), false);
+		ctx.getSource().sendSuccess(() -> VanishUtil.VANISHMOD_PREFIX.copy().append(vanishedStatus), false);
 
 		if (ctx.getSource().getEntity() instanceof ServerPlayer currentPlayer)
 			currentPlayer.connection.send(new ClientboundSetActionBarTextPacket(vanishedStatus));
@@ -59,9 +59,9 @@ public class VanishCommand {
 		}
 
 		if (VanishUtil.removeFromQueue(playerName))
-			ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable("Removed %s from the vanishing queue", playerName)), true);
+			ctx.getSource().sendSuccess(() -> VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable("Removed %s from the vanishing queue", playerName)), true);
 		else if (VanishUtil.addToQueue(playerName))
-			ctx.getSource().sendSuccess(VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable("Added %s to the vanishing queue", playerName)), true);
+			ctx.getSource().sendSuccess(() -> VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable("Added %s to the vanishing queue", playerName)), true);
 
 		return 1;
 	}

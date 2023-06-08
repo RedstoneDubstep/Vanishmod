@@ -106,12 +106,12 @@ public class SoundSuppressionHelper {
 
 	public static boolean areVanishedPlayersAt(Level level, Vec3 pos, Player forPlayer) {
 		VoxelShape shape = Shapes.block().move(pos.x - 0.5D, pos.y - 0.5D, pos.z - 0.5D);
-		return vanishedPlayersAndHitResults.keySet().stream().anyMatch(p -> p.level.equals(level) && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && VanishUtil.isVanished(p, forPlayer) && Shapes.joinIsNotEmpty(shape, Shapes.create(p.getBoundingBox()), BooleanOp.AND));
+		return vanishedPlayersAndHitResults.keySet().stream().anyMatch(p -> p.level().equals(level) && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && VanishUtil.isVanished(p, forPlayer) && Shapes.joinIsNotEmpty(shape, Shapes.create(p.getBoundingBox()), BooleanOp.AND));
 	}
 
 	public static boolean vanishedPlayerVehicleAt(Level level, Vec3 pos, Player forPlayer) {
 		VoxelShape shape = Shapes.block().move(pos.x - 0.5D, pos.y - 0.5D, pos.z - 0.5D);
-		return vanishedPlayersAndHitResults.keySet().stream().filter(p -> p.level.equals(level) && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && VanishUtil.isVanished(p, forPlayer)).map(Entity::getVehicle).filter(Objects::nonNull).anyMatch(v -> Shapes.joinIsNotEmpty(shape, Shapes.create(v.getBoundingBox()), BooleanOp.AND));
+		return vanishedPlayersAndHitResults.keySet().stream().filter(p -> p.level().equals(level) && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && VanishUtil.isVanished(p, forPlayer)).map(Entity::getVehicle).filter(Objects::nonNull).anyMatch(v -> Shapes.joinIsNotEmpty(shape, Shapes.create(v.getBoundingBox()), BooleanOp.AND));
 	}
 
 	public static boolean isVanishedPlayerVehicle(Entity entity, Player forPlayer) {
@@ -119,11 +119,11 @@ public class SoundSuppressionHelper {
 	}
 
 	public static boolean vanishedPlayersInteractWith(Level level, BlockPos pos, Player forPlayer) {
-		return vanishedPlayersAndHitResults.entrySet().stream().anyMatch(e -> e.getKey().level.equals(level) && VanishUtil.isVanished(e.getKey(), forPlayer) && e.getValue() != null && equalsThisOrConnected(pos, level, e.getValue().getLeft()));
+		return vanishedPlayersAndHitResults.entrySet().stream().anyMatch(e -> e.getKey().level().equals(level) && VanishUtil.isVanished(e.getKey(), forPlayer) && e.getValue() != null && equalsThisOrConnected(pos, level, e.getValue().getLeft()));
 	}
 
 	public static boolean vanishedPlayersInteractWith(Level level, Entity entity, Player forPlayer) {
-		return vanishedPlayersAndHitResults.entrySet().stream().anyMatch(e -> e.getKey().level.equals(level) && VanishUtil.isVanished(e.getKey(), forPlayer) && e.getValue() != null && entity.equals(e.getValue().getRight()));
+		return vanishedPlayersAndHitResults.entrySet().stream().anyMatch(e -> e.getKey().level().equals(level) && VanishUtil.isVanished(e.getKey(), forPlayer) && e.getValue() != null && entity.equals(e.getValue().getRight()));
 	}
 
 	public static boolean equalsThisOrConnected(BlockPos soundPos, Level level, BlockPos interactPos) {

@@ -50,16 +50,16 @@ public class VanishUtil {
 		if (vanishes)
 			player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: ").append(Component.literal("(...)").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(note))))));
 
-		VanishUtil.sendJoinOrLeaveMessageToPlayers(player.getLevel().getServer().getPlayerList().getPlayers(), player, vanishes, false);
+		VanishUtil.sendJoinOrLeaveMessageToPlayers(player.server.getPlayerList().getPlayers(), player, vanishes, false);
 		VanishUtil.updateVanishedStatus(player, vanishes);
-		VanishUtil.sendJoinOrLeaveMessageToPlayers(player.getLevel().getServer().getPlayerList().getPlayers(), player, vanishes, true); //We always need to send fake join/leave messages when the player is in an unvanished state, thus we try twice and return early (within that method) if the player is vanished
+		VanishUtil.sendJoinOrLeaveMessageToPlayers(player.server.getPlayerList().getPlayers(), player, vanishes, true); //We always need to send fake join/leave messages when the player is in an unvanished state, thus we try twice and return early (within that method) if the player is vanished
 
-		VanishUtil.sendPacketsOnVanish(player, player.getLevel(), vanishes);
+		VanishUtil.sendPacketsOnVanish(player, player.serverLevel(), vanishes);
 	}
 
 	public static void sendPacketsOnVanish(ServerPlayer changingPlayer, ServerLevel world, boolean vanishes) {
 		List<ServerPlayer> list = world.getServer().getPlayerList().getPlayers();
-		ServerChunkCache chunkProvider = changingPlayer.getLevel().getChunkSource();
+		ServerChunkCache chunkProvider = changingPlayer.serverLevel().getChunkSource();
 
 		for (ServerPlayer otherPlayer : list) {
 			boolean otherPlayerVanished = isVanished(otherPlayer);
@@ -166,7 +166,7 @@ public class VanishUtil {
 	}
 
 	public static ResourceKey<ChatType> getChatTypeRegistryKey(ChatType.Bound chatType, Player player) {
-		return player.level.registryAccess().registryOrThrow(Registries.CHAT_TYPE).getResourceKey(chatType.chatType()).orElse(ChatType.CHAT);
+		return player.level().registryAccess().registryOrThrow(Registries.CHAT_TYPE).getResourceKey(chatType.chatType()).orElse(ChatType.CHAT);
 	}
 
 	public static boolean isVanished(Entity player) {
@@ -174,7 +174,7 @@ public class VanishUtil {
 	}
 
 	public static boolean isVanished(Entity player, Entity forPlayer) {
-		if (player instanceof Player && !player.level.isClientSide) {
+		if (player instanceof Player && !player.level().isClientSide) {
 			boolean isVanished = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean("Vanished");
 
 			if (forPlayer != null)

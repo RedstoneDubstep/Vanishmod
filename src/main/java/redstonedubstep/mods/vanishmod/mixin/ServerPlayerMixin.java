@@ -49,7 +49,7 @@ public abstract class ServerPlayerMixin extends Player {
 
 			if (VanishUtil.isVanished(sender, this)) {
 				if (VanishConfig.CONFIG.hidePlayerNameInChat.get())
-					chatType = ChatType.bind(chatTypeKey, level.registryAccess(), Component.literal("vanished").withStyle(ChatFormatting.GRAY));
+					chatType = ChatType.bind(chatTypeKey, level().registryAccess(), Component.literal("vanished").withStyle(ChatFormatting.GRAY));
 
 				if (chatTypeKey != ChatType.CHAT && chatTypeKey != ChatType.TEAM_MSG_COMMAND_INCOMING)
 					sendSystemMessage(chatType.decorate(playerChatMessage.content()));

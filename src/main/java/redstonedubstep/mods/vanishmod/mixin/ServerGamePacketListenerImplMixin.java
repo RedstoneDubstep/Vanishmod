@@ -54,18 +54,18 @@ public class ServerGamePacketListenerImplMixin {
 			else if (!filteredPacketEntries.equals(infoPacket.entries()))
 				infoPacket.entries = filteredPacketEntries;
 		}
-		else if (packet instanceof ClientboundTakeItemEntityPacket pickupPacket && VanishUtil.isVanished(player.level.getEntity(pickupPacket.getPlayerId()), player))
+		else if (packet instanceof ClientboundTakeItemEntityPacket pickupPacket && VanishUtil.isVanished(player.level().getEntity(pickupPacket.getPlayerId()), player))
 			callbackInfo.cancel();
 		else if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
-			if (packet instanceof ClientboundSoundPacket soundPacket && SoundSuppressionHelper.shouldSuppressSoundEventFor(SoundSuppressionHelper.getPlayerForPacket(soundPacket), player.level, soundPacket.getX(), soundPacket.getY(), soundPacket.getZ(), player))
+			if (packet instanceof ClientboundSoundPacket soundPacket && SoundSuppressionHelper.shouldSuppressSoundEventFor(SoundSuppressionHelper.getPlayerForPacket(soundPacket), player.level(), soundPacket.getX(), soundPacket.getY(), soundPacket.getZ(), player))
 				callbackInfo.cancel();
-			else if (packet instanceof ClientboundSoundEntityPacket soundPacket && SoundSuppressionHelper.shouldSuppressSoundEventFor(SoundSuppressionHelper.getPlayerForPacket(soundPacket), player.level, player.level.getEntity(soundPacket.getId()), player))
+			else if (packet instanceof ClientboundSoundEntityPacket soundPacket && SoundSuppressionHelper.shouldSuppressSoundEventFor(SoundSuppressionHelper.getPlayerForPacket(soundPacket), player.level(), player.level().getEntity(soundPacket.getId()), player))
 				callbackInfo.cancel();
-			else if (packet instanceof ClientboundLevelEventPacket soundPacket && SoundSuppressionHelper.shouldSuppressSoundEventFor(SoundSuppressionHelper.getPlayerForPacket(soundPacket), player.level, Vec3.atCenterOf(soundPacket.getPos()), player))
+			else if (packet instanceof ClientboundLevelEventPacket soundPacket && SoundSuppressionHelper.shouldSuppressSoundEventFor(SoundSuppressionHelper.getPlayerForPacket(soundPacket), player.level(), Vec3.atCenterOf(soundPacket.getPos()), player))
 				callbackInfo.cancel();
-			else if (packet instanceof ClientboundBlockEventPacket eventPacket && SoundSuppressionHelper.shouldSuppressSoundEventFor(null, player.level, Vec3.atCenterOf(eventPacket.getPos()), player))
+			else if (packet instanceof ClientboundBlockEventPacket eventPacket && SoundSuppressionHelper.shouldSuppressSoundEventFor(null, player.level(), Vec3.atCenterOf(eventPacket.getPos()), player))
 				callbackInfo.cancel();
-			else if (packet instanceof ClientboundLevelParticlesPacket particlesPacket && SoundSuppressionHelper.shouldSuppressParticlesFor(null, player.level, particlesPacket.getX(), particlesPacket.getY(), particlesPacket.getZ(), player))
+			else if (packet instanceof ClientboundLevelParticlesPacket particlesPacket && SoundSuppressionHelper.shouldSuppressParticlesFor(null, player.level(), particlesPacket.getX(), particlesPacket.getY(), particlesPacket.getZ(), player))
 				callbackInfo.cancel();
 		}
 	}
