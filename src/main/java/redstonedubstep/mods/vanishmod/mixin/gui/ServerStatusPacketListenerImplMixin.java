@@ -38,13 +38,13 @@ public class ServerStatusPacketListenerImplMixin {
 			if (server.hidesOnlinePlayers())
 				playerStatus = new ServerStatus.Players(maxPlayers, unvanishedPlayerCount, List.of());
 			else {
-				int playerSampleSize = unvanishedPlayers.size();
-				ObjectArrayList<GameProfile> newPlayers = new ObjectArrayList<>(Math.min(playerSampleSize, 12));
+				int playerSampleSize = Math.min(unvanishedPlayers.size(), 12);
+				ObjectArrayList<GameProfile> newPlayers = new ObjectArrayList<>(playerSampleSize);
 				int offset = Mth.nextInt(server.overworld().random, 0, unvanishedPlayerCount - playerSampleSize);
 
 				for(int l = 0; l < playerSampleSize; ++l) {
-					ServerPlayer serverplayer = unvanishedPlayers.get(offset + l);
-					newPlayers.add(serverplayer.allowsListing() ? serverplayer.getGameProfile() : MinecraftServer.ANONYMOUS_PLAYER_PROFILE);
+					ServerPlayer player = unvanishedPlayers.get(offset + l);
+					newPlayers.add(player.allowsListing() ? player.getGameProfile() : MinecraftServer.ANONYMOUS_PLAYER_PROFILE);
 				}
 
 				Util.shuffle(newPlayers, server.overworld().random);
