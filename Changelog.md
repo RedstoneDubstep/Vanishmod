@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.12-----------
+
+- Fixed incorrect online player count of servers with Vanishmod installed on the server list screen
+
 -----------Changelog for v1.1.11-----------
 
 - Added vanilla team support: Players can now see vanished teammates if the relevant config option and team setting is set to true
