@@ -1,6 +1,9 @@
 package redstonedubstep.mods.vanishmod.compat;
 
+import java.util.Collections;
+
 import com.mojang.authlib.GameProfile;
+
 import fr.denisd3d.mc2discord.core.M2DUtils;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
 import fr.denisd3d.mc2discord.core.MessageManager;
@@ -11,8 +14,6 @@ import fr.denisd3d.mc2discord.core.storage.HiddenPlayerEntry;
 import fr.denisd3d.mc2discord.core.storage.HiddenPlayerList;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.util.Collections;
-
 public class Mc2DiscordCompat {
 	public static void hidePlayer(ServerPlayer player, boolean hide) {
 		HiddenPlayerList list = Mc2Discord.INSTANCE.hiddenPlayerList;
@@ -22,9 +23,8 @@ public class Mc2DiscordCompat {
 			if (!list.contains(profile.getId()))
 				list.add(new HiddenPlayerEntry(profile.getId()));
 		}
-		else if (list.contains(profile.getId())) {
+		else if (list.contains(profile.getId()))
 			list.remove(profile.getId());
-		}
 	}
 
 	public static void sendFakeJoinLeaveMessage(ServerPlayer player, boolean left) {
