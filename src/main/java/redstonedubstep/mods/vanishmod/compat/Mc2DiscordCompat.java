@@ -1,37 +1,38 @@
 package redstonedubstep.mods.vanishmod.compat;
 
-import java.util.Collections;
-
 import com.mojang.authlib.GameProfile;
-
-import ml.denisd3d.mc2discord.core.Mc2Discord;
-import ml.denisd3d.mc2discord.core.config.M2DConfig;
-import ml.denisd3d.mc2discord.core.entities.Entity;
-import ml.denisd3d.mc2discord.core.entities.Player;
-import ml.denisd3d.mc2discord.forge.MinecraftImpl;
-import ml.denisd3d.mc2discord.forge.storage.HiddenPlayerEntry;
-import ml.denisd3d.mc2discord.forge.storage.HiddenPlayerList;
+import fr.denisd3d.mc2discord.core.M2DUtils;
+import fr.denisd3d.mc2discord.core.Mc2Discord;
+import fr.denisd3d.mc2discord.core.MessageManager;
+import fr.denisd3d.mc2discord.core.config.M2DConfig;
+import fr.denisd3d.mc2discord.core.entities.Entity;
+import fr.denisd3d.mc2discord.core.entities.PlayerEntity;
+import fr.denisd3d.mc2discord.core.storage.HiddenPlayerEntry;
+import fr.denisd3d.mc2discord.core.storage.HiddenPlayerList;
 import net.minecraft.server.level.ServerPlayer;
+
+import java.util.Collections;
 
 public class Mc2DiscordCompat {
 	public static void hidePlayer(ServerPlayer player, boolean hide) {
-		HiddenPlayerList list = ((MinecraftImpl) Mc2Discord.INSTANCE.iMinecraft).hiddenPlayerList;
+		HiddenPlayerList list = Mc2Discord.INSTANCE.hiddenPlayerList;
 		GameProfile profile = player.getGameProfile();
 
 		if (hide) {
-			if (!list.isHidden(profile))
-				list.add(new HiddenPlayerEntry(profile));
+			if (!list.contains(profile.getId()))
+				list.add(new HiddenPlayerEntry(profile.getId()));
 		}
-		else if (list.isHidden(profile)) {
-			list.remove(new HiddenPlayerEntry(profile));
+		else if (list.contains(profile.getId())) {
+			list.remove(profile.getId());
 		}
 	}
 
 	public static void sendFakeJoinLeaveMessage(ServerPlayer player, boolean left) {
-		Player mc2dcplayer = new ml.denisd3d.mc2discord.core.entities.Player(player.getGameProfile().getName(), player.getDisplayName().getString(), player.getGameProfile().getId());
-		M2DConfig config = Mc2Discord.INSTANCE.config;
+		if (M2DUtils.isNotConfigured())
+			return;
 
-		if (Mc2Discord.INSTANCE.isDiscordRunning())
-			Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(left ? config.messages.leave : config.messages.join, Collections.singletonList(mc2dcplayer)));
+		PlayerEntity playerEntity = new PlayerEntity(player.getGameProfile().getName(), player.getDisplayName().getString(), player.getGameProfile().getId());
+		M2DConfig config = Mc2Discord.INSTANCE.config;
+		MessageManager.sendInfoMessage("vanish", Entity.replace(left ? config.messages.leave : config.messages.join, Collections.singletonList(playerEntity))).subscribe();
 	}
 }
