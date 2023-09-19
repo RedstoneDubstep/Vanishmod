@@ -24,7 +24,8 @@ public class VanishConfig {
 		public BooleanValue disableCommandTargeting;
 		public BooleanValue hidePlayerNameInChat;
 		public BooleanValue sendFakeJoinLeaveMessages;
-		public BooleanValue fixModCompatibility;
+		public BooleanValue fixPlayerDetectionModCompatibility;
+		public BooleanValue removeModdedSystemMessageReferences;
 		public BooleanValue vanishedPlayersSeeEachOther;
 		public BooleanValue seeVanishedTeamPlayers;
 		public BooleanValue indirectSoundSuppression;
@@ -52,9 +53,12 @@ public class VanishConfig {
 			sendFakeJoinLeaveMessages = builder
 					.comment("Should players see a fake join/leave message in their chat when another player (un-)vanishes?")
 					.define("sendFakeJoinLeaveMessages", true);
-			fixModCompatibility = builder
+			fixPlayerDetectionModCompatibility = builder
 					.comment("Should there be a (potential) fix for other mods uncovering the presence of vanished players? This may severely increase CPU usage and is thus not recommended")
-					.define("fixModCompatibility", false);
+					.define("fixPlayerDetectionModCompatibility", false);
+			removeModdedSystemMessageReferences = builder
+					.comment("Should this mod unconditionally and strictly remove (mostly) all references of names of vanished players by system messages added by mods? This is experimental, disable the config if too many modded messages get removed. Vanilla messages mentioning vanished players, such as death and advancement messages, will be removed regardless of this config's state.")
+					.define("removeModdedSystemMessageReferences", true);
 			vanishedPlayersSeeEachOther = builder
 					.comment("Should vanished players be able to see each other?")
 					.define("vanishedPlayersSeeEachOther", false);

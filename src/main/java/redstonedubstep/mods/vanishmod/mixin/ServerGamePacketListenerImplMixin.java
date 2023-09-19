@@ -1,5 +1,6 @@
 package redstonedubstep.mods.vanishmod.mixin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.spongepowered.asm.mixin.Final;
@@ -33,7 +34,7 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 import redstonedubstep.mods.vanishmod.misc.FieldHolder;
 import redstonedubstep.mods.vanishmod.misc.SoundSuppressionHelper;
 
-@Mixin(ServerGamePacketListenerImpl.class)
+@Mixin(value = ServerGamePacketListenerImpl.class, priority = 1200) //Lower priority to ensure that the injectors of this mixin are run after other mixins in this class; particularly important for vanishmod$onFinishDisconnect, which needs to be the last method called
 public class ServerGamePacketListenerImplMixin {
 	@Shadow
 	public ServerPlayer player;
@@ -71,22 +72,55 @@ public class ServerGamePacketListenerImplMixin {
 		}
 	}
 
-	//Prevent join, leave, death and advancement messages of vanished players from being broadcast
+	//Prevents vanilla join, leave, death and advancement messages of vanished players from being broadcast. Also removes all translation component messages (except for /msg messages) with vanished player references when relevant config is enabled
 	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V", at = @At("HEAD"), cancellable = true)
 	private void vanishmod$onSendPacket(Packet<?> packet, GenericFutureListener<?> listener, CallbackInfo callbackInfo) {
 		if (packet instanceof ClientboundChatPacket chatPacket && chatPacket.getMessage() instanceof TranslatableComponent component) {
-			if (component.getKey().startsWith("multiplayer.player.joined") && VanishUtil.isVanished(FieldHolder.joiningPlayer, player)) {
-				FieldHolder.joiningPlayer = null;
+			List<ServerPlayer> vanishedPlayers = new ArrayList<>(ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers().stream().filter(p -> VanishUtil.isVanished(p, player)).toList());
+			boolean joiningPlayerVanished = VanishUtil.isVanished(FieldHolder.joiningPlayer, player);
+
+			if (joiningPlayerVanished)
+				vanishedPlayers.add(FieldHolder.joiningPlayer);
+
+			if (VanishUtil.isVanished(FieldHolder.leavingPlayer, player))
+				vanishedPlayers.add(FieldHolder.leavingPlayer);
+
+			if (component.getKey().startsWith("multiplayer.player.joined") && joiningPlayerVanished)
 				callbackInfo.cancel();
-			}
 			else if (component.getKey().startsWith("multiplayer.player.left") || component.getKey().startsWith("death.") || component.getKey().startsWith("chat.type.advancement")) {
 				if (component.getArgs()[0] instanceof Component playerName) {
-					for (ServerPlayer sender : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-						if (sender.getDisplayName().getString().equals(playerName.getString()) && VanishUtil.isVanished(sender, player))
+					for (ServerPlayer sender : vanishedPlayers) {
+						if (sender.getDisplayName().getString().equals(playerName.getString()))
 							callbackInfo.cancel();
 					}
 				}
 			}
+			else if (!component.getKey().startsWith("commands.message.display.incoming") && VanishConfig.CONFIG.removeModdedSystemMessageReferences.get()) {
+				for (Object arg : component.getArgs()) {
+					if (arg instanceof Component componentArg) {
+						String potentialPlayerName = componentArg.getString();
+
+						for (ServerPlayer vanishedPlayer : vanishedPlayers) {
+							if (vanishedPlayer.getDisplayName().getString().equals(potentialPlayerName)) {
+								callbackInfo.cancel();
+								return;
+							}
+						}
+					}
+				}
+			}
 		}
+	}
+
+	//Stores the player that is about to leave the server and get removed from the regular player list
+	@Inject(method = "onDisconnect", at = @At("HEAD"))
+	private void vanishmod$onStartDisconnect(Component reason, CallbackInfo callbackInfo) {
+		FieldHolder.leavingPlayer = player;
+	}
+
+	//Removes the stored player after it has fully left the server
+	@Inject(method = "onDisconnect", at = @At("TAIL"))
+	private void vanishmod$onFinishDisconnect(Component reason, CallbackInfo callbackInfo) {
+		FieldHolder.leavingPlayer = null;
 	}
 }
