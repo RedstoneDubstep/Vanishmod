@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.13-----------
+
+- Partially fixed some mods sending custom messages which reveal the presence of vanished players
+  
 -----------Changelog for v1.1.12-----------
 
 - Fixed incorrect online player count of servers with Vanishmod installed on the server list screen
