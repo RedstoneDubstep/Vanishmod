@@ -18,7 +18,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 group = 'redstonedubstep.mods'
-version = '1.1.13'
+version = '1.1.13.1'
 archivesBaseName = 'vanishmod'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -118,8 +118,7 @@ dependencies {
     // These dependencies get remapped to your current MCP mappings
     // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 
-    compileOnly fg.deobf("curse.maven:mc2discord-325235:4672945")
-
+    implementation fg.deobf("curse.maven:mc2discord-325235:4752462")
     compileOnly 'com.austinv11.servicer:Servicer:1.0.3' //fixer for the mc2discord dependency
 
     // For more info...
