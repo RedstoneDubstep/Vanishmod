@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.13.1-----------
+
+- Added compatibility for mc2discord 4.1+
+  
 -----------Changelog for v1.1.13-----------
 
 - Partially fixed some mods sending custom messages which reveal the presence of vanished players
