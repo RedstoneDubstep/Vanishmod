@@ -33,6 +33,6 @@ public class Mc2DiscordCompat {
 
 		PlayerEntity playerEntity = new PlayerEntity(player.getGameProfile().getName(), player.getDisplayName().getString(), player.getGameProfile().getId());
 		M2DConfig config = Mc2Discord.INSTANCE.config;
-		MessageManager.sendInfoMessage("vanish", Entity.replace(left ? config.messages.leave : config.messages.join, Collections.singletonList(playerEntity))).subscribe();
+		MessageManager.sendInfoMessage("vanish", Entity.replace(left ? config.messages.leave.asString() : config.messages.join.asString(), Collections.singletonList(playerEntity))).subscribe();
 	}
 }
