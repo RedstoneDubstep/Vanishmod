@@ -1,7 +1,9 @@
 package redstonedubstep.mods.vanishmod.mixin.gui;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -10,14 +12,12 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import com.mojang.authlib.GameProfile;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.Util;
 import net.minecraft.network.protocol.status.ClientboundStatusResponsePacket;
 import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerStatusPacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
-import net.minecraft.util.Mth;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import redstonedubstep.mods.vanishmod.VanishConfig;
 import redstonedubstep.mods.vanishmod.VanishUtil;
@@ -40,14 +40,14 @@ public class ServerStatusPacketListenerImplMixin {
 			else {
 				int playerSampleSize = Math.min(unvanishedPlayers.size(), 12);
 				ObjectArrayList<GameProfile> newPlayers = new ObjectArrayList<>(playerSampleSize);
-				int offset = Mth.nextInt(server.overworld().random, 0, unvanishedPlayerCount - playerSampleSize);
+				int offset = ThreadLocalRandom.current().nextInt(0, unvanishedPlayerCount - playerSampleSize);
 
 				for(int l = 0; l < playerSampleSize; ++l) {
 					ServerPlayer player = unvanishedPlayers.get(offset + l);
 					newPlayers.add(player.allowsListing() ? player.getGameProfile() : MinecraftServer.ANONYMOUS_PLAYER_PROFILE);
 				}
 
-				Util.shuffle(newPlayers, server.overworld().random);
+				Collections.shuffle(newPlayers, ThreadLocalRandom.current());
 				playerStatus = new ServerStatus.Players(maxPlayers, unvanishedPlayerCount, newPlayers);
 			}
 
