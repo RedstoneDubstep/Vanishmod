@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.14-----------
+
+- Optimised the construction of the custom server status that filters vanished players
+
 -----------Changelog for v1.1.13.1-----------
 
 - Added compatibility for mc2discord 4.1+

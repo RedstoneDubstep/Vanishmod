@@ -4,19 +4,20 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "vanishmod.refmap.json",
   "mixins": [
+    "PlayerListMixin",
+    "ServerGamePacketListenerImplMixin",
+    "ServerPlayerMixin",
     "chat.CombatTrackerMixin",
     "chat.EntityArgumentMixin",
     "chat.EntitySelectorMixin",
     "chat.ListPlayersCommandMixin",
+    "gui.MinecraftServerMixin",
     "gui.ServerStatusPacketListenerImplMixin",
     "sound.EntityMixin",
     "world.ChunkMapTrackedEntityMixin",
     "world.LivingEntityMixin",
     "world.PlayerMixin",
-    "world.SleepStatusMixin",
-    "PlayerListMixin",
-    "ServerGamePacketListenerImplMixin",
-    "ServerPlayerMixin"
+    "world.SleepStatusMixin"
   ],
   "minVersion": "0.8"
 }
