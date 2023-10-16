@@ -11,6 +11,7 @@
 		"chat.EntityArgumentMixin",
 		"chat.EntitySelectorMixin",
 		"chat.ListPlayersCommandMixin",
+		"gui.MinecraftServerMixin",
 		"gui.ServerStatusPacketListenerImplMixin",
 		"sound.EntityMixin",
 		"world.ChunkMapTrackedEntityMixin",
