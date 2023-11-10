@@ -6,7 +6,7 @@
 # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader = "javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion = "[41,)" #mandatory
+loaderVersion = "[1,)" #mandatory
 license = "All Rights Reserved"
 # A URL to refer people to when problems occur with this mod
 issueTrackerURL="https://www.github.com/RedstoneDubstep/Vanishmod/issues"
@@ -33,14 +33,18 @@ authors = "Redstone_Dubstep" #optional
 description = '''
 A mod that tries to recreate the /vanish command from Bukkit plugins.
 '''
+
+[[mixins]]
+    config="vanishmod.mixins.json"
+
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.vmod]] #optional
     # the modid of the dependency
-    modId="forge" #mandatory
+    modId="neoforge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
     # The version range of the dependency
-    versionRange="[43.1.8,)" #mandatory
+    versionRange="[20.2.1-beta,)" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER

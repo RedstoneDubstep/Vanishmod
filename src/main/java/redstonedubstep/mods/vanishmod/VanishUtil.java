@@ -24,8 +24,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.scores.Team;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.common.NeoForge;
 import redstonedubstep.mods.vanishmod.api.PlayerVanishEvent;
 import redstonedubstep.mods.vanishmod.compat.Mc2DiscordCompat;
 import redstonedubstep.mods.vanishmod.misc.SoundSuppressionHelper;
@@ -118,7 +118,7 @@ public class VanishUtil {
 			Mc2DiscordCompat.hidePlayer(player, vanished);
 
 		updateVanishedPlayerList(player, vanished);
-		MinecraftForge.EVENT_BUS.post(new PlayerVanishEvent(player, vanished));
+		NeoForge.EVENT_BUS.post(new PlayerVanishEvent(player, vanished));
 	}
 
 	public static void updateVanishedPlayerList(ServerPlayer player, boolean vanished) {

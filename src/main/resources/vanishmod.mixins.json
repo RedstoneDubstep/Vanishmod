@@ -5,6 +5,7 @@
 	"refmap": "vanishmod.refmap.json",
 	"mixins": [
 		"PlayerListMixin",
+		"ServerCommonPacketListenerImplMixin",
 		"ServerGamePacketListenerImplMixin",
 		"ServerPlayerMixin",
 		"chat.CombatTrackerMixin",

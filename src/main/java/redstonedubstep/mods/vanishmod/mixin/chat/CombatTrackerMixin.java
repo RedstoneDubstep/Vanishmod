@@ -14,7 +14,7 @@ import net.minecraft.world.damagesource.CombatTracker;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(CombatTracker.class)
@@ -27,7 +27,7 @@ public abstract class CombatTrackerMixin {
 	private Component vanishmod$modifyFallDeathMessage(CombatTracker instance, CombatEntry entry, Entity entity) {
 		Component deathMessage = getFallMessage(entry, entity);
 
-		return filterDeathMessage(deathMessage);
+		return vanishmod$filterDeathMessage(deathMessage);
 	}
 
 	//Change the death message of an unvanished player to the generic one if it was killed by a vanished player
@@ -35,11 +35,11 @@ public abstract class CombatTrackerMixin {
 	private Component vanishmod$modifyDeathMessage(DamageSource instance, LivingEntity entity) {
 		Component deathMessage = instance.getLocalizedDeathMessage(entity);
 
-		return filterDeathMessage(deathMessage);
+		return vanishmod$filterDeathMessage(deathMessage);
 	}
 
 	@Unique
-	private Component filterDeathMessage(Component deathMessage) {
+	private Component vanishmod$filterDeathMessage(Component deathMessage) {
 		if (deathMessage != null && deathMessage.getContents() instanceof TranslatableContents content && content.getArgs().length > 1 && content.getArgs()[1] instanceof Component playerName) {
 			for (ServerPlayer killer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
 				if (killer.getDisplayName().getString().equals(playerName.getString()) && VanishUtil.isVanished(killer))
