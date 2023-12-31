@@ -66,7 +66,7 @@ public abstract class MinecraftServerMixin {
 			}
 
 			if (mainServerStatus != null)
-				FieldHolder.vanishedServerStatus = new ServerStatus(mainServerStatus.description(), Optional.of(vanishedPlayerStatus), mainServerStatus.version(), mainServerStatus.favicon(), mainServerStatus.enforcesSecureChat(), mainServerStatus.neoForgeData());
+				FieldHolder.vanishedServerStatus = new ServerStatus(mainServerStatus.description(), Optional.of(vanishedPlayerStatus), mainServerStatus.version(), mainServerStatus.favicon(), mainServerStatus.enforcesSecureChat(), mainServerStatus.isModded());
 		}
 		else
 			FieldHolder.vanishedServerStatus = null;
