@@ -118,8 +118,7 @@ dependencies {
     // These dependencies get remapped to your current MCP mappings
     // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 
-    implementation fg.deobf("curse.maven:mc2discord-325235:4752462")
-    compileOnly 'com.austinv11.servicer:Servicer:1.0.3' //fixer for the mc2discord dependency
+    implementation fg.deobf("curse.maven:mc2discord-325235:4886408")
 
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
