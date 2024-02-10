@@ -86,7 +86,7 @@ public class SoundSuppressionHelper {
 		if (player != null)
 			return VanishUtil.isVanished(player, forPlayer);
 
-		if (!VanishConfig.CONFIG.indirectSoundSuppression.get())
+		if (!VanishConfig.CONFIG.indirectSoundSuppression.get() || soundOrigin == null)
 			return false;
 
 		return SoundSuppressionHelper.areVanishedPlayersAt(level, soundOrigin.position(), forPlayer) || SoundSuppressionHelper.isVanishedPlayerVehicle(soundOrigin, forPlayer) || SoundSuppressionHelper.vanishedPlayersInteractWith(level, soundOrigin, forPlayer);
