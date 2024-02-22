@@ -119,6 +119,7 @@ dependencies {
     // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 
     implementation fg.deobf("curse.maven:mc2discord-325235:4886408")
+    implementation fg.deobf("curse.maven:joinleavemessages-514102:4908512")
 
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html

@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.15.1-----------
+
+- Added compatibility for the JoinLeaveMessages mod to use its custom join/leave messages when vanishing/unvanishing
+
 -----------Changelog for v1.1.15-----------
 
 - Fixed server crash when trying to suppress certain sounds from other mods

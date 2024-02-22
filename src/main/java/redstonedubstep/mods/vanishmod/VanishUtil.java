@@ -27,6 +27,7 @@ import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
 import redstonedubstep.mods.vanishmod.api.PlayerVanishEvent;
+import redstonedubstep.mods.vanishmod.compat.JoinLeaveMessagesCompat;
 import redstonedubstep.mods.vanishmod.compat.Mc2DiscordCompat;
 import redstonedubstep.mods.vanishmod.misc.SoundSuppressionHelper;
 
@@ -96,15 +97,24 @@ public class VanishUtil {
 
 	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayer> playerList, ServerPlayer sender, boolean leaveMessage, boolean beforeStatusChange) {
 		if (VanishConfig.CONFIG.sendFakeJoinLeaveMessages.get() && leaveMessage != beforeStatusChange && sender.server.getPlayerList().getPlayers().contains(sender)) { //Only send fake messages if the player has actually fully joined the server before this method is invoked
-			Component message = Component.translatable(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).withStyle(ChatFormatting.YELLOW);
+			Component message = getFakeJoinLeaveMessage(sender, leaveMessage);
 
-			for (ServerPlayer receiver : playerList) {
-				receiver.sendSystemMessage(message);
+			if (message != null) {
+				for (ServerPlayer receiver : playerList) {
+					receiver.sendSystemMessage(message);
+				}
 			}
 
 			if (ModList.get().isLoaded("mc2discord"))
 				Mc2DiscordCompat.sendFakeJoinLeaveMessage(sender, leaveMessage);
 		}
+	}
+
+	public static Component getFakeJoinLeaveMessage(ServerPlayer player, boolean leaveMessage) {
+		if (ModList.get().isLoaded("joinleavemessages"))
+			return JoinLeaveMessagesCompat.getFakeJoinLeaveMessage(player, leaveMessage);
+
+		return Component.translatable(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", player.getDisplayName()).withStyle(ChatFormatting.YELLOW);
 	}
 
 	public static void updateVanishedStatus(ServerPlayer player, boolean vanished) {
