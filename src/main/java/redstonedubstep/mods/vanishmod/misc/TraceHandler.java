@@ -1,5 +1,6 @@
 package redstonedubstep.mods.vanishmod.misc;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,17 +38,19 @@ public class TraceHandler {
 	}
 
 	public static void sendTraceStatus(ServerPlayer player) {
-		String permissionString = "";
 		int seeVanishedOpLevel = VanishConfig.CONFIG.seeVanishedPermissionLevel.get();
+		List<String> permissionText = new ArrayList<>();
 
 		if (VanishConfig.CONFIG.vanishedPlayersSeeEachOther.get())
-			permissionString += "Other vanished players" + (seeVanishedOpLevel >= 0 ? " + " : "");
+			permissionText.add("Other vanished players");
+
+		if (VanishConfig.CONFIG.seeVanishedTeamPlayers.get())
+			permissionText.add("Members of your team");
 
 		if (seeVanishedOpLevel >= 0)
-			permissionString += "Players with an operator level of " + seeVanishedOpLevel + " or higher";
+			permissionText.add("All players with an operator level of " + seeVanishedOpLevel + " or higher");
 
-		if (permissionString.isEmpty())
-			permissionString += "Only yourself";
+		String permissionString = !permissionText.isEmpty() ? String.join(" + ", permissionText) : "Only yourself";
 
 		MutableComponent visibleForComponent = Component.literal("# §nPlayers permitted to see you§r: " + permissionString + " ");
 		List<Component> visibleForPlayerNames = player.server.getPlayerList().getPlayers().stream().filter(p -> p != player && !VanishUtil.isVanished(player, p)).map(Player::getDisplayName).toList();
