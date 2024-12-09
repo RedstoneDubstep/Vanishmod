@@ -28,6 +28,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerCommonPacketListenerImpl;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -68,23 +69,24 @@ public class ServerCommonPacketListenerImplMixin {
 				callbackInfo.cancel();
 			}
 			else if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
+				PlayerList playerList = receivingPlayer.server.getPlayerList();
 				Holder<SoundEvent> suppressedSound = null;
 				Player vanishedIndirectCause = null;
 
 				if (packet instanceof ClientboundSoundPacket soundPacket) {
-					vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedSoundCause(SoundSuppressionHelper.getPlayerForPacket(soundPacket), level, soundPacket.getX(), soundPacket.getY(), soundPacket.getZ(), receivingPlayer);
+					vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedSoundCause(SoundSuppressionHelper.getPlayerForPacket(soundPacket, playerList), level, soundPacket.getX(), soundPacket.getY(), soundPacket.getZ(), receivingPlayer);
 
 					if (vanishedIndirectCause != null)
 						suppressedSound = soundPacket.getSound();
 				}
 				else if (packet instanceof ClientboundSoundEntityPacket soundPacket) {
-					vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedSoundCause(SoundSuppressionHelper.getPlayerForPacket(soundPacket), level, level.getEntity(soundPacket.getId()), receivingPlayer);
+					vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedSoundCause(SoundSuppressionHelper.getPlayerForPacket(soundPacket, playerList), level, level.getEntity(soundPacket.getId()), receivingPlayer);
 
 					if (vanishedIndirectCause != null)
 						suppressedSound = soundPacket.getSound();
 				}
 				else if (packet instanceof ClientboundLevelEventPacket soundPacket) {
-					vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedSoundCause(SoundSuppressionHelper.getPlayerForPacket(soundPacket), level, Vec3.atCenterOf(soundPacket.getPos()), receivingPlayer);
+					vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedSoundCause(SoundSuppressionHelper.getPlayerForPacket(soundPacket, playerList), level, Vec3.atCenterOf(soundPacket.getPos()), receivingPlayer);
 
 					if (vanishedIndirectCause != null) {
 						TraceHandler.trace(vanishedIndirectCause, "Level Event", soundPacket.getType() + "/" + soundPacket.getData());
