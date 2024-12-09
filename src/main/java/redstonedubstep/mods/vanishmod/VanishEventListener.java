@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.scores.PlayerTeam;
@@ -40,8 +41,26 @@ public class VanishEventListener {
 
 	@SubscribeEvent
 	public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player && VanishUtil.isVanished(player))
-			player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: You are currently vanished"));
+		if (event.getEntity() instanceof ServerPlayer player) {
+			PlayerList list = player.server.getPlayerList();
+
+			if (VanishUtil.isVanished(player)) {
+				player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: You are currently vanished"));
+
+				for (ServerPlayer otherPlayer : list.getPlayers()) {
+					if (!otherPlayer.equals(player) && !VanishUtil.isVanished(player, otherPlayer)) //When the event is fired, the joining player has already been added to the player list
+						otherPlayer.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: ").append(player.getDisplayName()).append(" is currently vanished"));
+				}
+			}
+			else {
+				for (ServerPlayer otherPlayer : list.getPlayers()) { //If the joining player is unvanished and is able to see vanished players, they could potentially expose them by e.g. mentioning their name in chat. This notification should help to prevent that.
+					if (!otherPlayer.equals(player) && VanishUtil.isVanished(otherPlayer) && !VanishUtil.isVanished(otherPlayer, player)) {
+						player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: At least one player visible for you is vanished for other players, be careful to not accidentally reveal them"));
+						break;
+					}
+				}
+			}
+		}
 
 		if (event.getEntity().equals(FieldHolder.joiningPlayer))
 			FieldHolder.joiningPlayer = null; //Reset the joiningPlayer field due to it being obsolete at the time the event is fired
