@@ -29,7 +29,7 @@ public class VanishingHandler {
 		String note = "Note: You can still see yourself in the tab list for technical reasons, but you are vanished for other players. \nNote: Be careful when producing noise near other players, because while most sounds will get suppressed, some won't due to technical limitations. \nNote: While vanished, only players that are able to see you will receive your chat messages. If you want to chat with everyone, use the /say command.";
 
 		if (vanishes)
-			player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: ").append(Component.literal("(...)").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(note))))));
+			player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: ").append(Component.literal("(...)").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withHoverEvent(new HoverEvent.ShowText(Component.literal(note))))));
 
 		VanishingHandler.sendJoinOrLeaveMessageToPlayers(player.server.getPlayerList().getPlayers(), player, vanishes, false);
 		VanishingHandler.updateVanishedStatus(player, vanishes);
@@ -90,7 +90,7 @@ public class VanishingHandler {
 
 	public static void updateVanishedStatus(ServerPlayer player, boolean vanished) {
 		CompoundTag persistentData = player.getPersistentData();
-		CompoundTag deathPersistentData = persistentData.getCompound(Player.PERSISTED_NBT_TAG);
+		CompoundTag deathPersistentData = persistentData.getCompoundOrEmpty(Player.PERSISTED_NBT_TAG);
 
 		deathPersistentData.putBoolean("Vanished", vanished);
 		persistentData.put(Player.PERSISTED_NBT_TAG, deathPersistentData); //Because the deathPersistentData could have been created newly by getCompound if it didn't exist before

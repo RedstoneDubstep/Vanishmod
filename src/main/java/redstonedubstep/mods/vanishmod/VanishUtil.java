@@ -1,5 +1,6 @@
 package redstonedubstep.mods.vanishmod;
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +21,7 @@ import net.minecraft.world.scores.Team;
 
 public class VanishUtil {
 	public static final Set<UUID> VANISHED_PLAYERS = new HashSet<>();
-	public static final MutableComponent VANISHMOD_PREFIX = Component.literal("").append(Component.literal("[").withStyle(ChatFormatting.WHITE)).append(Component.literal("Vanishmod").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/vanishmod")))).append(Component.literal("] ").withStyle(ChatFormatting.WHITE));
+	public static final MutableComponent VANISHMOD_PREFIX = Component.literal("").append(Component.literal("[").withStyle(ChatFormatting.WHITE)).append(Component.literal("Vanishmod").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withClickEvent(new ClickEvent.OpenUrl(URI.create("https://www.curseforge.com/minecraft/mc-mods/vanishmod"))))).append(Component.literal("] ").withStyle(ChatFormatting.WHITE));
 
 	public static boolean isVanished(Entity player) {
 		return isVanished(player, null);
@@ -77,7 +78,7 @@ public class VanishUtil {
 	}
 
 	public static void recheckVanished(ServerPlayer player) {
-		boolean isMarkedVanished = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean("Vanished");
+		boolean isMarkedVanished = player.getPersistentData().getCompoundOrEmpty(Player.PERSISTED_NBT_TAG).getBooleanOr("Vanished", false);
 
 		if (isMarkedVanished != isVanished(player))
 			VanishingHandler.updateVanishedStatus(player, isMarkedVanished);

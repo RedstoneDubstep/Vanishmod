@@ -21,7 +21,7 @@ import redstonedubstep.mods.vanishmod.VanishConfig;
 import redstonedubstep.mods.vanishmod.VanishUtil;
 
 public class TraceHandler {
-	public static final MutableComponent TRACE_PREFIX = Component.literal("").append(Component.literal("[").withStyle(ChatFormatting.WHITE)).append(Component.literal("§7Trace§r").withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Click to disable"))).withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/vanish trace disable")))).append(Component.literal("] ").withStyle(ChatFormatting.WHITE));
+	public static final MutableComponent TRACE_PREFIX = Component.literal("").append(Component.literal("[").withStyle(ChatFormatting.WHITE)).append(Component.literal("§7Trace§r").withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(Component.literal("Click to disable"))).withClickEvent(new ClickEvent.RunCommand("/vanish trace disable")))).append(Component.literal("] ").withStyle(ChatFormatting.WHITE));
 	private static final Map<UUID, Map<String, Set<String>>> traceEntries = new HashMap<>();
 
 	public static boolean isTracing(Player player) {
@@ -56,10 +56,10 @@ public class TraceHandler {
 		List<Component> visibleForPlayerNames = player.server.getPlayerList().getPlayers().stream().filter(p -> p != player && !VanishUtil.isVanished(player, p)).map(Player::getDisplayName).toList();
 
 		if (!visibleForPlayerNames.isEmpty())
-			visibleForComponent.append(Component.literal("§7(...)").withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Currently: ").append(ComponentUtils.formatList(visibleForPlayerNames, ComponentUtils.DEFAULT_SEPARATOR))))));
+			visibleForComponent.append(Component.literal("§7(...)").withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(Component.literal("Currently: ").append(ComponentUtils.formatList(visibleForPlayerNames, ComponentUtils.DEFAULT_SEPARATOR))))));
 
 		player.sendSystemMessage(Component.literal("# §nTrace Status§r:"));
-		player.sendSystemMessage(Component.literal("# §bAlways enabled§r: ").append(Component.literal("§7(...)").withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Hiding from the tab list, hiding your skin, hiding join/leave/death/advancement/command feedback messages"))))));
+		player.sendSystemMessage(Component.literal("# §bAlways enabled§r: ").append(Component.literal("§7(...)").withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(Component.literal("Hiding from the tab list, hiding your skin, hiding join/leave/death/advancement/command feedback messages"))))));
 		player.sendSystemMessage(getTracePrefix(VanishConfig.CONFIG.hidePlayersFromWorld.get()).append("Hiding from the world, like through suppressing sounds and particles"));
 		player.sendSystemMessage(getTracePrefix(VanishConfig.CONFIG.hidePlayersFromPlayerLists.get()).append("Hiding from other player lists, like the server player list in the multiplayer screen"));
 		player.sendSystemMessage(getTracePrefix(VanishConfig.CONFIG.disableCommandTargeting.get()).append("Hiding from player selectors in commands, like the /give command"));
@@ -93,7 +93,7 @@ public class TraceHandler {
 			player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append(TRACE_PREFIX).append("Concealed the following events:"));
 
 			for (Map.Entry<String, Set<String>> traceEntry : playerTraceEntries.entrySet()) {
-				player.sendSystemMessage(Component.literal("# §5" + traceEntry.getKey() + "§r: " + traceEntry.getValue().size() + " ").append(Component.literal("§7(...)").withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ComponentUtils.formatList(traceEntry.getValue()))))));
+				player.sendSystemMessage(Component.literal("# §5" + traceEntry.getKey() + "§r: " + traceEntry.getValue().size() + " ").append(Component.literal("§7(...)").withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(ComponentUtils.formatList(traceEntry.getValue()))))));
 			}
 
 			playerTraceEntries.clear();

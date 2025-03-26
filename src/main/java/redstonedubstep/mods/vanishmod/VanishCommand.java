@@ -1,5 +1,7 @@
 package redstonedubstep.mods.vanishmod;
 
+import java.net.URI;
+
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -27,7 +29,7 @@ public class VanishCommand {
 				§7/v trace§r: Enables and disables tracing, which is a debug functionality that reports any event caused by you that has been concealed for other players.
 				
 				A lot of the features of this mod are customizable via the configuration file, which is located in the "config" folder of your server, so check that out if you're interested!
-				If you have a suggestion or found a bug, feel free to open an issue in""")).append(Component.literal(" §7§nthe mod's GitHub repository§r.").withStyle(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/RedstoneDubstep/Vanishmod"))));
+				If you have a suggestion or found a bug, feel free to open an issue in""")).append(Component.literal(" §7§nthe mod's GitHub repository§r.").withStyle(s -> s.withClickEvent(new ClickEvent.OpenUrl(URI.create("https://github.com/RedstoneDubstep/Vanishmod")))));
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(alias("v"));
