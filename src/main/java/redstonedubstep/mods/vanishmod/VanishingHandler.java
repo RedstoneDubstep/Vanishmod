@@ -31,16 +31,16 @@ public class VanishingHandler {
 		if (vanishes)
 			player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: ").append(Component.literal("(...)").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withHoverEvent(new HoverEvent.ShowText(Component.literal(note))))));
 
-		VanishingHandler.sendJoinOrLeaveMessageToPlayers(player.server.getPlayerList().getPlayers(), player, vanishes, false);
+		VanishingHandler.sendJoinOrLeaveMessageToPlayers(player.getServer().getPlayerList().getPlayers(), player, vanishes, false);
 		VanishingHandler.updateVanishedStatus(player, vanishes);
-		VanishingHandler.sendJoinOrLeaveMessageToPlayers(player.server.getPlayerList().getPlayers(), player, vanishes, true); //We always need to send fake join/leave messages when the player is in an unvanished state, thus we try twice and return early (within that method) if the player is vanished
+		VanishingHandler.sendJoinOrLeaveMessageToPlayers(player.getServer().getPlayerList().getPlayers(), player, vanishes, true); //We always need to send fake join/leave messages when the player is in an unvanished state, thus we try twice and return early (within that method) if the player is vanished
 
-		VanishingHandler.sendPacketsOnVanish(player, player.serverLevel(), vanishes);
+		VanishingHandler.sendPacketsOnVanish(player, player.level(), vanishes);
 	}
 
 	public static void sendPacketsOnVanish(ServerPlayer changingPlayer, ServerLevel world, boolean vanishes) {
 		List<ServerPlayer> list = world.getServer().getPlayerList().getPlayers();
-		ServerChunkCache chunkProvider = changingPlayer.serverLevel().getChunkSource();
+		ServerChunkCache chunkProvider = changingPlayer.level().getChunkSource();
 
 		for (ServerPlayer otherPlayer : list) {
 			boolean otherPlayerVanished = VanishUtil.isVanished(otherPlayer);
@@ -76,7 +76,7 @@ public class VanishingHandler {
 	}
 
 	public static void sendJoinOrLeaveMessageToPlayers(List<ServerPlayer> playerList, ServerPlayer sender, boolean leaveMessage, boolean beforeStatusChange) {
-		if (VanishConfig.CONFIG.sendFakeJoinLeaveMessages.get() && leaveMessage != beforeStatusChange && sender.server.getPlayerList().getPlayers().contains(sender)) { //Only send fake messages if the player has actually fully joined the server before this method is invoked
+		if (VanishConfig.CONFIG.sendFakeJoinLeaveMessages.get() && leaveMessage != beforeStatusChange && sender.getServer().getPlayerList().getPlayers().contains(sender)) { //Only send fake messages if the player has actually fully joined the server before this method is invoked
 			Component message = Component.translatable(leaveMessage ? "multiplayer.player.left" : "multiplayer.player.joined", sender.getDisplayName()).withStyle(ChatFormatting.YELLOW);
 
 			for (ServerPlayer receiver : playerList) {

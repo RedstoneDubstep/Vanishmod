@@ -44,7 +44,7 @@ public class SoundSuppressionHelper {
 		else
 			vanishedPlayersAndHitResults.remove(uuid);
 
-		new HashSet<>(vanishedPlayersAndHitResults.keySet()).stream().filter(loopUuid -> player.server.getPlayerList().getPlayer(loopUuid) == null).forEach(vanishedPlayersAndHitResults::remove);
+		new HashSet<>(vanishedPlayersAndHitResults.keySet()).stream().filter(loopUuid -> player.getServer().getPlayerList().getPlayer(loopUuid) == null).forEach(vanishedPlayersAndHitResults::remove);
 	}
 
 	public static void updateBlockHitResult(ServerPlayer player, BlockHitResult hitResult) {
@@ -146,14 +146,14 @@ public class SoundSuppressionHelper {
 	}
 
 	public static Player getVanishedPlayerAt(Level level, Vec3 pos, ServerPlayer forPlayer) {
-		PlayerList list = forPlayer.server.getPlayerList();
+		PlayerList list = forPlayer.getServer().getPlayerList();
 		VoxelShape shape = Shapes.block().move(pos.x - 0.5D, pos.y - 0.5D, pos.z - 0.5D);
 
 		return vanishedPlayersAndHitResults.keySet().stream().map(list::getPlayer).filter(p -> p != null && p.level().equals(level) && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && VanishUtil.isVanished(p, forPlayer) && Shapes.joinIsNotEmpty(shape, Shapes.create(p.getBoundingBox()), BooleanOp.AND)).findFirst().orElse(null);
 	}
 
 	public static Player getVanishedProjectileOwnerAt(Level level, Vec3 pos, ServerPlayer forPlayer) {
-		PlayerList list = forPlayer.server.getPlayerList();
+		PlayerList list = forPlayer.getServer().getPlayerList();
 		AABB soundArea = AABB.ofSize(pos, 1.0D, 1.0D, 1.0D);
 		List<Entity> projectiles = level.getEntities((Entity) null, soundArea, e -> e instanceof Projectile);
 
@@ -164,7 +164,7 @@ public class SoundSuppressionHelper {
 	}
 
 	public static Player getVanishedProjectileOwner(Entity entity, ServerPlayer forPlayer) {
-		PlayerList list = forPlayer.server.getPlayerList();
+		PlayerList list = forPlayer.getServer().getPlayerList();
 
 		if (entity instanceof Projectile projectile)
 			return vanishedPlayersAndHitResults.keySet().stream().map(list::getPlayer).filter(p -> p != null && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && VanishUtil.isVanished(p, forPlayer) && p.equals(projectile.getOwner())).findFirst().orElse(null);
@@ -173,26 +173,26 @@ public class SoundSuppressionHelper {
 	}
 
 	public static Player getVanishedPlayerWithVehicleAt(Level level, Vec3 pos, ServerPlayer forPlayer) {
-		PlayerList list = forPlayer.server.getPlayerList();
+		PlayerList list = forPlayer.getServer().getPlayerList();
 		VoxelShape shape = Shapes.block().move(pos.x - 0.5D, pos.y - 0.5D, pos.z - 0.5D);
 
 		return vanishedPlayersAndHitResults.keySet().stream().map(list::getPlayer).filter(p -> p != null && p.level().equals(level) && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && VanishUtil.isVanished(p, forPlayer)).map(p -> Pair.of(p, p.getVehicle())).filter(pv -> pv.getRight() != null && Shapes.joinIsNotEmpty(shape, Shapes.create(pv.getRight().getBoundingBox()), BooleanOp.AND)).findFirst().map(Pair::getLeft).orElse(null);
 	}
 
 	public static Player getVanishedPlayerInVehicle(Entity entity, ServerPlayer forPlayer) {
-		PlayerList list = forPlayer.server.getPlayerList();
+		PlayerList list = forPlayer.getServer().getPlayerList();
 
 		return vanishedPlayersAndHitResults.keySet().stream().map(list::getPlayer).filter(p -> p != null && p.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && VanishUtil.isVanished(p, forPlayer) && entity.equals(p.getVehicle())).findFirst().orElse(null);
 	}
 
 	public static Player getVanishedPlayerInteractedWith(Level level, Vec3 pos, ServerPlayer forPlayer) {
-		PlayerList list = forPlayer.server.getPlayerList();
+		PlayerList list = forPlayer.getServer().getPlayerList();
 
 		return vanishedPlayersAndHitResults.entrySet().stream().map(e -> Pair.of(list.getPlayer(e.getKey()), e.getValue())).filter(p -> p.getKey() != null && p.getKey().level().equals(level) && VanishUtil.isVanished(p.getKey(), forPlayer) && p.getValue() != null && equalsThisOrConnected(pos, level, p.getValue().getLeft())).findFirst().map(Map.Entry::getKey).orElse(null);
 	}
 
 	public static Player getVanishedPlayerInteractedWith(Level level, Entity entity, ServerPlayer forPlayer) {
-		PlayerList list = forPlayer.server.getPlayerList();
+		PlayerList list = forPlayer.getServer().getPlayerList();
 
 		return vanishedPlayersAndHitResults.entrySet().stream().map(e -> Pair.of(list.getPlayer(e.getKey()), e.getValue())).filter(p -> p.getKey() != null && p.getKey().level().equals(level) && VanishUtil.isVanished(p.getKey(), forPlayer) && p.getValue() != null && entity.getUUID().equals(p.getValue().getRight())).findFirst().map(Map.Entry::getKey).orElse(null);
 	}
