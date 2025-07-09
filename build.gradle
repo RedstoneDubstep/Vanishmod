@@ -51,7 +51,7 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    implementation 'net.neoforged:neoforge:21.6.0-beta'
+    implementation 'net.neoforged:neoforge:21.7.0-beta'
 
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
@@ -67,7 +67,7 @@ dependencies {
     // These dependencies get remapped to your current MCP mappings
     // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 
-    compileOnly "curse.maven:mc2discord-325235:6033754"
+    compileOnly "curse.maven:mc2discord-325235:6495513"
 
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
