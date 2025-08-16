@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import io.netty.channel.ChannelFutureListener;
 import net.minecraft.core.Holder;
-import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
@@ -120,8 +120,8 @@ public class ServerCommonPacketListenerImplMixin {
 
 	//Prevents vanilla join, leave, death, advancement and command feedback messages of vanished players from being broadcast.
 	//Also removes all translation component messages (except for chat and /msg messages) with vanished player references when relevant config is enabled
-	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V", at = @At("HEAD"), cancellable = true)
-	private void vanishmod$onSendPacket(Packet<?> packet, PacketSendListener sendListener, CallbackInfo callbackInfo) {
+	@Inject(method = "send(Lnet/minecraft/network/protocol/Packet;Lio/netty/channel/ChannelFutureListener;)V", at = @At("HEAD"), cancellable = true)
+	private void vanishmod$onSendPacket(Packet<?> packet, ChannelFutureListener sendListener, CallbackInfo callbackInfo) {
 		if ((Object)this instanceof ServerGamePacketListenerImpl listener && packet instanceof ClientboundSystemChatPacket chatPacket && chatPacket.content() instanceof MutableComponent component && component.getContents() instanceof TranslatableContents content) {
 			ServerPlayer player = listener.player;
 			List<ServerPlayer> vanishedPlayers = new ArrayList<>(ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers().stream().filter(p -> VanishUtil.isVanished(p, player)).toList());
