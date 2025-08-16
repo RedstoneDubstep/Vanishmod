@@ -20,7 +20,8 @@
 		"world.LivingEntityMixin",
 		"world.PlayerMixin",
 		"world.SleepStatusMixin",
-		"world.TrialSpawnerLevelEntitySelectorMixin"
+		"world.TrialSpawnerLevelEntitySelectorMixin",
+		"world.WaypointTransmitterMixin"
 	],
 	"minVersion": "0.8"
 }
