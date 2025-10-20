@@ -31,6 +31,7 @@ public class VanishConfig {
 		public BooleanValue seeVanishedTeamPlayers;
 		public BooleanValue indirectSoundSuppression;
 		public BooleanValue indirectParticleSuppression;
+		public BooleanValue spoofVanishedPlayerInvisibility;
 		public BooleanValue forceSyncHiddenList;
 		public IntValue vanishCommandPermissionLevel;
 		public IntValue seeVanishedPermissionLevel;
@@ -76,6 +77,9 @@ public class VanishConfig {
 			indirectParticleSuppression = builder
 					.comment("Should this mod try to detect and suppress particles that are indirectly caused by vanished players (e.g. eating or block breaking particles)? This detection might accidentally suppress particles unrelated to vanished players, disable this detection if too many visual bugs occur")
 					.define("indirectParticleSuppression", true);
+			spoofVanishedPlayerInvisibility = builder
+					.comment("Should vanished players be regarded as having the Invisibility status effect on the server side? This does not actually affect if the player is rendered or not, but it may allow vanished players to hide from certain serverside map tools like Dynmap.")
+					.define("spoofVanishedPlayerInvisibility", true);
 			forceSyncHiddenList = builder
 					.comment("Should the \"Hidden Players\" list from mc2discord be constantly synched with a player's vanished status? (This might lead to worse performance)")
 					.define("forceSyncHiddenList", false);
