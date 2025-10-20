@@ -1,3 +1,7 @@
+-----------Changelog for v1.1.19-----------
+
+- Added config option to toggle serverside invisibility for vanished players
+
 -----------Changelog for v1.1.18-----------
 
 - Added messages on player join to inform about vanished status of other players
