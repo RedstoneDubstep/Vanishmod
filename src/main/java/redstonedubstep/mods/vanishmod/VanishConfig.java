@@ -23,7 +23,9 @@ public class VanishConfig {
 		public BooleanValue hidePlayersFromPlayerLists;
 		public BooleanValue disableCommandTargeting;
 		public BooleanValue hideChatMessages;
+		public BooleanValue hideSystemMessages;
 		public BooleanValue hidePlayerNameInChat;
+		public BooleanValue hidePlayerNameInSystemMessages;
 		public BooleanValue sendFakeJoinLeaveMessages;
 		public BooleanValue fixPlayerDetectionModCompatibility;
 		public BooleanValue removeModdedSystemMessageReferences;
@@ -39,70 +41,96 @@ public class VanishConfig {
 		public ConfigValue<String> onUnvanishMessage;
 		public ConfigValue<String> onVanishQuery;
 		public ConfigValue<String> onUnvanishQuery;
+		public ConfigValue<String> vanishedPlayerNameReplacement;
 
 		Config(ForgeConfigSpec.Builder builder) {
 			hidePlayersFromWorld = builder
-					.comment(" --- Vanishmod Config File --- ", "Should vanished players be physically hidden from the world? This includes sound and particle suppression")
+					.comment(" --- Vanishmod Config File --- ",
+							"",
+							"Should vanished players be physically hidden from the world?",
+							"If this config option is enabled, sounds and particles by vanished players will be suppressed and they will not be targeted by monsters, among other things.",
+							"Note that the skins of vanished players will never show up for non-permitted players, even if this config option is disabled, due to a vanilla limitation involving the tab list.")
 					.define("hidePlayersFromWorld", true);
 			hidePlayersFromPlayerLists = builder
 					.comment("Should vanished players be hidden from player lists such as the /list command and the list in the Multiplayer screen?")
 					.define("hidePlayersFromPlayerLists", true);
 			disableCommandTargeting = builder
-					.comment("Should vanished players not be targetable by other players via command selectors (so players that cannot see vanished players cannot target them with e.g. /msg or /give)?")
+					.comment("Should vanished players not be targetable by non-permitted players via command selectors?",
+							"This prevents those players from uncovering the presence of vanished players through e.g. /msg or /give.")
 					.define("disableCommandTargeting", true);
 			hideChatMessages = builder
-					.comment("Should chat and /teammsg messages from vanished players be hidden for unvanished players?")
+					.comment("Should chat and /teammsg messages from vanished players be suppressed for non-permitted players?",
+							"Note that this does not affect emote commands such as /say and /me, as well as private message ones like /msg.")
 					.define("hideChatMessages", true);
+			hideSystemMessages = builder
+					.comment("Should system messages from vanished players, e.g. join, leave, death and advancement messages, be suppressed for non-permitted players?")
+					.define("hideSystemMessages", true);
 			hidePlayerNameInChat = builder
-					.comment("When unvanished players receive a message from a vanished player (e.g. a chat or /msg message), should the name of the player that sent the message be replaced with \"vanished\" (in gray color)?")
+					.comment("Should the name of vanished players within chat messages sent to non-permitted players be concealed by replacing it with a custom string?",
+							"This applies to all chat messages, including ones from e.g. /say and /msg.",
+							"The string that the player name will be replaced with can be customized through the \"vanishedPlayerNameReplacement\" config option.")
 					.define("hidePlayerNameInChat", false);
+			hidePlayerNameInSystemMessages = builder
+					.comment("Should the name of vanished players within system messages, e.g. join, leave, death and advancement messages, be concealed by replacing it with a custom string?",
+							"The string that the player name will be replaced with can be customized through the \"vanishedPlayerNameReplacement\" config option.")
+					.define("hidePlayerNameInSystemMessages", true);
 			sendFakeJoinLeaveMessages = builder
-					.comment("Should players see a fake join/leave message in their chat when another player (un-)vanishes?")
+					.comment("Should vanished players send all non-permitted players a fake leave/join message when they vanish or unvanish?")
 					.define("sendFakeJoinLeaveMessages", true);
 			fixPlayerDetectionModCompatibility = builder
-					.comment("Should there be a (potential) fix for other mods uncovering the presence of vanished players? This may severely increase CPU usage and is thus not recommended")
+					.comment("Should there be a (potential) fix for other mods uncovering the presence of vanished players?",
+							"This may severely decrease the game's performance and is thus not enabled by default.")
 					.define("fixPlayerDetectionModCompatibility", false);
 			removeModdedSystemMessageReferences = builder
-					.comment("Should this mod unconditionally and strictly remove (mostly) all references of names of vanished players by system messages added by mods? This is experimental, disable the config if too many modded messages get removed. Vanilla messages mentioning vanished players, such as death and advancement messages, will be removed regardless of this config's state.")
+					.comment("Should this mod unconditionally and strictly remove (mostly) all references of names of vanished players by system messages added by mods?",
+							"This is experimental, disable the config if too many modded messages get removed.",
+							"Vanilla messages mentioning vanished players, such as death and advancement messages, will be removed regardless of this config's state.")
 					.define("removeModdedSystemMessageReferences", true);
 			vanishedPlayersSeeEachOther = builder
 					.comment("Should vanished players be able to see each other?")
 					.define("vanishedPlayersSeeEachOther", false);
 			seeVanishedTeamPlayers = builder
-					.comment("Should players be able to see vanished players in the same vanilla team, if the \"seeFriendlyInvisibles\" option is enabled for that team?")
+					.comment("Should vanished players be visible for all players within their vanilla team, if the \"seeFriendlyInvisibles\" option is enabled for that team?")
 					.define("seeVanishedTeamPlayers", false);
 			indirectSoundSuppression = builder
-					.comment("Should this mod try to detect and suppress sounds that are indirectly caused by vanished players (e.g. pressing a button or hitting an entity)? This detection might accidentally suppress a few sounds unrelated to vanished players, disable this detection if too many sound bugs occur")
+					.comment("Should sounds that vanished players cause indirectly (e.g. pressing a button or hitting an entity) be suppressed?",
+							"This detection might accidentally suppress some sounds unrelated to vanished players, disable this detection if too many sound bugs occur")
 					.define("indirectSoundSuppression", true);
 			indirectParticleSuppression = builder
-					.comment("Should this mod try to detect and suppress particles that are indirectly caused by vanished players (e.g. eating or block breaking particles)? This detection might accidentally suppress particles unrelated to vanished players, disable this detection if too many visual bugs occur")
+					.comment("Should particles that vanished players cause indirectly (e.g. eating or block breaking particles) be suppressed?",
+							"This detection might accidentally suppress particles unrelated to vanished players, disable this detection if too many visual bugs occur")
 					.define("indirectParticleSuppression", true);
 			spoofVanishedPlayerInvisibility = builder
-					.comment("Should vanished players be regarded as having the Invisibility status effect on the server side? This does not actually affect if the player is rendered or not, but it may allow vanished players to hide from certain serverside map tools like Dynmap.")
+					.comment("Should vanished players be regarded as having the Invisibility status effect on the server side?",
+							"This does not actually affect if the player is rendered or not, but it may allow vanished players to hide from certain serverside map tools like Dynmap.")
 					.define("spoofVanishedPlayerInvisibility", true);
 			forceSyncHiddenList = builder
-					.comment("Should the \"Hidden Players\" list from mc2discord be constantly synched with a player's vanished status? (This might lead to worse performance)")
+					.comment("Should the \"Hidden Players\" list from mc2discord be constantly synchronised with a player's vanished status? (This might lead to worse performance)")
 					.define("forceSyncHiddenList", false);
 
 			vanishCommandPermissionLevel = builder
-					.comment("What op permission level should be the requirement for being able to execute /vanish? (A value of 2 or lower allows command blocks to execute /vanish)")
+					.comment("What operator permission level should be the requirement for being able to execute /vanish? A value of 2 or lower allows command blocks to execute /vanish.")
 					.defineInRange("vanishCommandPermissionLevel", 2, 0, 4);
 			seeVanishedPermissionLevel = builder
-					.comment("What op permission level should be the requirement for being able to see vanished players, no matter if the player with that permission level is vanished or not? A value of -1 disables this feature.")
+					.comment("What operator permission level should be the requirement for non-vanished players to be able to see vanished players?",
+							"A value of 0 means that every player is able to see vanished players. A value of -1 disables this feature, meaning that the operator level is not taken into account when determining who a player is vanished for.")
 					.defineInRange("seeVanishedPermissionLevel", -1, -1, 4);
 
 			onVanishMessage = builder
-					.comment("What message should a player receive when they vanish? (%s will get replaced with the name of the vanishing player)")
+					.comment("What message should a player receive when they vanish? Insert %s as a placeholder for the name of the vanishing player.")
 					.define("onVanishMessage", "%s vanished");
 			onUnvanishMessage = builder
-					.comment("What message should a player receive when they unvanish? (%s will get replaced with the name of the unvanishing player)")
+					.comment("What message should a player receive when they unvanish? Insert %s as a placeholder for the name of the unvanishing player.")
 					.define("onUnvanishMessage", "%s unvanished");
 			onVanishQuery = builder
-					.comment("What message should a player receive if they query the vanished status of a vanished player? (%s will get replaced with the name of the player that the status is queried of)")
+					.comment("What message should a player receive if they query the vanished status of a vanished player? Insert %s as a placeholder for the name of the player that the status is queried of.")
 					.define("onVanishQuery", "%s is currently vanished.");
 			onUnvanishQuery = builder
-					.comment("What message should a player receive if they query the vanished status of a visible player? (%s will get replaced with the name of the player that the status is queried of)")
+					.comment("What message should a player receive if they query the vanished status of a visible player? Insert %s as a placeholder for the name of the player that the status is queried of.")
 					.define("onUnvanishQuery", "%s is currently not vanished.");
+			vanishedPlayerNameReplacement = builder
+					.comment("What string should the name of vanished players be replaced with if the \"hidePlayerNameInChat\" config option is enabled?")
+					.define("vanishedPlayerNameReplacement", "§7vanished");
 		}
 	}
 }
