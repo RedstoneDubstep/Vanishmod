@@ -95,9 +95,6 @@ public class VanishingHandler {
 		deathPersistentData.putBoolean("Vanished", vanished);
 		persistentData.put(Player.PERSISTED_NBT_TAG, deathPersistentData); //Because the deathPersistentData could have been created newly by getCompound if it didn't exist before
 
-		if (Vanishmod.mc2discordDetected)
-			Mc2DiscordCompat.hidePlayer(player, vanished);
-
 		updateVanishedPlayerList(player, vanished);
 		MinecraftForge.EVENT_BUS.post(new PlayerVanishEvent(player, vanished));
 	}
@@ -107,6 +104,9 @@ public class VanishingHandler {
 			VanishUtil.VANISHED_PLAYERS.add(player.getUUID());
 		else
 			VanishUtil.VANISHED_PLAYERS.remove(player.getUUID());
+
+		if (Vanishmod.mc2discordDetected)
+			Mc2DiscordCompat.hidePlayer(player, vanished);
 
 		SoundSuppressionHelper.updateVanishedPlayerMap(player, vanished);
 	}
