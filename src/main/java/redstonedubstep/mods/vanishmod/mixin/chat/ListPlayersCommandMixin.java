@@ -15,7 +15,7 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(ListPlayersCommand.class)
 public class ListPlayersCommandMixin {
-	//Filter result of /list command when non-admins execute it
+	//Filter result of the /list command when non-permitted players use it
 	@Redirect(method = "format", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;getPlayers()Ljava/util/List;"))
 	private static List<ServerPlayer> vanishmod$redirectGetPlayers(PlayerList playerList, CommandSourceStack source) {
 		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get())

@@ -134,16 +134,33 @@ public class ServerCommonPacketListenerImplMixin {
 			if (VanishUtil.isVanished(FieldHolder.leavingPlayer, player))
 				vanishedPlayers.add(FieldHolder.leavingPlayer);
 
-			if (key.startsWith("multiplayer.player.joined") && joiningPlayerVanished)
-				callbackInfo.cancel();
-			else if (key.startsWith("multiplayer.player.left") || key.startsWith("death.") || key.startsWith("chat.type.advancement.") || key.startsWith("chat.type.admin")) {
-				if (content.getArgs()[0] instanceof Component playerName) {
-					for (ServerPlayer sender : vanishedPlayers) {
-						if (sender.getDisplayName().getString().equals(playerName.getString())) {
-							TraceHandler.trace(sender, "Announcement", component.getString());
-							callbackInfo.cancel();
-							return;
+			if (VanishConfig.CONFIG.hideSystemMessages.get() || VanishConfig.CONFIG.hidePlayerNameInSystemMessages.get()) {
+				ServerPlayer vanishedSender = null;
+				Object[] args = content.getArgs();
+
+				if (key.startsWith("multiplayer.player.joined") && joiningPlayerVanished)
+					vanishedSender = FieldHolder.joiningPlayer;
+				else if (key.startsWith("multiplayer.player.left") || key.startsWith("death.") || key.startsWith("chat.type.advancement.") || key.startsWith("chat.type.admin")) {
+					if (args[0] instanceof Component playerName) {
+						for (ServerPlayer sender : vanishedPlayers) {
+							if (sender.getDisplayName().getString().equals(playerName.getString())) {
+								vanishedSender = sender;
+								break;
+							}
 						}
+					}
+				}
+
+				if (vanishedSender != null) {
+					if (VanishConfig.CONFIG.hideSystemMessages.get()) {
+						TraceHandler.trace(vanishedSender, "Announcement", component.getString());
+						callbackInfo.cancel();
+					}
+					else if (VanishConfig.CONFIG.hidePlayerNameInSystemMessages.get()) {
+						Component replacement = Component.literal(VanishConfig.CONFIG.vanishedPlayerNameReplacement.get());
+
+						TraceHandler.trace(vanishedSender, "Player Name (now \"" + replacement.getString() + "\")", component.getString());
+						args[0] = replacement;
 					}
 				}
 			}

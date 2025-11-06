@@ -17,6 +17,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.common.damagesource.IDeathMessageProvider;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import redstonedubstep.mods.vanishmod.VanishConfig;
 import redstonedubstep.mods.vanishmod.VanishUtil;
 
 @Mixin(IDeathMessageProvider.class)
@@ -35,10 +36,15 @@ public interface IDeathMessageProviderMixin {
 
 	@Unique
 	private static Component vanishmod$filterDeathMessage(Component deathMessage) {
-		if (deathMessage != null && deathMessage.getContents() instanceof TranslatableContents content && content.getArgs().length > 1 && content.getArgs()[1] instanceof Component playerName) {
+		if ((VanishConfig.CONFIG.hideSystemMessages.get() || VanishConfig.CONFIG.hidePlayerNameInSystemMessages.get()) && deathMessage != null && deathMessage.getContents() instanceof TranslatableContents content && content.getArgs().length > 1 && content.getArgs()[1] instanceof Component playerName) {
 			for (ServerPlayer killer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-				if (killer.getDisplayName().getString().equals(playerName.getString()) && VanishUtil.isVanished(killer))
-					deathMessage = Component.translatable("death.attack.generic", content.getArgs()[0]);
+				if (killer.getDisplayName().getString().equals(playerName.getString()) && VanishUtil.isVanished(killer)) {
+					if (VanishConfig.CONFIG.hideSystemMessages.get())
+						deathMessage = Component.translatable("death.attack.generic", content.getArgs()[0]);
+					else if (VanishConfig.CONFIG.hidePlayerNameInSystemMessages.get())
+						content.getArgs()[1] = Component.literal(VanishConfig.CONFIG.vanishedPlayerNameReplacement.get());
+				}
+
 			}
 		}
 
