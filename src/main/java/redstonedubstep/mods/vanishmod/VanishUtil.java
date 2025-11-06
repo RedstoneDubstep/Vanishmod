@@ -80,7 +80,7 @@ public class VanishUtil {
 		boolean isMarkedVanished = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean("Vanished");
 
 		if (isMarkedVanished != isVanished(player))
-			VanishingHandler.updateVanishedStatus(player, isMarkedVanished);
+			VanishingHandler.updateVanishedPlayerList(player, isMarkedVanished);
 	}
 
 	public static List<? extends Entity> removeVanishedFromEntityList(List<? extends Entity> rawList, Entity forPlayer) {

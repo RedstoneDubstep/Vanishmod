@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'redstonedubstep.mods'
-version = '1.1.19'
+version = '1.1.19.1'
 archivesBaseName = 'vanishmod'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
