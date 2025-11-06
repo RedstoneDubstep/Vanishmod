@@ -9,8 +9,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.authlib.GameProfile;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.ChatType.Bound;
 import net.minecraft.network.chat.Component;
@@ -50,8 +48,10 @@ public abstract class ServerPlayerMixin extends Player {
 			if (VanishUtil.isVanished(sender, this)) {
 				if (!VanishConfig.CONFIG.hideChatMessages.get() || (chatTypeKey != ChatType.CHAT && chatTypeKey != ChatType.TEAM_MSG_COMMAND_INCOMING)) {
 					if (VanishConfig.CONFIG.hidePlayerNameInChat.get()) {
-						TraceHandler.trace(sender, "Chat Message Sender (now \"vanished\")", message.content().getString());
-						chatType = ChatType.bind(chatTypeKey, level().registryAccess(), Component.literal("vanished").withStyle(ChatFormatting.GRAY));
+						Component replacement = Component.literal(VanishConfig.CONFIG.vanishedPlayerNameReplacement.get());
+
+						TraceHandler.trace(sender, "Chat Message Sender (now \"" + replacement.getString() + "\")", message.content().getString());
+						chatType = ChatType.bind(chatTypeKey, level().registryAccess(), replacement);
 					}
 
 					sendSystemMessage(chatType.decorate(playerChatMessage.content()));
