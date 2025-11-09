@@ -159,7 +159,7 @@ public class ServerCommonPacketListenerImplMixin {
 					else if (VanishConfig.CONFIG.hidePlayerNameInSystemMessages.get()) {
 						Component replacement = Component.literal(VanishConfig.CONFIG.vanishedPlayerNameReplacement.get());
 
-						TraceHandler.trace(vanishedSender, "Player Name (now \"" + replacement.getString() + "\")", component.getString());
+						TraceHandler.trace(vanishedSender, Component.literal("Player Name (now \"").append(replacement).append("\")"), component.getString());
 						args[0] = replacement;
 					}
 				}

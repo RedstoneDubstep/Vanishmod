@@ -50,7 +50,7 @@ public abstract class ServerPlayerMixin extends Player {
 					if (VanishConfig.CONFIG.hidePlayerNameInChat.get()) {
 						Component replacement = Component.literal(VanishConfig.CONFIG.vanishedPlayerNameReplacement.get());
 
-						TraceHandler.trace(sender, "Chat Message Sender (now \"" + replacement.getString() + "\")", message.content().getString());
+						TraceHandler.trace(sender, Component.literal("Chat Message Sender (now \"").append(replacement).append("\")"), message.content().getString());
 						chatType = ChatType.bind(chatTypeKey, level().registryAccess(), replacement);
 					}
 

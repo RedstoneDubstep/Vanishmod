@@ -22,7 +22,7 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 
 public class TraceHandler {
 	public static final MutableComponent TRACE_PREFIX = Component.literal("").append(Component.literal("[").withStyle(ChatFormatting.WHITE)).append(Component.literal("§7Trace§r").withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(Component.literal("Click to disable"))).withClickEvent(new ClickEvent.RunCommand("/vanish trace disable")))).append(Component.literal("] ").withStyle(ChatFormatting.WHITE));
-	private static final Map<UUID, Map<String, Set<String>>> traceEntries = new HashMap<>();
+	private static final Map<UUID, Map<MutableComponent, Set<String>>> traceEntries = new HashMap<>();
 
 	public static boolean isTracing(Player player) {
 		return traceEntries.containsKey(player.getUUID());
@@ -65,8 +65,8 @@ public class TraceHandler {
 		player.sendSystemMessage(getTracePrefix(VanishConfig.CONFIG.disableCommandTargeting.get()).append("Hiding from player selectors in commands, like the /give command"));
 		player.sendSystemMessage(getTracePrefix(VanishConfig.CONFIG.hideChatMessages.get()).append("Hiding chat and /teammsg messages"));
 		player.sendSystemMessage(getTracePrefix(VanishConfig.CONFIG.hideSystemMessages.get()).append("Hiding join, leave, advancement and death messages"));
-		player.sendSystemMessage(getTracePrefix(VanishConfig.CONFIG.hidePlayerNameInChat.get()).append("Hiding your player name in public chat messages, replacing it with \"" + VanishConfig.CONFIG.vanishedPlayerNameReplacement.get() + "\""));
-		player.sendSystemMessage(getTracePrefix(VanishConfig.CONFIG.hidePlayerNameInSystemMessages.get()).append("Hiding your player name in system messages, replacing it with \"" + VanishConfig.CONFIG.vanishedPlayerNameReplacement.get() + "\""));
+		player.sendSystemMessage(getTracePrefix(VanishConfig.CONFIG.hidePlayerNameInChat.get()).append("Hiding your player name in public chat messages, replacing it with \"").append(VanishConfig.CONFIG.vanishedPlayerNameReplacement.get()).append("\""));
+		player.sendSystemMessage(getTracePrefix(VanishConfig.CONFIG.hidePlayerNameInSystemMessages.get()).append("Hiding your player name in system messages, replacing it with \"").append(VanishConfig.CONFIG.vanishedPlayerNameReplacement.get()).append("\""));
 		player.sendSystemMessage(visibleForComponent);
 	}
 
@@ -75,8 +75,12 @@ public class TraceHandler {
 	}
 
 	public static void trace(Player player, String group, String identifier) {
+		trace(player, Component.literal(group), identifier);
+	}
+
+	public static void trace(Player player, MutableComponent group, String identifier) {
 		if (isTracing(player)) {
-			Map<String, Set<String>> playerTraceEntries = traceEntries.get(player.getUUID());
+			Map<MutableComponent, Set<String>> playerTraceEntries = traceEntries.get(player.getUUID());
 
 			if (playerTraceEntries.containsKey(group))
 				playerTraceEntries.get(group).add(identifier);
@@ -87,15 +91,15 @@ public class TraceHandler {
 
 	public static void sendTraceEntries(ServerPlayer player) {
 		if (isTracing(player)) {
-			Map<String, Set<String>> playerTraceEntries = traceEntries.get(player.getUUID());
+			Map<MutableComponent, Set<String>> playerTraceEntries = traceEntries.get(player.getUUID());
 
 			if (playerTraceEntries.isEmpty())
 				return;
 
 			player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append(TRACE_PREFIX).append("Concealed the following events:"));
 
-			for (Map.Entry<String, Set<String>> traceEntry : playerTraceEntries.entrySet()) {
-				player.sendSystemMessage(Component.literal("# §5" + traceEntry.getKey() + "§r: " + traceEntry.getValue().size() + " ").append(Component.literal("§7(...)").withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(ComponentUtils.formatList(traceEntry.getValue()))))));
+			for (Map.Entry<MutableComponent, Set<String>> traceEntry : playerTraceEntries.entrySet()) {
+				player.sendSystemMessage(Component.literal("# ").append(traceEntry.getKey().withStyle(ChatFormatting.DARK_PURPLE)).append(": " + traceEntry.getValue().size() + " ").append(Component.literal("(...)").withStyle(s -> s.withColor(ChatFormatting.GRAY).withHoverEvent(new HoverEvent.ShowText(ComponentUtils.formatList(traceEntry.getValue()))))));
 			}
 
 			playerTraceEntries.clear();
