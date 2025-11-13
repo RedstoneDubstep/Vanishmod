@@ -2,6 +2,7 @@
 
 - Added new config options for adjusting whether vanished players may reveal themselves through vanilla system messages, like join/leave/death messages
 - Fixed error messages being logged when the hidePlayersFromWorld config option is disabled
+- Fixed some logic related to vanished player sleeping not being controllable through the "hidePlayersFromWorld" config option
 
 -----------Changelog for v1.1.19.1-----------
 
