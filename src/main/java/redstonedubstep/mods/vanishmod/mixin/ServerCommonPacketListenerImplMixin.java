@@ -162,9 +162,12 @@ public class ServerCommonPacketListenerImplMixin {
 						TraceHandler.trace(vanishedSender, Component.literal("Player Name (now \"").append(replacement).append("\")"), component.getString());
 						args[0] = replacement;
 					}
+
+					return;
 				}
 			}
-			else if (VanishConfig.CONFIG.removeModdedSystemMessageReferences.get() && !key.startsWith("commands.message.display.incoming") && !key.startsWith("chat.type.")) {
+
+			if (VanishConfig.CONFIG.removeModdedSystemMessageReferences.get() && !key.startsWith("commands.message.display.incoming") && !key.startsWith("chat.type.")) {
 				for (Object arg : content.getArgs()) {
 					if (arg instanceof Component componentArg) {
 						String potentialPlayerName = componentArg.getString();
