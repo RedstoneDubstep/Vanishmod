@@ -8,6 +8,7 @@
 		"ServerCommonPacketListenerImplMixin",
 		"ServerGamePacketListenerImplMixin",
 		"ServerPlayerMixin",
+		"chat.CommandSourceStackMixin",
 		"chat.EntityArgumentMixin",
 		"chat.EntitySelectorMixin",
 		"chat.IDeathMessageProviderMixin",
