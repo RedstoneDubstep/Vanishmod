@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.commands.ListPlayersCommand;
@@ -16,11 +18,13 @@ import redstonedubstep.mods.vanishmod.VanishUtil;
 @Mixin(ListPlayersCommand.class)
 public class ListPlayersCommandMixin {
 	//Filter result of the /list command when non-permitted players use it
-	@Redirect(method = "format", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;getPlayers()Ljava/util/List;"))
-	private static List<ServerPlayer> vanishmod$redirectGetPlayers(PlayerList playerList, CommandSourceStack source) {
-		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get())
-			return VanishUtil.removeVanishedFromPlayerList(playerList.getPlayers(), source.getEntity());
+	@WrapOperation(method = "format", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;getPlayers()Ljava/util/List;"))
+	private static List<ServerPlayer> vanishmod$redirectGetPlayers(PlayerList playerList, Operation<List<ServerPlayer>> original, CommandSourceStack source) {
+		List<ServerPlayer> originalList = original.call(playerList);
 
-		return playerList.getPlayers();
+		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get())
+			return VanishUtil.removeVanishedFromPlayerList(originalList, source.getEntity());
+
+		return originalList;
 	}
 }
