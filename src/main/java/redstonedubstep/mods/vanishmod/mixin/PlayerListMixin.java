@@ -29,7 +29,7 @@ public class PlayerListMixin {
 	public void vanishmod$onSendJoinMessage(Connection networkManager, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
 		VanishUtil.recheckVanished(player);
 
-		if (VanishingHandler.removeFromQueue(player.getGameProfile().getName()) && !VanishUtil.isVanished(player))
+		if (VanishingHandler.removeFromQueue(player.getGameProfile().name()) && !VanishUtil.isVanished(player))
 			VanishingHandler.toggleVanish(player);
 
 		FieldHolder.joiningPlayer = player;

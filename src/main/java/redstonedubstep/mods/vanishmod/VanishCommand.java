@@ -41,7 +41,7 @@ public class VanishCommand {
 				.then(Commands.literal("get").executes(ctx -> getVanishedStatus(ctx, ctx.getSource().getPlayerOrException()))
 						.then(Commands.argument("player", EntityArgument.player()).executes(ctx -> getVanishedStatus(ctx, EntityArgument.getPlayer(ctx, "player")))))
 				.then(Commands.literal("help").executes(VanishCommand::sendHelpText))
-				.then(Commands.literal("queue").executes(ctx -> queue(ctx, ctx.getSource().getPlayerOrException().getGameProfile().getName()))
+				.then(Commands.literal("queue").executes(ctx -> queue(ctx, ctx.getSource().getPlayerOrException().getGameProfile().name()))
 						.then(Commands.argument("player", StringArgumentType.word()).executes(ctx -> queue(ctx, StringArgumentType.getString(ctx, "player")))))
 				.then(Commands.literal("toggle").executes(ctx -> vanish(ctx, ctx.getSource().getPlayerOrException()))
 						.then(Commands.argument("player", EntityArgument.player()).executes(ctx -> vanish(ctx, EntityArgument.getPlayer(ctx, "player")))))

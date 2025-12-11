@@ -10,13 +10,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.mojang.authlib.GameProfile;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.Util;
 import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -53,12 +52,12 @@ public abstract class MinecraftServerMixin {
 				vanishedPlayerStatus = new ServerStatus.Players(maxPlayers, unvanishedPlayerCount, List.of());
 			else {
 				int playerSampleSize = Math.min(unvanishedPlayers.size(), 12);
-				ObjectArrayList<GameProfile> displayedPlayers = new ObjectArrayList<>(playerSampleSize);
+				ObjectArrayList<NameAndId> displayedPlayers = new ObjectArrayList<>(playerSampleSize);
 				int offset = Mth.nextInt(random, 0, unvanishedPlayerCount - playerSampleSize);
 
 				for(int l = 0; l < playerSampleSize; ++l) {
 					ServerPlayer player = unvanishedPlayers.get(offset + l);
-					displayedPlayers.add(player.allowsListing() ? player.getGameProfile() : MinecraftServer.ANONYMOUS_PLAYER_PROFILE);
+					displayedPlayers.add(player.allowsListing() ? player.nameAndId() : MinecraftServer.ANONYMOUS_PLAYER_PROFILE);
 				}
 
 				Util.shuffle(displayedPlayers, random);

@@ -53,7 +53,7 @@ public class TraceHandler {
 		String permissionString = !permissionText.isEmpty() ? String.join(" + ", permissionText) : "Only yourself";
 
 		MutableComponent visibleForComponent = Component.literal("# §nPlayers permitted to see you§r: " + permissionString + " ");
-		List<Component> visibleForPlayerNames = player.getServer().getPlayerList().getPlayers().stream().filter(p -> p != player && !VanishUtil.isVanished(player, p)).map(Player::getDisplayName).toList();
+		List<Component> visibleForPlayerNames = player.level().getServer().getPlayerList().getPlayers().stream().filter(p -> p != player && !VanishUtil.isVanished(player, p)).map(Player::getDisplayName).toList();
 
 		if (!visibleForPlayerNames.isEmpty())
 			visibleForComponent.append(Component.literal("§7(...)").withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(Component.literal("Currently: ").append(ComponentUtils.formatList(visibleForPlayerNames, ComponentUtils.DEFAULT_SEPARATOR))))));

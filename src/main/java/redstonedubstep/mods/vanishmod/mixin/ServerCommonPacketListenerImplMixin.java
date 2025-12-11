@@ -69,7 +69,7 @@ public class ServerCommonPacketListenerImplMixin {
 				callbackInfo.cancel();
 			}
 			else if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
-				PlayerList playerList = receivingPlayer.getServer().getPlayerList();
+				PlayerList playerList = receivingPlayer.level().getServer().getPlayerList();
 				Holder<SoundEvent> suppressedSound = null;
 				Player vanishedIndirectCause = null;
 

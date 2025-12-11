@@ -42,7 +42,7 @@ public class VanishUtil {
 		if (VANISHED_PLAYERS.isEmpty())
 			return false;
 
-		if (player != null && !player.level().isClientSide) {
+		if (player != null && !player.level().isClientSide()) {
 			boolean isVanished = VANISHED_PLAYERS.contains(player.getUUID());
 
 			if (forPlayer != null)
