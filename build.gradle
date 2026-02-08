@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id 'eclipse'
     id 'idea'
-    id 'net.neoforged.gradle.userdev' version '7.0.190'
+    id 'net.neoforged.moddev' version '2.0.107'
 }
 
 group = 'redstonedubstep.mods'
@@ -12,32 +12,31 @@ archivesBaseName = 'vanishmod'
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
-minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
+neoForge {
+    version = "${neo_version}"
+    validateAccessTransformers = true
 
+    runs {
+        configureEach {
+            logLevel = org.slf4j.event.Level.DEBUG
+            gameDirectory = project.file('run/' + name)
+            ideName = "${project.mc_version} " + ideName.get()
+        }
 
-runs {
-	configureEach {
-		systemProperty 'forge.logging.console.level', 'debug'
-		systemProperty 'forge.logging.markers', 'REGISTRIES,REGISTRYDUMP'
-		modSource project.sourceSets.main
-	}
+        client {
+            client()
+        }
 
-    client {
-        workingDirectory project.file('run/client')
+        server {
+            server()
+            programArgument('-nogui')
+        }
     }
 
-    server {
-        workingDirectory project.file('run/server')
-        arguments.addAll '-nogui'
-    }
-
-    clientData {
-        workingDirectory project.file('run/data')
-
-        // Recommended logging data for a userdev environment
-        systemProperty 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-        arguments.addAll '--mod', 'vanishmod', '--all', '--output', file('src/generated/resources/').getAbsolutePath()
+    mods {
+        vanishmod {
+            sourceSet(sourceSets.main)
+        }
     }
 }
 
@@ -48,11 +47,6 @@ repositories {
 }
 
 dependencies {
-    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
-    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    implementation "net.neoforged:neoforge:${neo_version}"
-
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"

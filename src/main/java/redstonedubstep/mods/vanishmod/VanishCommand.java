@@ -37,7 +37,7 @@ public class VanishCommand {
 	}
 
 	private static LiteralArgumentBuilder<CommandSourceStack> alias(String prefix) {
-		return Commands.literal(prefix).requires(player -> player.hasPermission(VanishConfig.CONFIG.vanishCommandPermissionLevel.get())).executes(ctx -> vanish(ctx, ctx.getSource().getPlayerOrException()))
+		return Commands.literal(prefix).requires(ctx -> VanishUtil.getPermissionCheckFromLevel(VanishConfig.CONFIG.vanishCommandPermissionLevel.get()).check(ctx.permissions())).executes(ctx -> vanish(ctx, ctx.getSource().getPlayerOrException()))
 				.then(Commands.literal("get").executes(ctx -> getVanishedStatus(ctx, ctx.getSource().getPlayerOrException()))
 						.then(Commands.argument("player", EntityArgument.player()).executes(ctx -> getVanishedStatus(ctx, EntityArgument.getPlayer(ctx, "player")))))
 				.then(Commands.literal("help").executes(VanishCommand::sendHelpText))
