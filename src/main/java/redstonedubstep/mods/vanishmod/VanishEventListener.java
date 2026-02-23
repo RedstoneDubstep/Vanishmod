@@ -45,17 +45,17 @@ public class VanishEventListener {
 			PlayerList list = player.level().getServer().getPlayerList();
 
 			if (VanishUtil.isVanished(player)) {
-				player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: You are currently vanished"));
+				player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable(VanishConfig.CONFIG.selfJoinVanishedWarning.get(), player.getDisplayName())));
 
 				for (ServerPlayer otherPlayer : list.getPlayers()) {
 					if (!otherPlayer.equals(player) && !VanishUtil.isVanished(player, otherPlayer)) //When the event is fired, the joining player has already been added to the player list
-						otherPlayer.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: ").append(player.getDisplayName()).append(" is currently vanished"));
+						otherPlayer.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable(VanishConfig.CONFIG.othersJoinVanishedWarning.get(), player.getDisplayName())));
 				}
 			}
 			else {
 				for (ServerPlayer otherPlayer : list.getPlayers()) { //If the joining player is unvanished and is able to see vanished players, they could potentially expose them by e.g. mentioning their name in chat. This notification should help to prevent that.
 					if (!otherPlayer.equals(player) && VanishUtil.isVanished(otherPlayer) && !VanishUtil.isVanished(otherPlayer, player)) {
-						player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append("Note: At least one player visible for you is vanished for other players, be careful to not accidentally reveal them"));
+						player.sendSystemMessage(VanishUtil.VANISHMOD_PREFIX.copy().append(Component.translatable(VanishConfig.CONFIG.onlinePlayersAreVanishedWarning.get(), player.getDisplayName())));
 						break;
 					}
 				}
