@@ -17,7 +17,7 @@ public class ServerStatusPacketListenerImplMixin {
 	//Updates the player list sent to clients on the Multiplayer screen to only display and count unvanished players
 	@WrapOperation(method = "handleStatusRequest", at = @At(value = "NEW", target = "(Lnet/minecraft/network/protocol/status/ServerStatus;Ljava/lang/String;)Lnet/minecraft/network/protocol/status/ClientboundStatusResponsePacket;"))
 	public ClientboundStatusResponsePacket vanishmod$constructSServerInfoPacket(ServerStatus status, String cachedStatus, Operation<ClientboundStatusResponsePacket> original) {
-		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get() && FieldHolder.vanishedServerStatus != null) {
+		if (FieldHolder.vanishedServerStatus != null && VanishConfig.CONFIG.hidePlayersFromPlayerLists.get()) {
 			status = FieldHolder.vanishedServerStatus;
 			cachedStatus = null;
 		}

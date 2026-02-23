@@ -19,8 +19,8 @@ public interface EntityGetterMixin {
 	//Fixes mobs spawning naturally around vanished players, and experience orbs being magnetized towards them
 	@WrapOperation(method = "getNearestPlayer(DDDDLjava/util/function/Predicate;)Lnet/minecraft/world/entity/player/Player;", at = @At(value = "INVOKE", target = "Ljava/util/function/Predicate;test(Ljava/lang/Object;)Z"))
 	default <T> boolean vanishmod$checkNearestPlayerVanished(Predicate<T> predicate, T input, Operation<Boolean> original) {
-		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && (predicate == EntitySelector.NO_CREATIVE_OR_SPECTATOR || predicate == EntitySelector.NO_SPECTATORS)) {
-			if (input instanceof Player player && VanishUtil.isVanished(player))
+		if (input instanceof Player player && VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
+			if ((predicate == EntitySelector.NO_CREATIVE_OR_SPECTATOR || predicate == EntitySelector.NO_SPECTATORS) && VanishUtil.isVanished(player))
 				return false;
 		}
 
@@ -30,7 +30,7 @@ public interface EntityGetterMixin {
 	//Fixes mob spawners activating around vanished players
 	@WrapOperation(method = "hasNearbyAlivePlayer", at = @At(value = "INVOKE", target = "Ljava/util/function/Predicate;test(Ljava/lang/Object;)Z", ordinal = 0))
 	default <T> boolean vanishmod$checkNearbyAlivePlayerVanished(Predicate<T> predicate, T input, Operation<Boolean> original) {
-		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && input instanceof Player player && VanishUtil.isVanished(player))
+		if (input instanceof Player player && VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(player))
 			return false;
 
 		return original.call(predicate, input);

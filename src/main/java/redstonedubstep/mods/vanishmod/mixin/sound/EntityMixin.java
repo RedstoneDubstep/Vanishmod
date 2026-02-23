@@ -19,14 +19,14 @@ public class EntityMixin {
 	//Invalidates the hit results of a vanished player if its position changes, because then their crosshair is most likely on a different block
 	@Inject(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setPos(DDD)V", ordinal = 1))
 	private void vanishmod$onActualMove(MoverType type, Vec3 pos, CallbackInfo callbackInfo) {
-		if (SoundSuppressionHelper.shouldCapturePlayers() && (Object) this instanceof ServerPlayer player && !player.hasContainerOpen())
+		if ((Object) this instanceof ServerPlayer player && SoundSuppressionHelper.shouldCapturePlayers() && !player.hasContainerOpen())
 			SoundSuppressionHelper.invalidateHitResults(player);
 	}
 
 	//Makes a vanished player pretend that they are invisible serverside, so e.g. minimap mods hide those players
 	@Inject(method = "isInvisible", at = @At("HEAD"), cancellable = true)
 	private void vanishmod$isInvisible(CallbackInfoReturnable<Boolean> callbackInfo) {
-		if ((Object) this instanceof ServerPlayer player && VanishConfig.CONFIG.spoofVanishedPlayerInvisibility.get() && VanishUtil.isVanished(player))
+		if (VanishUtil.isVanished(this, p -> VanishConfig.CONFIG.spoofVanishedPlayerInvisibility.get()))
 			callbackInfo.setReturnValue(true);
 	}
 }

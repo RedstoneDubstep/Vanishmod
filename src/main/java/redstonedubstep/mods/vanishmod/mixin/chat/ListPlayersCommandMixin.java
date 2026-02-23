@@ -22,7 +22,7 @@ public class ListPlayersCommandMixin {
 	private static List<ServerPlayer> vanishmod$redirectGetPlayers(PlayerList playerList, Operation<List<ServerPlayer>> original, CommandSourceStack source) {
 		List<ServerPlayer> originalList = original.call(playerList);
 
-		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get())
+		if (!originalList.isEmpty() && VanishConfig.CONFIG.hidePlayersFromPlayerLists.get())
 			return VanishUtil.removeVanishedFromPlayerList(originalList, source.getEntity());
 
 		return originalList;

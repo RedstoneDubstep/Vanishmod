@@ -55,6 +55,9 @@ public class ServerCommonPacketListenerImplMixin {
 		if ((Object)this instanceof ServerGamePacketListenerImpl listener) {
 			ServerPlayer receivingPlayer = listener.player;
 			Level level = receivingPlayer.level();
+			PlayerList playerList = receivingPlayer.level().getServer().getPlayerList();
+			Holder<SoundEvent> suppressedSound = null;
+			Player vanishedIndirectCause = null;
 
 			if (packet instanceof ClientboundPlayerInfoUpdatePacket infoPacket) {
 				List<ClientboundPlayerInfoUpdatePacket.Entry> filteredPacketEntries = infoPacket.entries().stream().filter(e -> !VanishUtil.isVanished(server.getPlayerList().getPlayer(e.profileId()), receivingPlayer)).toList();
@@ -68,52 +71,46 @@ public class ServerCommonPacketListenerImplMixin {
 				TraceHandler.trace(pickUppingPlayer, "Pickup Animation", pickupPacket.getItemId() + "x" + pickupPacket.getAmount());
 				callbackInfo.cancel();
 			}
-			else if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
-				PlayerList playerList = receivingPlayer.server.getPlayerList();
-				Holder<SoundEvent> suppressedSound = null;
-				Player vanishedIndirectCause = null;
+			else if (packet instanceof ClientboundSoundPacket soundPacket) {
+				vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedSoundCause(SoundSuppressionHelper.getPlayerForPacket(soundPacket, playerList), level, soundPacket.getX(), soundPacket.getY(), soundPacket.getZ(), receivingPlayer);
 
-				if (packet instanceof ClientboundSoundPacket soundPacket) {
-					vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedSoundCause(SoundSuppressionHelper.getPlayerForPacket(soundPacket, playerList), level, soundPacket.getX(), soundPacket.getY(), soundPacket.getZ(), receivingPlayer);
+				if (vanishedIndirectCause != null && VanishConfig.CONFIG.hidePlayersFromWorld.get())
+					suppressedSound = soundPacket.getSound();
+			}
+			else if (packet instanceof ClientboundSoundEntityPacket soundPacket) {
+				vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedSoundCause(SoundSuppressionHelper.getPlayerForPacket(soundPacket, playerList), level, level.getEntity(soundPacket.getId()), receivingPlayer);
 
-					if (vanishedIndirectCause != null)
-						suppressedSound = soundPacket.getSound();
-				}
-				else if (packet instanceof ClientboundSoundEntityPacket soundPacket) {
-					vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedSoundCause(SoundSuppressionHelper.getPlayerForPacket(soundPacket, playerList), level, level.getEntity(soundPacket.getId()), receivingPlayer);
+				if (vanishedIndirectCause != null && VanishConfig.CONFIG.hidePlayersFromWorld.get())
+					suppressedSound = soundPacket.getSound();
+			}
+			else if (packet instanceof ClientboundLevelEventPacket soundPacket) {
+				vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedSoundCause(SoundSuppressionHelper.getPlayerForPacket(soundPacket, playerList), level, Vec3.atCenterOf(soundPacket.getPos()), receivingPlayer);
 
-					if (vanishedIndirectCause != null)
-						suppressedSound = soundPacket.getSound();
-				}
-				else if (packet instanceof ClientboundLevelEventPacket soundPacket) {
-					vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedSoundCause(SoundSuppressionHelper.getPlayerForPacket(soundPacket, playerList), level, Vec3.atCenterOf(soundPacket.getPos()), receivingPlayer);
-
-					if (vanishedIndirectCause != null) {
-						TraceHandler.trace(vanishedIndirectCause, "Level Event", soundPacket.getType() + "/" + soundPacket.getData());
-						callbackInfo.cancel();
-					}
-				}
-				else if (packet instanceof ClientboundBlockEventPacket eventPacket) {
-					vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedSoundCause(null, level, Vec3.atCenterOf(eventPacket.getPos()), receivingPlayer);
-
-					if (vanishedIndirectCause != null) {
-						TraceHandler.trace(vanishedIndirectCause, "Block Event", eventPacket.getBlock().getName().getString() + "/" + eventPacket.getB0() + "/" + eventPacket.getB1());
-						callbackInfo.cancel();
-					}
-				}
-				else if (packet instanceof ClientboundLevelParticlesPacket particlesPacket){
-					vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedParticleCause(null, level, particlesPacket.getX(), particlesPacket.getY(), particlesPacket.getZ(), receivingPlayer);
-
-					if (vanishedIndirectCause != null) {
-						TraceHandler.trace(vanishedIndirectCause, "Particle", particlesPacket.getParticle().getClass().getSimpleName());
-						callbackInfo.cancel();
-					}
-				}
-
-				if (suppressedSound != null) {
-					TraceHandler.trace(vanishedIndirectCause, "Sound", suppressedSound.value().getLocation().toString());
+				if (vanishedIndirectCause != null && VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
+					TraceHandler.trace(vanishedIndirectCause, "Level Event", soundPacket.getType() + "/" + soundPacket.getData());
 					callbackInfo.cancel();
 				}
+			}
+			else if (packet instanceof ClientboundBlockEventPacket eventPacket) {
+				vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedSoundCause(null, level, Vec3.atCenterOf(eventPacket.getPos()), receivingPlayer);
+
+				if (vanishedIndirectCause != null && VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
+					TraceHandler.trace(vanishedIndirectCause, "Block Event", eventPacket.getBlock().getName().getString() + "/" + eventPacket.getB0() + "/" + eventPacket.getB1());
+					callbackInfo.cancel();
+				}
+			}
+			else if (packet instanceof ClientboundLevelParticlesPacket particlesPacket) {
+				vanishedIndirectCause = SoundSuppressionHelper.getIndirectVanishedParticleCause(null, level, particlesPacket.getX(), particlesPacket.getY(), particlesPacket.getZ(), receivingPlayer);
+
+				if (vanishedIndirectCause != null && VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
+					TraceHandler.trace(vanishedIndirectCause, "Particle", particlesPacket.getParticle().getClass().getSimpleName());
+					callbackInfo.cancel();
+				}
+			}
+
+			if (suppressedSound != null && VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
+				TraceHandler.trace(vanishedIndirectCause, "Sound", suppressedSound.value().getLocation().toString());
+				callbackInfo.cancel();
 			}
 		}
 	}

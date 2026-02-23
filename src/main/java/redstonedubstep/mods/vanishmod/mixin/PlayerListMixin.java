@@ -38,7 +38,7 @@ public class PlayerListMixin {
 	//Stores the player that is exempted from broadcasting a given sound packet, which most likely is the one causing the packet to be sent, so the information can be used later for sound suppression
 	@Inject(method = "broadcast", at = @At("HEAD"))
 	public void vanishmod$onBroadcast(Player except, double x, double y, double z, double radius, ResourceKey<Level> dimension, Packet<?> packet, CallbackInfo callbackInfo) {
-		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && except != null && (packet instanceof ClientboundSoundPacket || packet instanceof ClientboundSoundEntityPacket || packet instanceof ClientboundLevelEventPacket))
+		if (except != null && VanishConfig.CONFIG.hidePlayersFromWorld.get() && (packet instanceof ClientboundSoundPacket || packet instanceof ClientboundSoundEntityPacket || packet instanceof ClientboundLevelEventPacket))
 			SoundSuppressionHelper.putSoundPacket(packet, except);
 	}
 }

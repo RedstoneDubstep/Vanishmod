@@ -23,7 +23,7 @@ public class EntityArgumentMixin {
 	//Prevent players that are not allowed to see vanished players from targeting them through their name or a selector (1/4)
 	@ModifyVariable(method = "getEntities", at = @At(value = "INVOKE", target = "Ljava/util/Collection;isEmpty()Z", shift = Shift.BEFORE))
 	private static Collection<? extends Entity> vanishmod$modifyEntityList(Collection<? extends Entity> originalList, CommandContext<CommandSourceStack> context) {
-		if (VanishConfig.CONFIG.disableCommandTargeting.get() && context.getSource().getEntity() != null) //only filter commands from players, not command blocks/console/datapacks
+		if (context.getSource().getEntity() != null && VanishConfig.CONFIG.disableCommandTargeting.get()) //only filter commands from players, not command blocks/console/datapacks
 			originalList = VanishUtil.removeVanishedFromEntityList(new ArrayList<>(originalList), context.getSource().getEntity());
 
 		return originalList;
@@ -32,7 +32,7 @@ public class EntityArgumentMixin {
 	//Prevent players that are not allowed to see vanished players from targeting them through their name or a selector (2/4)
 	@ModifyVariable(method = "getPlayers", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", shift = Shift.BEFORE))
 	private static List<ServerPlayer> vanishmod$modifyPlayerList(List<ServerPlayer> originalList, CommandContext<CommandSourceStack> context) {
-		if (VanishConfig.CONFIG.disableCommandTargeting.get() && context.getSource().getEntity() != null) //only filter commands from players, not command blocks/console/datapacks
+		if (context.getSource().getEntity() != null && VanishConfig.CONFIG.disableCommandTargeting.get()) //only filter commands from players, not command blocks/console/datapacks
 			originalList = VanishUtil.removeVanishedFromPlayerList(originalList, context.getSource().getEntity());
 
 		return originalList;

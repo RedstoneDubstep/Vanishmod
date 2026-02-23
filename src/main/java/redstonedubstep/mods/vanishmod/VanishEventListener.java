@@ -123,7 +123,7 @@ public class VanishEventListener {
 	@SubscribeEvent
 	public static void onProjectileImpact(ProjectileImpactEvent event) {
 		if (VanishConfig.CONFIG.hidePlayersFromWorld.get()) {
-			if (event.getRayTraceResult() instanceof EntityHitResult hitResult && VanishUtil.isVanished(hitResult.getEntity(), event.getProjectile().getOwner()))
+			if (event.getRayTraceResult() instanceof EntityHitResult hitResult && VanishUtil.isVanished(hitResult.getEntity(), event.getProjectile().getOwner(), null))
 				event.setCanceled(true);
 		}
 	}

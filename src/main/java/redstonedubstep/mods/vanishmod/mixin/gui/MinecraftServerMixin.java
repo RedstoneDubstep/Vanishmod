@@ -41,9 +41,11 @@ public abstract class MinecraftServerMixin {
 	//Constructs an alternative ServerStatus that accounts for vanished players after the main one has been constructed
 	@Inject(method = {"runServer", "tickServer"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;resetStatusCache(Lnet/minecraft/network/protocol/status/ServerStatus;)V"))
 	private void vanishmod$onBuildServerStatus(CallbackInfo callbackInfo) {
-		if (VanishConfig.CONFIG.hidePlayersFromPlayerLists.get()) {
-			PlayerList list = getPlayerList();
-			List<ServerPlayer> unvanishedPlayers = VanishUtil.removeVanishedFromPlayerList(list.getPlayers(), null);
+		PlayerList list = getPlayerList();
+		List<ServerPlayer> players = list.getPlayers();
+
+		if (!players.isEmpty() && VanishConfig.CONFIG.hidePlayersFromPlayerLists.get()) {
+			List<ServerPlayer> unvanishedPlayers = VanishUtil.removeVanishedFromPlayerList(players, null);
 			int unvanishedPlayerCount = unvanishedPlayers.size();
 			int maxPlayers = list.getMaxPlayers();
 			ServerStatus mainServerStatus = status;
