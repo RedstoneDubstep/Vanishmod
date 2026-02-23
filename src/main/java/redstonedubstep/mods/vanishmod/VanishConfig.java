@@ -41,6 +41,9 @@ public class VanishConfig {
 		public ConfigValue<String> onUnvanishMessage;
 		public ConfigValue<String> onVanishQuery;
 		public ConfigValue<String> onUnvanishQuery;
+		public ConfigValue<String> selfJoinVanishedWarning;
+		public ConfigValue<String> othersJoinVanishedWarning;
+		public ConfigValue<String> onlinePlayersAreVanishedWarning;
 		public ConfigValue<String> vanishedPlayerNameReplacement;
 
 		Config(ModConfigSpec.Builder builder) {
@@ -128,6 +131,15 @@ public class VanishConfig {
 			onUnvanishQuery = builder
 					.comment("What message should a player receive if they query the vanished status of a visible player? Insert %s as a placeholder for the name of the player that the status is queried of.")
 					.define("onUnvanishQuery", "%s is currently not vanished.");
+			selfJoinVanishedWarning = builder
+					.comment("What message should a player receive if they join while vanished? Insert %s as a placeholder for the name of the joining player.")
+					.define("selfJoinVanishedWarning", "Note: You are currently vanished");
+			othersJoinVanishedWarning = builder
+					.comment("What message should online players that are permitted to see vanished players receive if a vanished player joins? Insert %s as a placeholder for the name of the joining player.")
+					.define("othersJoinVanishedWarning", "§cWarning: %s is currently vanished!");
+			onlinePlayersAreVanishedWarning = builder
+					.comment("What message should a player receive if they join while being able to see online vanished players? Insert %s as a placeholder for the name of the joining player.")
+					.define("onlinePlayersAreVanishedWarning", "§cWarning: At least one player visible for you is vanished for other players!");
 			vanishedPlayerNameReplacement = builder
 					.comment("What string should the name of vanished players be replaced with if the \"hidePlayerNameInChat\" config option is enabled?")
 					.define("vanishedPlayerNameReplacement", "§7vanished");
