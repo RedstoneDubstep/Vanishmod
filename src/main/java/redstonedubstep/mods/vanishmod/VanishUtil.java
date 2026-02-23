@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import net.minecraft.ChatFormatting;
@@ -23,19 +24,23 @@ public class VanishUtil {
 	public static final Set<UUID> VANISHED_PLAYERS = new HashSet<>();
 	public static final MutableComponent VANISHMOD_PREFIX = Component.literal("").append(Component.literal("[").withStyle(ChatFormatting.WHITE)).append(Component.literal("Vanishmod").withStyle(s -> s.applyFormat(ChatFormatting.GRAY).withClickEvent(new ClickEvent.OpenUrl(URI.create("https://www.curseforge.com/minecraft/mc-mods/vanishmod"))))).append(Component.literal("] ").withStyle(ChatFormatting.WHITE));
 
-	public static boolean isVanished(Entity player) {
-		return isVanished(player, null);
+	public static boolean isVanished(Object player) {
+		return isVanished(player, null, null);
 	}
 
-	public static boolean isVanished(Player player) {
-		return isVanished(player, null);
+	public static boolean isVanished(Object player, Predicate<Player> afterPlayerCastCheck) {
+		return isVanished(player, null, afterPlayerCastCheck);
 	}
 
-	public static boolean isVanished(Entity potentialPlayer, Entity forPlayer) {
-		if (potentialPlayer instanceof Player player)
+	public static boolean isVanished(Object potentialPlayer, Entity forPlayer, Predicate<Player> afterPlayerCastCheck) {
+		if (potentialPlayer instanceof Player player && (afterPlayerCastCheck == null || afterPlayerCastCheck.test(player)))
 			return isVanished(player, forPlayer);
 
 		return false;
+	}
+
+	public static boolean isVanished(Player player) {
+		return isVanished(player, (Entity) null);
 	}
 
 	public static boolean isVanished(Player player, Entity forPlayer) {

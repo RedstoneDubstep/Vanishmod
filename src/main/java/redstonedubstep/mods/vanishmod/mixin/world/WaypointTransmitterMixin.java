@@ -16,7 +16,7 @@ public interface WaypointTransmitterMixin {
 	//Prevents vanished players from showing up on the locator bar of players that aren't allowed to see them
 	@Inject(method = "doesSourceIgnoreReceiver", at = @At("HEAD"), cancellable = true)
 	private static void vanishmod$ignoreVanishedSources(LivingEntity source, ServerPlayer receiver, CallbackInfoReturnable<Boolean> callbackInfo) {
-		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(source, receiver))
+		if (VanishUtil.isVanished(source, receiver, p -> VanishConfig.CONFIG.hidePlayersFromWorld.get()))
 			callbackInfo.setReturnValue(true);
 	}
 }

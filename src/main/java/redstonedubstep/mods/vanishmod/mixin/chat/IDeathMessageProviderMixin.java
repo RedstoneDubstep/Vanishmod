@@ -1,5 +1,7 @@
 package redstonedubstep.mods.vanishmod.mixin.chat;
 
+import java.util.List;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,8 +38,10 @@ public interface IDeathMessageProviderMixin {
 
 	@Unique
 	private static Component vanishmod$filterDeathMessage(Component deathMessage) {
-		if ((VanishConfig.CONFIG.hideSystemMessages.get() || VanishConfig.CONFIG.hidePlayerNameInSystemMessages.get()) && deathMessage != null && deathMessage.getContents() instanceof TranslatableContents content && content.getArgs().length > 1 && content.getArgs()[1] instanceof Component playerName) {
-			for (ServerPlayer killer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+		List<ServerPlayer> players = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
+
+		if (!players.isEmpty() && (VanishConfig.CONFIG.hideSystemMessages.get() || VanishConfig.CONFIG.hidePlayerNameInSystemMessages.get()) && deathMessage != null && deathMessage.getContents() instanceof TranslatableContents content && content.getArgs().length > 1 && content.getArgs()[1] instanceof Component playerName) {
+			for (ServerPlayer killer : players) {
 				if (killer.getDisplayName().getString().equals(playerName.getString()) && VanishUtil.isVanished(killer)) {
 					if (VanishConfig.CONFIG.hideSystemMessages.get())
 						deathMessage = Component.translatable("death.attack.generic", content.getArgs()[0]);

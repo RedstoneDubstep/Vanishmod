@@ -22,7 +22,7 @@ public class TrialSpawnerLevelEntitySelectorMixin {
 	private List<? extends Player> vanishmod$filterTrialSpawnerPlayerList(ServerLevel instance, Predicate<? super ServerPlayer> playerCheck, Operation<List<ServerPlayer>> original) {
 		List<? extends Player> nearbyPlayers = original.call(instance, playerCheck);
 
-		if (VanishConfig.CONFIG.hidePlayersFromWorld.get())
+		if (!nearbyPlayers.isEmpty() && VanishConfig.CONFIG.hidePlayersFromWorld.get())
 			nearbyPlayers = VanishUtil.removeVanishedFromPlayerList(nearbyPlayers, null);
 
 		return nearbyPlayers;

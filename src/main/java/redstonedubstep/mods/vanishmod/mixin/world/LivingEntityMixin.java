@@ -29,28 +29,28 @@ public abstract class LivingEntityMixin extends Entity {
 	//Prevent entities like passive mobs or pufferfish from detecting vanished players
 	@Inject(method = "canBeSeenByAnyone", at = @At("HEAD"), cancellable = true)
 	public void vanishmod$onCanBeSeen(CallbackInfoReturnable<Boolean> callbackInfo) {
-		if (VanishConfig.CONFIG.hidePlayersFromWorld.get() && VanishUtil.isVanished(this))
+		if (VanishUtil.isVanished(this, p -> VanishConfig.CONFIG.hidePlayersFromWorld.get()))
 			callbackInfo.setReturnValue(false);
 	}
 
 	//Makes a vanished player pretend that they have the invisibility effect serverside, so e.g. minimap mods hide those players
 	@Inject(method = "hasEffect", at = @At("HEAD"), cancellable = true)
 	private void vanishmod$hasInvisibility(Holder<MobEffect> effect, CallbackInfoReturnable<Boolean> callbackInfo) {
-		if (effect == MobEffects.INVISIBILITY && VanishConfig.CONFIG.spoofVanishedPlayerInvisibility.get() && VanishUtil.isVanished(this))
+		if (effect == MobEffects.INVISIBILITY && VanishUtil.isVanished(this, p -> VanishConfig.CONFIG.spoofVanishedPlayerInvisibility.get()))
 			callbackInfo.setReturnValue(true);
 	}
 
 	//Makes a vanished player pretend that they have the invisibility effect serverside, so e.g. minimap mods hide those players
 	@Inject(method = "getEffect", at = @At("HEAD"), cancellable = true)
 	private void vanishmod$getInvisibilityEffect(Holder<MobEffect> effect, CallbackInfoReturnable<MobEffectInstance> callbackInfo) {
-		if (effect == MobEffects.INVISIBILITY && VanishConfig.CONFIG.spoofVanishedPlayerInvisibility.get() && VanishUtil.isVanished(this))
+		if (effect == MobEffects.INVISIBILITY && VanishUtil.isVanished(this, p -> VanishConfig.CONFIG.spoofVanishedPlayerInvisibility.get()))
 			callbackInfo.setReturnValue(new MobEffectInstance(MobEffects.INVISIBILITY, 10));
 	}
 
 	//This mixin ensures that the serverside invisibility induced by this mod is not synced to the client side, by directly checking with the active effects map (which is not modified by this mod)
 	@WrapOperation(method = "updateInvisibilityStatus", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;hasEffect(Lnet/minecraft/core/Holder;)Z"))
 	private boolean vanishmod$correctInvisibilityStatus(LivingEntity entity, Holder<MobEffect> effect, Operation<Boolean> original) {
-		if (effect == MobEffects.INVISIBILITY && VanishConfig.CONFIG.spoofVanishedPlayerInvisibility.get() && VanishUtil.isVanished(entity))
+		if (effect == MobEffects.INVISIBILITY && VanishUtil.isVanished(this, p -> VanishConfig.CONFIG.spoofVanishedPlayerInvisibility.get()))
 			return entity.getActiveEffectsMap().containsKey(MobEffects.INVISIBILITY);
 
 		return original.call(entity, effect);
